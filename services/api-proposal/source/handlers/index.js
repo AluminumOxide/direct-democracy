@@ -1,0 +1,12 @@
+module.exports = {
+	proposal_list: require('./proposal/list'),
+	proposal_create: require('./proposal/create'),
+	proposal_read: require('./proposal/read'),
+	proposal_update: require('./proposal/update'),
+	proposal_delete: require('./proposal/delete'),
+	ballot_list: require('./ballot/list'),
+	ballot_create: require('./ballot/create'),
+	ballot_read: require('./ballot/read'),
+	ballot_update: require('./ballot/update'),
+	ballot_delete: require('./ballot/delete')
+}
