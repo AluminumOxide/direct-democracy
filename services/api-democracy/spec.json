@@ -7,8 +7,12 @@
   },
   "servers": [
     {
-      "url": "http://api-democracy:3000/v1",
+      "url": "http://0.0.0.0:3000/v1",
       "description": "local"
+    },
+    {
+      "url": "http://api-democracy:3000/v1",
+      "description": "dev"
     }
   ],
   "tags": [

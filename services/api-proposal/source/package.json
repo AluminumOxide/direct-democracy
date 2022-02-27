@@ -7,11 +7,12 @@
     "@aluminumoxide/direct-democracy-democracy-api-client": "^1.0.12",
     "@aluminumoxide/direct-democracy-proposal-api-client": "^1.0.4",
     "@aluminumoxide/openapi-3.1-server": "^1.0.4",
-    "fastify": "^3.20.1"
+    "fastify": "^3.20.1",
+    "nodemon": "^2.0.15"
   },
   "devDependencies": {},
   "scripts": {
-    "server": "node index.js"
+    "server": "nodemon index.js"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
