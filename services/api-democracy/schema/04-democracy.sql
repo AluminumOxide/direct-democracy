@@ -3,6 +3,7 @@ CREATE TABLE democracy( LIKE base INCLUDING ALL );
 ALTER TABLE democracy ADD COLUMN parent_id UUID;
 ALTER TABLE democracy ADD COLUMN name VARCHAR;
 ALTER TABLE democracy ADD COLUMN description VARCHAR;
+ALTER TABLE democracy ADD COLUMN population INTEGER DEFAULT 0;
 ALTER TABLE democracy ADD COLUMN rules JSONB;
 ALTER TABLE democracy ADD COLUMN metas JSONB;
 

@@ -1,10 +1,10 @@
 {
   "name": "@aluminumoxide/direct-democracy-proposal-api-client",
-  "version": "1.0.4",
+  "version": "1.0.9",
   "description": "Client library for proposal API",
   "main": "index.js",
   "dependencies": {
-    "@aluminumoxide/openapi-3.1-client": "^1.0.4"
+    "@aluminumoxide/openapi-3.1-client": "^1.0.8"
   },
   "files": [
     "spec.json"

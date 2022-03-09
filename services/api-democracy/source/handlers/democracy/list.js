@@ -7,13 +7,11 @@ const democracy_list = async function(request, reply, db, log) {
       democracy_id: 'democracy.id',
       democracy_name: 'democracy.name',
       democracy_description: 'democracy.description',
+			democracy_population: 'democracy.population',
       date_created: 'democracy.date_created',
       date_updated: 'democracy.date_updated'
     })
-    .from('democracy')
-    .join('membership', 'democracy.id', '=', 'membership.democracy_id')
-    .groupBy('democracy.id')
-    .count('membership.id', {as: 'democracy_population'}))
+    .from('democracy'))
 
   log.info('Democracy/List: Success')
   return reply.code(200).send(rows)

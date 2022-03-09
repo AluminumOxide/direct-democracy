@@ -1,11 +1,15 @@
-const api_democracy_client = require('@aluminumoxide/direct-democracy-democracy-api-client')
+const api_membership_client = require('@aluminumoxide/direct-democracy-membership-api-client')
 
 const proposal_create = async function(request, reply, db, log) {
 	const { proposal_name, proposal_description, proposal_target, proposal_changes, democracy_id, membership_id } = request
 
 	// check the membership_id & democracy_id are valid
 	try {
-		const mem_check = await api_democracy_client.membership_read({ democracy_id, membership_id })
+		const mem_check = await api_membership_client.membership_read({ membership_id })
+		if(mem_check.democracy_id !== democracy_id) {
+			log.error('Proposal/Create: Failure(invalid democracy '+democracy_id+')')
+			return reply.code(400).send()
+		}
 	} catch (e) {
 		log.error('Proposal/Create: Failure(invalid membership '+membership_id+')')
 		return reply.code(400).send()
