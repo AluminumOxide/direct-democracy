@@ -1,6 +1,5 @@
 const fastify = require('fastify')({ logger: true })
 const { start } = require('@aluminumoxide/openapi-3.1-server')
-
 start({
 	address: process.env.API_MEMBERSHIP_URL,
 	port: process.env.API_MEMBERSHIP_PORT,
@@ -14,3 +13,4 @@ start({
 	db_address: process.env.DB_MEMBERSHIP_DB,
 	fastify
 })
+

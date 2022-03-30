@@ -1,516 +1,516 @@
 {
-  "openapi": "3.1.0",
-  "info": {
-    "description": "API to manage democracies",
-    "version": "1.0.0",
-    "title": "Democracy API"
-  },
-  "servers": [
-    {
-      "url": "http://0.0.0.0:3001/v1",
-      "description": "local"
-    },
-    {
-      "url": "http://api-democracy:3001/v1",
-      "description": "dev"
-    }
-  ],
-  "tags": [
-    {
-      "name": "democracy"
-    }
-  ],
-  "paths": {
-    "/democracy": {
-      "get": {
-        "description": "List democracies",
-        "operationId": "democracy_list",
-        "tags": [
-          "democracy"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/limit"
-          },
-          {
-            "$ref": "#/components/parameters/last"
-          },
-          {
-            "$ref": "#/components/parameters/order"
-          },
-          {
-            "$ref": "#/components/parameters/democracy_sort"
-          },
-          {
-            "$ref": "#/components/parameters/democracy_filter"
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/democracy_list"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/democracy/{democracy_id}": {
-      "get": {
-        "description": "Get a democracy",
-        "operationId": "democracy_read",
-        "tags": [
-          "democracy"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/democracy_id"
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/democracy_read"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/democracy/{democracy_id}/population": {
-      "post": {
-        "description": "Increase the population",
-        "operationId": "democracy_population_increase",
-        "tags": [
-          "democracy"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/democracy_id"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "operation successful"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "delete": {
-        "description": "Decrease the population",
-        "operationId": "democracy_population_decrease",
-        "tags": [
-          "democracy"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/democracy_id"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "operation successful"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "parameters": {
-      "limit": {
-        "name": "limit",
-        "in": "query",
-        "required": false,
-        "schema": {
-          "type": "integer"
-        }
-      },
-      "last": {
-        "name": "last",
-        "in": "query",
-        "required": false,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "order": {
-        "name": "order",
-        "in": "query",
-        "schema": {
-          "type": "string",
-          "enum": [
-            "ASC",
-            "DESC"
-          ]
-        }
-      },
-      "democracy_id": {
-        "name": "democracy_id",
-        "in": "path",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/democracy_id"
-        }
-      },
-      "democracy_sort": {
-        "name": "sort",
-        "in": "query",
-        "schema": {
-          "type": "string",
-          "enum": [
-            "democracy_name",
-            "democracy_population",
-            "date_created",
-            "date_updated"
-          ]
-        }
-      },
-      "democracy_filter": {
-        "name": "filter",
-        "in": "query",
-        "schema": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "filter": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "democracy_id": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "op": {
-                      "$ref": "#/components/schemas/op"
-                    },
-                    "val": {
-                      "$ref": "#/components/schemas/democracy_id"
-                    }
-                  }
-                },
-                "democracy_name": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "op": {
-                      "$ref": "#/components/schemas/op"
-                    },
-                    "val": {
-                      "$ref": "#/components/schemas/democracy_name"
-                    }
-                  }
-                },
-                "democracy_description": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "op": {
-                      "type": "string",
-                      "enum": [
-                        "~"
-                      ]
-                    },
-                    "val": {
-                      "$ref": "#/components/schemas/democracy_description"
-                    }
-                  }
-                },
-                "democracy_population": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "op": {
-                      "$ref": "#/components/schemas/op"
-                    },
-                    "val": {
-                      "$ref": "#/components/schemas/democracy_population"
-                    }
-                  }
-                },
-                "date_created": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "op": {
-                      "$ref": "#/components/schemas/op"
-                    },
-                    "val": {
-                      "$ref": "#/components/schemas/date"
-                    }
-                  }
-                },
-                "date_updated": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "op": {
-                      "$ref": "#/components/schemas/op"
-                    },
-                    "val": {
-                      "$ref": "#/components/schemas/date"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "responses": {
-      "400": {
-        "description": "Bad Request"
-      },
-      "401": {
-        "description": "Unauthorized"
-      },
-      "500": {
-        "description": "Internal Error"
-      },
-      "democracy_list": {
-        "description": "Successfully return list of democracies",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/democracy_list"
-              }
-            }
-          }
-        }
-      },
-      "democracy_read": {
-        "description": "Successfully fetched a democracy",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/democracy_read"
-            }
-          }
-        }
-      }
-    },
-    "schemas": {
-      "op": {
-        "type": "string",
-        "enum": [
-          "=",
-          "!=",
-          ">=",
-          ">",
-          "<=",
-          "<"
-        ]
-      },
-      "date": {
-        "type": "string",
-        "format": "date-time"
-      },
-      "date_created": {
-        "type": "string",
-        "format": "timestamp"
-      },
-      "date_updated": {
-        "type": "string",
-        "format": "timestamp"
-      },
-      "democracy_id": {
-        "description": "Democracy ID",
-        "type": "string",
-        "format": "uuid"
-      },
-      "democracy_name": {
-        "description": "Democracy name",
-        "type": "string"
-      },
-      "democracy_description": {
-        "description": "Democracy description",
-        "type": "string"
-      },
-      "democracy_population": {
-        "description": "Democracy population",
-        "type": "integer"
-      },
-      "democracy_rules": {
-        "description": "Democracy population",
-        "type": "integer"
-      },
-      "democracy_metas": {
-        "description": "Democracy meta rules",
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "name": {
-            "description": "Rules for modifying democracy name",
-            "$ref": "#/components/schemas/meta_rules"
-          },
-          "description": {
-            "description": "Rules for modifying democracy description",
-            "$ref": "#/components/schemas/meta_rules"
-          },
-          "rules": {
-            "description": "Rules for modifying democracy rules",
-            "$ref": "#/components/schemas/meta_branch"
-          },
-          "metas": {
-            "description": "Rules for modifying democracy meta rules",
-            "$ref": "#/components/schemas/meta_branch"
-          }
-        }
-      },
-      "meta_rules": {
-        "type": "object",
-        "properties": {
-          "approval_percent_minimum": {
-            "type": "integer"
-          },
-          "approval_number_minimum": {
-            "type": "integer"
-          },
-          "disapproval_percent_maximum": {
-            "type": "integer"
-          },
-          "disapproval_number_maximum": {
-            "type": "integer"
-          },
-          "proposal_lifetime_minimum": {
-            "type": "integer"
-          },
-          "proposal_lifetime_maximum": {
-            "type": "integer"
-          }
-        }
-      },
-      "meta_branch": {
-        "type": "object",
-        "additionalProperties": {
-          "oneOf": [
-            {
-              "$ref": "#/components/schemas/meta_leaf"
-            },
-            {
-              "$ref": "#/components/schemas/meta_branch"
-            }
-          ]
-        }
-      },
-      "meta_leaf": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "add": {
-            "$ref": "#/components/schemas/meta_rules"
-          },
-          "update": {
-            "$ref": "#/components/schemas/meta_rules"
-          },
-          "delete": {
-            "$ref": "#/components/schemas/meta_rules"
-          }
-        }
-      },
-      "democracy_read": {
-        "description": "Democracy - Read",
-        "type": "object",
-        "required": [
-          "democracy_id",
-          "democracy_name",
-          "democracy_description",
-          "democracy_population",
-          "democracy_rules",
-          "democracy_metas",
-          "date_created",
-          "date_updated"
-        ],
-        "properties": {
-          "democracy_id": {
-            "$ref": "#/components/schemas/democracy_id"
-          },
-          "democracy_name": {
-            "$ref": "#/components/schemas/democracy_name"
-          },
-          "democracy_description": {
-            "$ref": "#/components/schemas/democracy_description"
-          },
-          "democracy_population": {
-            "$ref": "#/components/schemas/democracy_population"
-          },
-          "democracy_rules": {
-            "$ref": "#/components/schemas/democracy_rules"
-          },
-          "democracy_metas": {
-            "$ref": "#/components/schemas/democracy_metas"
-          },
-          "date_created": {
-            "$ref": "#/components/schemas/date_created"
-          },
-          "date_updated": {
-            "$ref": "#/components/schemas/date_updated"
-          }
-        }
-      },
-      "democracy_list": {
-        "description": "Democracy - List",
-        "type": "object",
-        "required": [
-          "democracy_id",
-          "democracy_name",
-          "democracy_description",
-          "democracy_population",
-          "date_created",
-          "date_updated"
-        ],
-        "properties": {
-          "democracy_id": {
-            "$ref": "#/components/schemas/democracy_id"
-          },
-          "democracy_name": {
-            "$ref": "#/components/schemas/democracy_name"
-          },
-          "democracy_description": {
-            "$ref": "#/components/schemas/democracy_description"
-          },
-          "democracy_population": {
-            "$ref": "#/components/schemas/democracy_population"
-          },
-          "date_created": {
-            "$ref": "#/components/schemas/date_created"
-          },
-          "date_updated": {
-            "$ref": "#/components/schemas/date_updated"
-          }
-        }
-      }
-    }
-  }
+	"openapi": "3.1.0",
+	"info": {
+		"description": "API to manage democracies",
+		"version": "1.0.0",
+		"title": "Democracy API"
+	},
+	"servers": [
+		{
+			"url": "http://0.0.0.0:3001/v1",
+			"description": "local"
+		},
+		{
+			"url": "http://api-democracy:3001/v1",
+			"description": "dev"
+		}
+	],
+	"tags": [
+		{
+			"name": "democracy"
+		}
+	],
+	"paths": {
+		"/democracy": {
+			"get": {
+				"description": "List democracies",
+				"operationId": "democracy_list",
+				"tags": [
+					"democracy"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/limit"
+					},
+					{
+						"$ref": "#/components/parameters/last"
+					},
+					{
+						"$ref": "#/components/parameters/order"
+					},
+					{
+						"$ref": "#/components/parameters/democracy_sort"
+					},
+					{
+						"$ref": "#/components/parameters/democracy_filter"
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/democracy_list"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			}
+		},
+		"/democracy/{democracy_id}": {
+			"get": {
+				"description": "Get a democracy",
+				"operationId": "democracy_read",
+				"tags": [
+					"democracy"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/democracy_id"
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/democracy_read"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			}
+		},
+		"/democracy/{democracy_id}/population": {
+			"post": {
+				"description": "Increase the population",
+				"operationId": "democracy_population_increase",
+				"tags": [
+					"democracy"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/democracy_id"
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "operation successful"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			},
+			"delete": {
+				"description": "Decrease the population",
+				"operationId": "democracy_population_decrease",
+				"tags": [
+					"democracy"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/democracy_id"
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "operation successful"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"parameters": {
+			"limit": {
+				"name": "limit",
+				"in": "query",
+				"required": false,
+				"schema": {
+					"type": "integer"
+				}
+			},
+			"last": {
+				"name": "last",
+				"in": "query",
+				"required": false,
+				"schema": {
+					"type": "string"
+				}
+			},
+			"order": {
+				"name": "order",
+				"in": "query",
+				"schema": {
+					"type": "string",
+					"enum": [
+						"ASC",
+						"DESC"
+					]
+				}
+			},
+			"democracy_id": {
+				"name": "democracy_id",
+				"in": "path",
+				"required": true,
+				"schema": {
+					"$ref": "#/components/schemas/democracy_id"
+				}
+			},
+			"democracy_sort": {
+				"name": "sort",
+				"in": "query",
+				"schema": {
+					"type": "string",
+					"enum": [
+						"democracy_name",
+						"democracy_population",
+						"date_created",
+						"date_updated"
+					]
+				}
+			},
+			"democracy_filter": {
+				"name": "filter",
+				"in": "query",
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"filter": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"democracy_id": {
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"op": {
+											"$ref": "#/components/schemas/op"
+										},
+										"val": {
+											"$ref": "#/components/schemas/democracy_id"
+										}
+									}
+								},
+								"democracy_name": {
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"op": {
+											"$ref": "#/components/schemas/op"
+										},
+										"val": {
+											"$ref": "#/components/schemas/democracy_name"
+										}
+									}
+								},
+								"democracy_description": {
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"op": {
+											"type": "string",
+											"enum": [
+												"~"
+											]
+										},
+										"val": {
+											"$ref": "#/components/schemas/democracy_description"
+										}
+									}
+								},
+								"democracy_population": {
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"op": {
+											"$ref": "#/components/schemas/op"
+										},
+										"val": {
+											"$ref": "#/components/schemas/democracy_population"
+										}
+									}
+								},
+								"date_created": {
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"op": {
+											"$ref": "#/components/schemas/op"
+										},
+										"val": {
+											"$ref": "#/components/schemas/date"
+										}
+									}
+								},
+								"date_updated": {
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"op": {
+											"$ref": "#/components/schemas/op"
+										},
+										"val": {
+											"$ref": "#/components/schemas/date"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"responses": {
+			"400": {
+				"description": "Bad Request"
+			},
+			"401": {
+				"description": "Unauthorized"
+			},
+			"500": {
+				"description": "Internal Error"
+			},
+			"democracy_list": {
+				"description": "Successfully return list of democracies",
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/democracy_list"
+							}
+						}
+					}
+				}
+			},
+			"democracy_read": {
+				"description": "Successfully fetched a democracy",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/democracy_read"
+						}
+					}
+				}
+			}
+		},
+		"schemas": {
+			"op": {
+				"type": "string",
+				"enum": [
+					"=",
+					"!=",
+					">=",
+					">",
+					"<=",
+					"<"
+				]
+			},
+			"date": {
+				"type": "string",
+				"format": "date-time"
+			},
+			"date_created": {
+				"type": "string",
+				"format": "timestamp"
+			},
+			"date_updated": {
+				"type": "string",
+				"format": "timestamp"
+			},
+			"democracy_id": {
+				"description": "Democracy ID",
+				"type": "string",
+				"format": "uuid"
+			},
+			"democracy_name": {
+				"description": "Democracy name",
+				"type": "string"
+			},
+			"democracy_description": {
+				"description": "Democracy description",
+				"type": "string"
+			},
+			"democracy_population": {
+				"description": "Democracy population",
+				"type": "integer"
+			},
+			"democracy_rules": {
+				"description": "Democracy population",
+				"type": "integer"
+			},
+			"democracy_metas": {
+				"description": "Democracy meta rules",
+				"type": "object",
+				"additionalProperties": false,
+				"properties": {
+					"name": {
+						"description": "Rules for modifying democracy name",
+						"$ref": "#/components/schemas/meta_rules"
+					},
+					"description": {
+						"description": "Rules for modifying democracy description",
+						"$ref": "#/components/schemas/meta_rules"
+					},
+					"rules": {
+						"description": "Rules for modifying democracy rules",
+						"$ref": "#/components/schemas/meta_branch"
+					},
+					"metas": {
+						"description": "Rules for modifying democracy meta rules",
+						"$ref": "#/components/schemas/meta_branch"
+					}
+				}
+			},
+			"meta_rules": {
+				"type": "object",
+				"properties": {
+					"approval_percent_minimum": {
+						"type": "integer"
+					},
+					"approval_number_minimum": {
+						"type": "integer"
+					},
+					"disapproval_percent_maximum": {
+						"type": "integer"
+					},
+					"disapproval_number_maximum": {
+						"type": "integer"
+					},
+					"proposal_lifetime_minimum": {
+						"type": "integer"
+					},
+					"proposal_lifetime_maximum": {
+						"type": "integer"
+					}
+				}
+			},
+			"meta_branch": {
+				"type": "object",
+				"additionalProperties": {
+					"oneOf": [
+						{
+							"$ref": "#/components/schemas/meta_leaf"
+						},
+						{
+							"$ref": "#/components/schemas/meta_branch"
+						}
+					]
+				}
+			},
+			"meta_leaf": {
+				"type": "object",
+				"additionalProperties": false,
+				"properties": {
+					"add": {
+						"$ref": "#/components/schemas/meta_rules"
+					},
+					"update": {
+						"$ref": "#/components/schemas/meta_rules"
+					},
+					"delete": {
+						"$ref": "#/components/schemas/meta_rules"
+					}
+				}
+			},
+			"democracy_read": {
+				"description": "Democracy - Read",
+				"type": "object",
+				"required": [
+					"democracy_id",
+					"democracy_name",
+					"democracy_description",
+					"democracy_population",
+					"democracy_rules",
+					"democracy_metas",
+					"date_created",
+					"date_updated"
+				],
+				"properties": {
+					"democracy_id": {
+						"$ref": "#/components/schemas/democracy_id"
+					},
+					"democracy_name": {
+						"$ref": "#/components/schemas/democracy_name"
+					},
+					"democracy_description": {
+						"$ref": "#/components/schemas/democracy_description"
+					},
+					"democracy_population": {
+						"$ref": "#/components/schemas/democracy_population"
+					},
+					"democracy_rules": {
+						"$ref": "#/components/schemas/democracy_rules"
+					},
+					"democracy_metas": {
+						"$ref": "#/components/schemas/democracy_metas"
+					},
+					"date_created": {
+						"$ref": "#/components/schemas/date_created"
+					},
+					"date_updated": {
+						"$ref": "#/components/schemas/date_updated"
+					}
+				}
+			},
+			"democracy_list": {
+				"description": "Democracy - List",
+				"type": "object",
+				"required": [
+					"democracy_id",
+					"democracy_name",
+					"democracy_description",
+					"democracy_population",
+					"date_created",
+					"date_updated"
+				],
+				"properties": {
+					"democracy_id": {
+						"$ref": "#/components/schemas/democracy_id"
+					},
+					"democracy_name": {
+						"$ref": "#/components/schemas/democracy_name"
+					},
+					"democracy_description": {
+						"$ref": "#/components/schemas/democracy_description"
+					},
+					"democracy_population": {
+						"$ref": "#/components/schemas/democracy_population"
+					},
+					"date_created": {
+						"$ref": "#/components/schemas/date_created"
+					},
+					"date_updated": {
+						"$ref": "#/components/schemas/date_updated"
+					}
+				}
+			}
+		}
+	}
 }

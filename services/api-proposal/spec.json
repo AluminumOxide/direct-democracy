@@ -1,1066 +1,989 @@
 {
-  "openapi": "3.1.0",
-  "info": {
-    "description": "API to manage proposals",
-    "version": "1.0.0",
-    "title": "Proposal API"
-  },
-  "servers": [
-    {
-      "url": "http://0.0.0.0:3002/v1",
-      "description": "local"
-    },
-    {
-      "url": "http://api-proposal:3002/v1",
-      "description": "dev"
-    }
-  ],
-  "tags": [
-    {
-      "name": "proposal"
-    },
-    {
-      "name": "ballot"
-    }
-  ],
-  "paths": {
-    "/proposal": {
-      "get": {
-        "description": "List proposals",
-        "operationId": "proposal_list",
-        "tags": [
-          "proposal"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/limit"
-          },
-          {
-            "$ref": "#/components/parameters/last"
-          },
-          {
-            "$ref": "#/components/parameters/order"
-          },
-          {
-            "$ref": "#/components/parameters/proposal_sort"
-          },
-          {
-            "$ref": "#/components/parameters/proposal_filter"
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/proposal_list"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "description": "Create a proposal",
-        "operationId": "proposal_create",
-        "tags": [
-          "proposal"
-        ],
-        "requestBody": {
-          "$ref": "#/components/requestBodies/proposal_create"
-        },
-        "responses": {
-          "201": {
-            "$ref": "#/components/responses/proposal_create"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/proposal/{proposal_id}": {
-      "get": {
-        "description": "Get a proposal",
-        "operationId": "proposal_read",
-        "tags": [
-          "proposal"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/proposal_id"
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/proposal_read"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "description": "Edit a proposal",
-        "operationId": "proposal_update",
-        "tags": [
-          "proposal"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/proposal_id"
-          }
-        ],
-        "requestBody": {
-          "$ref": "#/components/requestBodies/proposal_update"
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/proposal_update"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "delete": {
-        "description": "Delete a proposal",
-        "operationId": "proposal_delete",
-        "tags": [
-          "proposal"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/proposal_id"
-          }
-        ],
-        "responses": {
-          "204": {
-            "$ref": "#/components/responses/proposal_delete"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/proposal/{proposal_id}/ballot": {
-      "get": {
-        "description": "List ballots",
-        "operationId": "ballot_list",
-        "tags": [
-          "ballot"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/proposal_id"
-          },
-          {
-            "$ref": "#/components/parameters/limit"
-          },
-          {
-            "$ref": "#/components/parameters/last"
-          },
-          {
-            "$ref": "#/components/parameters/order"
-          },
-          {
-            "$ref": "#/components/parameters/ballot_sort"
-          },
-          {
-            "$ref": "#/components/parameters/ballot_filter"
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/ballot_list"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "description": "Create a ballot",
-        "operationId": "ballot_create",
-        "tags": [
-          "ballot"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/proposal_id"
-          }
-        ],
-        "requestBody": {
-          "$ref": "#/components/requestBodies/ballot_create"
-        },
-        "responses": {
-          "201": {
-            "$ref": "#/components/responses/ballot_create"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/proposal/{proposal_id}/ballot/{ballot_id}": {
-      "get": {
-        "description": "Get a ballot",
-        "operationId": "ballot_read",
-        "tags": [
-          "ballot"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/ballot_id"
-          },
-          {
-            "$ref": "#/components/parameters/proposal_id"
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/ballot_read"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "description": "Edit a ballot",
-        "operationId": "ballot_update",
-        "tags": [
-          "ballot"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/ballot_id"
-          },
-          {
-            "$ref": "#/components/parameters/proposal_id"
-          }
-        ],
-        "requestBody": {
-          "$ref": "#/components/requestBodies/ballot_update"
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/ballot_update"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "delete": {
-        "description": "Delete a ballot",
-        "operationId": "ballot_delete",
-        "tags": [
-          "ballot"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/ballot_id"
-          },
-          {
-            "$ref": "#/components/parameters/proposal_id"
-          }
-        ],
-        "responses": {
-          "204": {
-            "$ref": "#/components/responses/ballot_delete"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "parameters": {
-      "limit": {
-        "name": "limit",
-        "in": "query",
-        "required": false,
-        "schema": {
-          "type": "integer"
-        }
-      },
-      "last": {
-        "name": "last",
-        "in": "query",
-        "required": false,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "order": {
-        "name": "order",
-        "in": "query",
-        "schema": {
-          "type": "string",
-          "enum": [
-            "ASC",
-            "DESC"
-          ]
-        }
-      },
-      "proposal_id": {
-        "name": "proposal_id",
-        "in": "path",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/proposal_id"
-        }
-      },
-      "proposal_sort": {
-        "name": "sort",
-        "in": "query",
-        "schema": {
-          "type": "string",
-          "enum": [
-            "name",
-            "date_created",
-            "date_updated"
-          ]
-        }
-      },
-      "proposal_filter": {
-        "name": "filter",
-        "in": "query",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "democracy_id": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "op": {
-                  "$ref": "#/components/schemas/op"
-                },
-                "val": {
-                  "$ref": "#/components/schemas/democracy_id"
-                }
-              }
-            },
-            "membership_id": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "op": {
-                  "$ref": "#/components/schemas/op"
-                },
-                "val": {
-                  "$ref": "#/components/schemas/membership_id"
-                }
-              }
-            },
-            "proposal_name": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "op": {
-                  "$ref": "#/components/schemas/op"
-                },
-                "val": {
-                  "$ref": "#/components/schemas/proposal_name"
-                }
-              }
-            },
-            "proposal_description": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "op": {
-                  "type": "string",
-                  "enum": [
-                    "~"
-                  ]
-                },
-                "val": {
-                  "$ref": "#/components/schemas/proposal_description"
-                }
-              }
-            },
-            "proposal_target": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "op": {
-                  "$ref": "#/components/schemas/op"
-                },
-                "val": {
-                  "$ref": "#/components/schemas/proposal_target"
-                }
-              }
-            },
-            "proposal_votes_yes": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "op": {
-                  "$ref": "#/components/schemas/op"
-                },
-                "val": {
-                  "type": "integer"
-                }
-              }
-            },
-            "proposal_votes_no": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "op": {
-                  "$ref": "#/components/schemas/op"
-                },
-                "val": {
-                  "type": "integer"
-                }
-              }
-            },
-            "proposal_votable": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "op": {
-                  "type": "string",
-                  "enum": [ "=" ]
-                },
-                "val": {
-                  "type": "boolean"
-                }
-              }
-            },
-            "date_created": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "op": {
-                  "$ref": "#/components/schemas/op"
-                },
-                "val": {
-                  "$ref": "#/components/schemas/date"
-                }
-              }
-            },
-            "date_updated": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "op": {
-                  "$ref": "#/components/schemas/op"
-                },
-                "val": {
-                  "$ref": "#/components/schemas/date"
-                }
-              }
-            }
-          }
-        }
-      },
-      "ballot_id": {
-        "name": "ballot_id",
-        "in": "path",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/ballot_id"
-        }
-      },
-      "ballot_sort": {
-        "name": "sort",
-        "in": "query",
-        "schema": {
-          "type": "string",
-          "enum": [
-            "date_created",
-            "date_updated"
-          ]
-        }
-      },
-      "ballot_filter": {
-        "name": "filter",
-        "in": "query",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "membership_id": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "op": {
-                  "$ref": "#/components/schemas/op"
-                },
-                "val": {
-                  "$ref": "#/components/schemas/membership_id"
-                }
-              }
-            },
-            "ballot_approved": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "op": {
-                  "type": "string",
-                  "enum": [
-                    "="
-                  ]
-                },
-                "val": {
-                  "type": "boolean"
-                }
-              }
-            },
-            "ballot_comments": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "op": {
-                  "type": "string",
-                  "enum": [
-                    "~"
-                  ]
-                },
-                "val": {
-                  "$ref": "#/components/schemas/ballot_comments"
-                }
-              }
-            },
-            "date_created": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "op": {
-                  "$ref": "#/components/schemas/op"
-                },
-                "val": {
-                  "$ref": "#/components/schemas/date"
-                }
-              }
-            },
-            "date_updated": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "op": {
-                  "$ref": "#/components/schemas/op"
-                },
-                "val": {
-                  "$ref": "#/components/schemas/date"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "requestBodies": {
-      "proposal_create": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/proposal_create"
-            }
-          }
-        }
-      },
-      "proposal_update": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/proposal_update"
-            }
-          }
-        }
-      },
-      "ballot_create": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ballot_create"
-            }
-          }
-        }
-      },
-      "ballot_update": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ballot_update"
-            }
-          }
-        }
-      }
-    },
-    "responses": {
-      "400": {
-        "description": "Bad Request"
-      },
-      "401": {
-        "description": "Unauthorized"
-      },
-      "500": {
-        "description": "Internal Error"
-      },
-      "proposal_list": {
-        "description": "Successfully return list of proposals",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/proposal_read"
-              }
-            }
-          }
-        }
-      },
-      "proposal_create": {
-        "description": "Successfully created a proposal",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/proposal_read"
-            }
-          }
-        }
-      },
-      "proposal_read": {
-        "description": "Successfully fetched a proposal",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/proposal_read"
-            }
-          }
-        }
-      },
-      "proposal_update": {
-        "description": "Successfully updated a proposal",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/proposal_read"
-            }
-          }
-        }
-      },
-      "proposal_delete": {
-        "description": "Successfully deleted a proposal"
-      },
-      "ballot_list": {
-        "description": "Successfully return list of ballots",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/ballot_read"
-              }
-            }
-          }
-        }
-      },
-      "ballot_create": {
-        "description": "Successfully created a ballot",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ballot_read"
-            }
-          }
-        }
-      },
-      "ballot_read": {
-        "description": "Successfully fetched a ballot",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ballot_read"
-            }
-          }
-        }
-      },
-      "ballot_update": {
-        "description": "Successfully updated a ballot",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ballot_read"
-            }
-          }
-        }
-      },
-      "ballot_delete": {
-        "description": "Successfully deleted a ballot"
-      }
-    },
-    "schemas": {
-      "op": {
-        "type": "string",
-        "enum": [
-          "=",
-          "!=",
-          ">=",
-          ">",
-          "<=",
-          "<"
-        ]
-      },
-      "date": {
-        "type": "string",
-        "format": "date-time"
-      },
-      "date_created": {
-        "type": "string",
-        "format": "timestamp"
-      },
-      "date_updated": {
-        "type": "string",
-        "format": "timestamp"
-      },
-      "democracy_id": {
-        "description": "Democracy ID",
-        "type": "string",
-        "format": "uuid"
-      },
-      "membership_id": {
-        "description": "Membership ID",
-        "type": "string",
-        "format": "uuid"
-      },
-      "proposal_id": {
-        "description": "Proposal ID",
-        "type": "string",
-        "format": "uuid"
-      },
-      "proposal_name": {
-        "description": "Proposal name",
-        "type": "string"
-      },
-      "proposal_description": {
-        "description": "Proposal description",
-        "type": "string"
-      },
-      "proposal_target": {
-        "description": "Proposal target",
-        "type": "string"
-      },
-      "proposal_votable": {
-        "description": "Proposal is votable",
-        "type": "string"
-      },
-      "proposal_votes": {
-        "description": "Proposal votes",
-        "type": "object",
-        "properties": {
-          "yes": {
-            "type": "integer"
-          },
-          "no": {
-            "type": "integer"
-          }
-        }
-      },
-      "proposal_changes": {
-        "description": "Proposal changes",
-        "type": "object",
-        "properties": {
-          "add": {
-            "$ref": "#/components/schemas/proposal_rules_object"
-          },
-          "update": {
-            "$ref": "#/components/schemas/proposal_rules_object"
-          },
-          "delete": {
-            "$ref": "#/components/schemas/proposal_rules_array"
-          }
-        }
-      },
-      "proposal_rules_object": {
-        "type": "object",
-        "additionalProperties": true
-      },
-      "proposal_rules_array": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        }
-      },
-      "proposal_read": {
-        "description": "Proposal - Read",
-        "type": "object",
-        "required": [
-          "proposal_id",
-          "democracy_id",
-          "membership_id",
-          "proposal_name",
-          "proposal_description",
-          "proposal_target",
-          "proposal_changes",
-          "proposal_votable",
-          "date_created",
-          "date_updated"
-        ],
-        "properties": {
-          "proposal_id": {
-            "$ref": "#/components/schemas/proposal_id"
-          },
-          "democracy_id": {
-            "$ref": "#/components/schemas/democracy_id"
-          },
-          "membership_id": {
-            "$ref": "#/components/schemas/membership_id"
-          },
-          "proposal_name": {
-            "$ref": "#/components/schemas/proposal_name"
-          },
-          "proposal_description": {
-            "$ref": "#/components/schemas/proposal_description"
-          },
-          "proposal_target": {
-            "$ref": "#/components/schemas/proposal_target"
-          },
-          "proposal_changes": {
-            "$ref": "#/components/schemas/proposal_changes"
-          },
-          "proposal_votes": {
-            "$ref": "#/components/schemas/proposal_votes"
-          },
-          "proposal_votable": {
-            "$ref": "#/components/schemas/proposal_votable"
-          },
-          "date_created": {
-            "$ref": "#/components/schemas/date_created"
-          },
-          "date_updated": {
-            "$ref": "#/components/schemas/date_updated"
-          }
-        }
-      },
-      "proposal_create": {
-        "description": "Proposal - Create",
-        "type": "object",
-        "required": [
-          "democracy_id",
-          "membership_id",
-          "proposal_name",
-          "proposal_description",
-          "proposal_target",
-          "proposal_changes"
-        ],
-        "properties": {
-          "democracy_id": {
-            "$ref": "#/components/schemas/democracy_id"
-          },
-          "membership_id": {
-            "$ref": "#/components/schemas/membership_id"
-          },
-          "proposal_name": {
-            "$ref": "#/components/schemas/proposal_name"
-          },
-          "proposal_description": {
-            "$ref": "#/components/schemas/proposal_description"
-          },
-          "proposal_target": {
-            "$ref": "#/components/schemas/proposal_target"
-          },
-          "proposal_changes": {
-            "$ref": "#/components/schemas/proposal_changes"
-          }
-        }
-      },
-      "proposal_update": {
-        "description": "Proposal - Update",
-        "type": "object",
-        "required": [
-          "membership_id",
-          "proposal_name",
-          "proposal_description",
-          "proposal_target",
-          "proposal_changes"
-        ],
-        "properties": {
-          "membership_id": {
-            "$ref": "#/components/schemas/membership_id"
-          },
-          "proposal_name": {
-            "$ref": "#/components/schemas/proposal_name"
-          },
-          "proposal_description": {
-            "$ref": "#/components/schemas/proposal_description"
-          },
-          "proposal_target": {
-            "$ref": "#/components/schemas/proposal_target"
-          },
-          "proposal_changes": {
-            "$ref": "#/components/schemas/proposal_changes"
-          }
-        }
-      },
-      "ballot_id": {
-        "description": "Ballot ID",
-        "type": "string",
-        "format": "uuid"
-      },
-      "membership_id": {
-        "description": "Membership ID",
-        "type": "string",
-        "format": "uuid"
-      },
-      "ballot_approved": {
-        "description": "Do you approve the proposal?",
-        "type": "boolean"
-      },
-      "ballot_comments": {
-        "description": "Ballot comments",
-        "type": "string"
-      },
-      "ballot_modifiable": {
-        "description": "Can the ballot be updated?",
-        "type": "boolean"
-      },
-      "ballot_read": {
-        "description": "Ballot - Read",
-        "type": "object",
-        "required": [
-          "ballot_id",
-          "proposal_id",
-          "membership_id",
-          "ballot_approved",
-          "ballot_comments",
-          "ballot_modifiable",
-          "date_created",
-          "date_updated"
-        ],
-        "properties": {
-          "ballot_id": {
-            "$ref": "#/components/schemas/ballot_id"
-          },
-          "proposal_id": {
-            "$ref": "#/components/schemas/proposal_id"
-          },
-          "membership_id": {
-            "$ref": "#/components/schemas/membership_id"
-          },
-          "ballot_approved": {
-            "$ref": "#/components/schemas/ballot_approved"
-          },
-          "ballot_comments": {
-            "$ref": "#/components/schemas/ballot_comments"
-          },
-          "ballot_modifiable": {
-            "$ref": "#/components/schemas/ballot_modifiable"
-          },
-          "date_created": {
-            "$ref": "#/components/schemas/date_created"
-          },
-          "date_updated": {
-            "$ref": "#/components/schemas/date_updated"
-          }
-        }
-      },
-      "ballot_create": {
-        "description": "Ballot - Create",
-        "type": "object",
-        "required": [
-          "membership_id",
-          "ballot_approved"
-        ],
-        "properties": {
-          "membership_id": {
-            "$ref": "#/components/schemas/membership_id"
-          },
-          "ballot_approved": {
-            "$ref": "#/components/schemas/ballot_approved"
-          },
-          "ballot_comments": {
-            "$ref": "#/components/schemas/ballot_comments"
-          }
-        }
-      },
-      "ballot_update": {
-        "description": "Ballot - Update",
-        "type": "object",
-        "required": [
-          "membership_id",
-          "ballot_approved"
-        ],
-        "properties": {
-          "membership_id": {
-            "$ref": "#/components/schemas/membership_id"
-          },
-          "ballot_approved": {
-            "$ref": "#/components/schemas/ballot_approved"
-          },
-          "ballot_comments": {
-            "$ref": "#/components/schemas/ballot_comments"
-          }
-        }
-      }
-    }
-  }
+	"openapi": "3.1.0",
+	"info": {
+		"description": "API to manage proposals",
+		"version": "1.0.0",
+		"title": "Proposal API"
+	},
+	"servers": [
+		{
+			"url": "http://0.0.0.0:3002/v1",
+			"description": "local"
+		},
+		{
+			"url": "http://api-proposal:3002/v1",
+			"description": "dev"
+		}
+	],
+	"tags": [
+		{
+			"name": "proposal"
+		},
+		{
+			"name": "ballot"
+		}
+	],
+	"paths": {
+		"/proposal": {
+			"get": {
+				"description": "List proposals",
+				"operationId": "proposal_list",
+				"tags": [
+					"proposal"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/limit"
+					},
+					{
+						"$ref": "#/components/parameters/last"
+					},
+					{
+						"$ref": "#/components/parameters/order"
+					},
+					{
+						"$ref": "#/components/parameters/proposal_sort"
+					},
+					{
+						"$ref": "#/components/parameters/proposal_filter"
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/proposal_list"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			},
+			"post": {
+				"description": "Create a proposal",
+				"operationId": "proposal_create",
+				"tags": [
+					"proposal"
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/proposal_create"
+				},
+				"responses": {
+					"201": {
+						"$ref": "#/components/responses/proposal_create"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			}
+		},
+		"/proposal/{proposal_id}": {
+			"get": {
+				"description": "Get a proposal",
+				"operationId": "proposal_read",
+				"tags": [
+					"proposal"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/proposal_id"
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/proposal_read"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			},
+			"delete": {
+				"description": "Delete a proposal",
+				"operationId": "proposal_delete",
+				"tags": [
+					"proposal"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/proposal_id"
+					}
+				],
+				"responses": {
+					"204": {
+						"$ref": "#/components/responses/proposal_delete"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			}
+		},
+		"/proposal/{proposal_id}/ballot": {
+			"get": {
+				"description": "List ballots",
+				"operationId": "ballot_list",
+				"tags": [
+					"ballot"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/proposal_id"
+					},
+					{
+						"$ref": "#/components/parameters/limit"
+					},
+					{
+						"$ref": "#/components/parameters/last"
+					},
+					{
+						"$ref": "#/components/parameters/order"
+					},
+					{
+						"$ref": "#/components/parameters/ballot_sort"
+					},
+					{
+						"$ref": "#/components/parameters/ballot_filter"
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/ballot_list"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			},
+			"post": {
+				"description": "Create a ballot",
+				"operationId": "ballot_create",
+				"tags": [
+					"ballot"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/proposal_id"
+					}
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/ballot_create"
+				},
+				"responses": {
+					"201": {
+						"$ref": "#/components/responses/ballot_create"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			}
+		},
+		"/proposal/{proposal_id}/ballot/{ballot_id}": {
+			"get": {
+				"description": "Get a ballot",
+				"operationId": "ballot_read",
+				"tags": [
+					"ballot"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/ballot_id"
+					},
+					{
+						"$ref": "#/components/parameters/proposal_id"
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/ballot_read"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			},
+			"post": {
+				"description": "Edit a ballot",
+				"operationId": "ballot_update",
+				"tags": [
+					"ballot"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/ballot_id"
+					},
+					{
+						"$ref": "#/components/parameters/proposal_id"
+					}
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/ballot_update"
+				},
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/ballot_update"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			},
+			"delete": {
+				"description": "Delete a ballot",
+				"operationId": "ballot_delete",
+				"tags": [
+					"ballot"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/ballot_id"
+					},
+					{
+						"$ref": "#/components/parameters/proposal_id"
+					}
+				],
+				"responses": {
+					"204": {
+						"$ref": "#/components/responses/ballot_delete"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"parameters": {
+			"limit": {
+				"name": "limit",
+				"in": "query",
+				"required": false,
+				"schema": {
+					"type": "integer"
+				}
+			},
+			"last": {
+				"name": "last",
+				"in": "query",
+				"required": false,
+				"schema": {
+					"type": "string"
+				}
+			},
+			"order": {
+				"name": "order",
+				"in": "query",
+				"schema": {
+					"type": "string",
+					"enum": [
+						"ASC",
+						"DESC"
+					]
+				}
+			},
+			"proposal_id": {
+				"name": "proposal_id",
+				"in": "path",
+				"required": true,
+				"schema": {
+					"$ref": "#/components/schemas/proposal_id"
+				}
+			},
+			"proposal_sort": {
+				"name": "sort",
+				"in": "query",
+				"schema": {
+					"type": "string",
+					"enum": [
+						"name",
+						"date_created",
+						"date_updated"
+					]
+				}
+			},
+			"proposal_filter": {
+				"name": "filter",
+				"in": "query",
+				"schema": {
+					"type": "object",
+					"properties": {
+						"democracy_id": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"op": {
+									"$ref": "#/components/schemas/op"
+								},
+								"val": {
+									"$ref": "#/components/schemas/democracy_id"
+								}
+							}
+						},
+						"membership_id": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"op": {
+									"$ref": "#/components/schemas/op"
+								},
+								"val": {
+									"$ref": "#/components/schemas/membership_id"
+								}
+							}
+						},
+						"proposal_name": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"op": {
+									"$ref": "#/components/schemas/op"
+								},
+								"val": {
+									"$ref": "#/components/schemas/proposal_name"
+								}
+							}
+						},
+						"proposal_description": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"op": {
+									"type": "string",
+									"enum": [
+										"~"
+									]
+								},
+								"val": {
+									"$ref": "#/components/schemas/proposal_description"
+								}
+							}
+						},
+						"proposal_target": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"op": {
+									"$ref": "#/components/schemas/op"
+								},
+								"val": {
+									"$ref": "#/components/schemas/proposal_target"
+								}
+							}
+						},
+						"proposal_votes_yes": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"op": {
+									"$ref": "#/components/schemas/op"
+								},
+								"val": {
+									"type": "integer"
+								}
+							}
+						},
+						"proposal_votes_no": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"op": {
+									"$ref": "#/components/schemas/op"
+								},
+								"val": {
+									"type": "integer"
+								}
+							}
+						},
+						"proposal_votable": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"op": {
+									"type": "string",
+									"enum": [ "=" ]
+								},
+								"val": {
+									"type": "boolean"
+								}
+							}
+						},
+						"date_created": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"op": {
+									"$ref": "#/components/schemas/op"
+								},
+								"val": {
+									"$ref": "#/components/schemas/date"
+								}
+							}
+						},
+						"date_updated": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"op": {
+									"$ref": "#/components/schemas/op"
+								},
+								"val": {
+									"$ref": "#/components/schemas/date"
+								}
+							}
+						}
+					}
+				}
+			},
+			"ballot_id": {
+				"name": "ballot_id",
+				"in": "path",
+				"required": true,
+				"schema": {
+					"$ref": "#/components/schemas/ballot_id"
+				}
+			},
+			"ballot_sort": {
+				"name": "sort",
+				"in": "query",
+				"schema": {
+					"type": "string",
+					"enum": [
+						"date_created",
+						"date_updated"
+					]
+				}
+			},
+			"ballot_filter": {
+				"name": "filter",
+				"in": "query",
+				"schema": {
+					"type": "object",
+					"properties": {
+						"membership_id": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"op": {
+									"$ref": "#/components/schemas/op"
+								},
+								"val": {
+									"$ref": "#/components/schemas/membership_id"
+								}
+							}
+						},
+						"ballot_approved": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"op": {
+									"type": "string",
+									"enum": [
+										"="
+									]
+								},
+								"val": {
+									"type": "boolean"
+								}
+							}
+						},
+						"ballot_comments": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"op": {
+									"type": "string",
+									"enum": [
+										"~"
+									]
+								},
+								"val": {
+									"$ref": "#/components/schemas/ballot_comments"
+								}
+							}
+						},
+						"date_created": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"op": {
+									"$ref": "#/components/schemas/op"
+								},
+								"val": {
+									"$ref": "#/components/schemas/date"
+								}
+							}
+						},
+						"date_updated": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"op": {
+									"$ref": "#/components/schemas/op"
+								},
+								"val": {
+									"$ref": "#/components/schemas/date"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"requestBodies": {
+			"proposal_create": {
+				"required": true,
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/proposal_create"
+						}
+					}
+				}
+			},
+			"ballot_create": {
+				"required": true,
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/ballot_create"
+						}
+					}
+				}
+			},
+			"ballot_update": {
+				"required": true,
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/ballot_update"
+						}
+					}
+				}
+			}
+		},
+		"responses": {
+			"400": {
+				"description": "Bad Request"
+			},
+			"401": {
+				"description": "Unauthorized"
+			},
+			"500": {
+				"description": "Internal Error"
+			},
+			"proposal_list": {
+				"description": "Successfully return list of proposals",
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/proposal_read"
+							}
+						}
+					}
+				}
+			},
+			"proposal_create": {
+				"description": "Successfully created a proposal",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/proposal_read"
+						}
+					}
+				}
+			},
+			"proposal_read": {
+				"description": "Successfully fetched a proposal",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/proposal_read"
+						}
+					}
+				}
+			},
+			"proposal_delete": {
+				"description": "Successfully deleted a proposal"
+			},
+			"ballot_list": {
+				"description": "Successfully return list of ballots",
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ballot_read"
+							}
+						}
+					}
+				}
+			},
+			"ballot_create": {
+				"description": "Successfully created a ballot",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/ballot_read"
+						}
+					}
+				}
+			},
+			"ballot_read": {
+				"description": "Successfully fetched a ballot",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/ballot_read"
+						}
+					}
+				}
+			},
+			"ballot_update": {
+				"description": "Successfully updated a ballot",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/ballot_read"
+						}
+					}
+				}
+			},
+			"ballot_delete": {
+				"description": "Successfully deleted a ballot"
+			}
+		},
+		"schemas": {
+			"op": {
+				"type": "string",
+				"enum": [
+					"=",
+					"!=",
+					">=",
+					">",
+					"<=",
+					"<"
+				]
+			},
+			"date": {
+				"type": "string",
+				"format": "date-time"
+			},
+			"date_created": {
+				"type": "string",
+				"format": "timestamp"
+			},
+			"date_updated": {
+				"type": "string",
+				"format": "timestamp"
+			},
+			"democracy_id": {
+				"description": "Democracy ID",
+				"type": "string",
+				"format": "uuid"
+			},
+			"membership_id": {
+				"description": "Membership ID",
+				"type": "string",
+				"format": "uuid"
+			},
+			"proposal_id": {
+				"description": "Proposal ID",
+				"type": "string",
+				"format": "uuid"
+			},
+			"proposal_name": {
+				"description": "Proposal name",
+				"type": "string"
+			},
+			"proposal_description": {
+				"description": "Proposal description",
+				"type": "string"
+			},
+			"proposal_target": {
+				"description": "Proposal target",
+				"type": "string"
+			},
+			"proposal_votable": {
+				"description": "Proposal is votable",
+				"type": "string"
+			},
+			"proposal_votes": {
+				"description": "Proposal votes",
+				"type": "object",
+				"properties": {
+					"yes": {
+						"type": "integer"
+					},
+					"no": {
+						"type": "integer"
+					}
+				}
+			},
+			"proposal_changes": {
+				"description": "Proposal changes",
+				"type": "object",
+				"properties": {
+					"add": {
+						"$ref": "#/components/schemas/proposal_rules_object"
+					},
+					"update": {
+						"$ref": "#/components/schemas/proposal_rules_object"
+					},
+					"delete": {
+						"$ref": "#/components/schemas/proposal_rules_array"
+					}
+				}
+			},
+			"proposal_rules_object": {
+				"type": "object",
+				"additionalProperties": true
+			},
+			"proposal_rules_array": {
+				"type": "array",
+				"items": {
+					"type": "string"
+				}
+			},
+			"proposal_read": {
+				"description": "Proposal - Read",
+				"type": "object",
+				"required": [
+					"proposal_id",
+					"democracy_id",
+					"membership_id",
+					"proposal_name",
+					"proposal_description",
+					"proposal_target",
+					"proposal_changes",
+					"proposal_votable",
+					"date_created",
+					"date_updated"
+				],
+				"properties": {
+					"proposal_id": {
+						"$ref": "#/components/schemas/proposal_id"
+					},
+					"democracy_id": {
+						"$ref": "#/components/schemas/democracy_id"
+					},
+					"membership_id": {
+						"$ref": "#/components/schemas/membership_id"
+					},
+					"proposal_name": {
+						"$ref": "#/components/schemas/proposal_name"
+					},
+					"proposal_description": {
+						"$ref": "#/components/schemas/proposal_description"
+					},
+					"proposal_target": {
+						"$ref": "#/components/schemas/proposal_target"
+					},
+					"proposal_changes": {
+						"$ref": "#/components/schemas/proposal_changes"
+					},
+					"proposal_votes": {
+						"$ref": "#/components/schemas/proposal_votes"
+					},
+					"proposal_votable": {
+						"$ref": "#/components/schemas/proposal_votable"
+					},
+					"date_created": {
+						"$ref": "#/components/schemas/date_created"
+					},
+					"date_updated": {
+						"$ref": "#/components/schemas/date_updated"
+					}
+				}
+			},
+			"proposal_create": {
+				"description": "Proposal - Create",
+				"type": "object",
+				"required": [
+					"democracy_id",
+					"membership_id",
+					"proposal_name",
+					"proposal_description",
+					"proposal_target",
+					"proposal_changes"
+				],
+				"properties": {
+					"democracy_id": {
+						"$ref": "#/components/schemas/democracy_id"
+					},
+					"membership_id": {
+						"$ref": "#/components/schemas/membership_id"
+					},
+					"proposal_name": {
+						"$ref": "#/components/schemas/proposal_name"
+					},
+					"proposal_description": {
+						"$ref": "#/components/schemas/proposal_description"
+					},
+					"proposal_target": {
+						"$ref": "#/components/schemas/proposal_target"
+					},
+					"proposal_changes": {
+						"$ref": "#/components/schemas/proposal_changes"
+					}
+				}
+			},
+			"ballot_id": {
+				"description": "Ballot ID",
+				"type": "string",
+				"format": "uuid"
+			},
+			"membership_id": {
+				"description": "Membership ID",
+				"type": "string",
+				"format": "uuid"
+			},
+			"ballot_approved": {
+				"description": "Do you approve the proposal?",
+				"type": "boolean"
+			},
+			"ballot_comments": {
+				"description": "Ballot comments",
+				"type": "string"
+			},
+			"ballot_modifiable": {
+				"description": "Can the ballot be updated?",
+				"type": "boolean"
+			},
+			"ballot_read": {
+				"description": "Ballot - Read",
+				"type": "object",
+				"required": [
+					"ballot_id",
+					"proposal_id",
+					"membership_id",
+					"ballot_approved",
+					"ballot_comments",
+					"ballot_modifiable",
+					"date_created",
+					"date_updated"
+				],
+				"properties": {
+					"ballot_id": {
+						"$ref": "#/components/schemas/ballot_id"
+					},
+					"proposal_id": {
+						"$ref": "#/components/schemas/proposal_id"
+					},
+					"membership_id": {
+						"$ref": "#/components/schemas/membership_id"
+					},
+					"ballot_approved": {
+						"$ref": "#/components/schemas/ballot_approved"
+					},
+					"ballot_comments": {
+						"$ref": "#/components/schemas/ballot_comments"
+					},
+					"ballot_modifiable": {
+						"$ref": "#/components/schemas/ballot_modifiable"
+					},
+					"date_created": {
+						"$ref": "#/components/schemas/date_created"
+					},
+					"date_updated": {
+						"$ref": "#/components/schemas/date_updated"
+					}
+				}
+			},
+			"ballot_create": {
+				"description": "Ballot - Create",
+				"type": "object",
+				"required": [
+					"membership_id",
+					"ballot_approved"
+				],
+				"properties": {
+					"membership_id": {
+						"$ref": "#/components/schemas/membership_id"
+					},
+					"ballot_approved": {
+						"$ref": "#/components/schemas/ballot_approved"
+					},
+					"ballot_comments": {
+						"$ref": "#/components/schemas/ballot_comments"
+					}
+				}
+			},
+			"ballot_update": {
+				"description": "Ballot - Update",
+				"type": "object",
+				"required": [
+					"membership_id",
+					"ballot_approved"
+				],
+				"properties": {
+					"membership_id": {
+						"$ref": "#/components/schemas/membership_id"
+					},
+					"ballot_approved": {
+						"$ref": "#/components/schemas/ballot_approved"
+					},
+					"ballot_comments": {
+						"$ref": "#/components/schemas/ballot_comments"
+					}
+				}
+			}
+		}
+	}
 }

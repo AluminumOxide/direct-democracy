@@ -1,6 +1,7 @@
 #!/bin/sh
 
 cp ~/.npmrc .
-cp -r ../spec.json ./
+cp ../spec.json ./
+cp ../source/errors.json ./
 npm install
 npm publish

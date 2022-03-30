@@ -1,21 +1,22 @@
 {
-  "name": "@aluminumoxide/direct-democracy-api-democracy-server",
-  "version": "1.0.0",
-  "description": "Democracy API server",
-  "main": "index.js",
-  "dependencies": {
-    "@aluminumoxide/openapi-3.1-server": "^1.0.4",
-    "fastify": "^3.20.1",
-    "nodemon": "^2.0.15"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "server": "nodemon index.js"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
-  "repository": "https://github.com/aluminumoxide/direct-democracy",
-  "author": "Sapphyre Gervais",
-  "license": "gpl3"
+	"name": "@aluminumoxide/direct-democracy-api-democracy-server",
+	"version": "1.0.0",
+	"description": "Democracy API server",
+	"main": "index.js",
+	"dependencies": {
+		"@aluminumoxide/direct-democracy-democracy-api-client": "^1.0.21",
+		"@aluminumoxide/openapi-3.1-server": "^1.0.4",
+		"fastify": "^3.20.1",
+		"nodemon": "^2.0.15"
+	},
+	"devDependencies": {},
+	"scripts": {
+		"server": "nodemon index.js"
+	},
+	"publishConfig": {
+		"registry": "https://npm.pkg.github.com"
+	},
+	"repository": "https://github.com/aluminumoxide/direct-democracy",
+	"author": "Sapphyre Gervais",
+	"license": "gpl3"
 }

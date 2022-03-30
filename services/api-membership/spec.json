@@ -1,440 +1,440 @@
 {
-  "openapi": "3.1.0",
-  "info": {
-    "description": "API to manage memberships",
-    "version": "1.0.0",
-    "title": "Membership API"
-  },
-  "servers": [
-    {
-      "url": "http://0.0.0.0:3003/v1",
-      "description": "local"
-    },
-    {
-      "url": "http://api-membership:3003/v1",
-      "description": "dev"
-    }
-  ],
-  "tags": [
-    {
-      "name": "membership"
-    }
-  ],
-  "paths": {
-    "/membership": {
-      "get": {
-        "description": "List memberships",
-        "operationId": "membership_list",
-        "tags": [
-          "membership"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/limit"
-          },
-          {
-            "$ref": "#/components/parameters/last"
-          },
-          {
-            "$ref": "#/components/parameters/order"
-          },
-          {
-            "$ref": "#/components/parameters/membership_sort"
-          },
-          {
-            "$ref": "#/components/parameters/membership_filter"
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/membership_list"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "description": "Create a membership",
-        "operationId": "membership_create",
-        "tags": [
-          "membership"
-        ],
-        "requestBody": {
-          "$ref": "#/components/requestBodies/membership_create"
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/membership_read"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/membership/{membership_id}": {
-      "get": {
-        "description": "Get a membership",
-        "operationId": "membership_read",
-        "tags": [
-          "membership"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/membership_id"
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/membership_read"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "delete": {
-        "description": "Delete a membership",
-        "operationId": "membership_delete",
-        "tags": [
-          "membership"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/membership_id"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "successfully deleted"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "parameters": {
-      "limit": {
-        "name": "limit",
-        "in": "query",
-        "required": false,
-        "schema": {
-          "type": "integer"
-        }
-      },
-      "last": {
-        "name": "last",
-        "in": "query",
-        "required": false,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "order": {
-        "name": "order",
-        "in": "query",
-        "schema": {
-          "type": "string",
-          "enum": [
-            "ASC",
-            "DESC"
-          ]
-        }
-      },
-      "membership_id": {
-        "name": "membership_id",
-        "in": "path",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/membership_id"
-        }
-      },
-      "membership_sort": {
-        "name": "sort",
-        "in": "query",
-        "schema": {
-          "type": "string",
-          "enum": [
-            "membership_id",
-            "date_created",
-            "date_updated"
-          ]
-        }
-      },
-      "membership_filter": {
-        "name": "filter",
-        "in": "query",
-        "schema": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "filter": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "democracy_id": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "op": {
-                      "$ref": "#/components/schemas/op"
-                    },
-                    "val": {
-                      "$ref": "#/components/schemas/democracy_id"
-                    }
-                  }
-                },
-                "profile_id": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "op": {
-                      "$ref": "#/components/schemas/op"
-                    },
-                    "val": {
-                      "$ref": "#/components/schemas/profile_id"
-                    }
-                  }
-                },
-                "is_verified": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "op": {
-                      "$ref": "#/components/schemas/op"
-                    },
-                    "val": {
-                      "$ref": "#/components/schemas/is_verified"
-                    }
-                  }
-                },
-                "date_created": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "op": {
-                      "$ref": "#/components/schemas/op"
-                    },
-                    "val": {
-                      "$ref": "#/components/schemas/date"
-                    }
-                  }
-                },
-                "date_updated": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "op": {
-                      "$ref": "#/components/schemas/op"
-                    },
-                    "val": {
-                      "$ref": "#/components/schemas/date"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "requestBodies": {
-      "membership_create": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/membership_create"
-            }
-          }
-        }
-      }
-    },
-    "responses": {
-      "400": {
-        "description": "Bad Request"
-      },
-      "401": {
-        "description": "Unauthorized"
-      },
-      "500": {
-        "description": "Internal Error"
-      },
-      "membership_list": {
-        "description": "Successfully return list of memberships",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/membership_list"
-              }
-            }
-          }
-        }
-      },
-      "membership_read": {
-        "description": "Successfully fetched a membership",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/membership_read"
-            }
-          }
-        }
-      }
-    },
-    "schemas": {
-      "op": {
-        "type": "string",
-        "enum": [
-          "=",
-          "!=",
-          ">=",
-          ">",
-          "<=",
-          "<"
-        ]
-      },
-      "date": {
-        "type": "string",
-        "format": "date-time"
-      },
-      "date_created": {
-        "type": "string",
-        "format": "timestamp"
-      },
-      "date_updated": {
-        "type": "string",
-        "format": "timestamp"
-      },
-      "membership_id": {
-        "description": "Membership ID",
-        "type": "string",
-        "format": "uuid"
-      },
-      "democracy_id": {
-        "description": "Democracy ID",
-        "type": "string",
-        "format": "uuid"
-      },
-      "profile_id": {
-        "description": "Profile ID",
-        "type": "string",
-        "format": "uuid"
-      },
-      "is_verified": {
-        "description": "Is the membership verified?",
-        "type": "boolean"
-      },
-      "membership_read": {
-        "description": "Membership - Read",
-        "type": "object",
-        "required": [
-          "membership_id",
-          "democracy_id",
-          "profile_id",
-          "is_verified",
-          "date_created",
-          "date_updated"
-        ],
-        "properties": {
-          "membership_id": {
-            "$ref": "#/components/schemas/membership_id"
-          },
-          "democracy_id": {
-            "$ref": "#/components/schemas/democracy_id"
-          },
-          "profile_id": {
-            "$ref": "#/components/schemas/profile_id"
-          },
-          "is_verified": {
-            "$ref": "#/components/schemas/is_verified"
-          },
-          "date_created": {
-            "$ref": "#/components/schemas/date_created"
-          },
-          "date_updated": {
-            "$ref": "#/components/schemas/date_updated"
-          }
-        }
-      },
-      "membership_list": {
-        "description": "Membership - List",
-        "type": "object",
-        "required": [
-          "membership_id",
-          "democracy_id",
-          "profile_id",
-          "is_verified",
-          "date_created",
-          "date_updated"
-        ],
-        "properties": {
-          "membership_id": {
-            "$ref": "#/components/schemas/membership_id"
-          },
-          "democracy_id": {
-            "$ref": "#/components/schemas/democracy_id"
-          },
-          "profile_id": {
-            "$ref": "#/components/schemas/profile_id"
-          },
-          "is_verified": {
-            "$ref": "#/components/schemas/is_verified"
-          },
-          "date_created": {
-            "$ref": "#/components/schemas/date_created"
-          },
-          "date_updated": {
-            "$ref": "#/components/schemas/date_updated"
-          }
-        }
-      },
-      "membership_create": {
-        "description": "Membership - Create",
-        "type": "object",
-        "required": [
-          "democracy_id",
-          "profile_id"
-        ],
-        "properties": {
-          "democracy_id": {
-            "$ref": "#/components/schemas/democracy_id"
-          },
-          "profile_id": {
-            "$ref": "#/components/schemas/profile_id"
-          }
-        }
-      }
-    }
-  }
+	"openapi": "3.1.0",
+	"info": {
+		"description": "API to manage memberships",
+		"version": "1.0.0",
+		"title": "Membership API"
+	},
+	"servers": [
+		{
+			"url": "http://0.0.0.0:3003/v1",
+			"description": "local"
+		},
+		{
+			"url": "http://api-membership:3003/v1",
+			"description": "dev"
+		}
+	],
+	"tags": [
+		{
+			"name": "membership"
+		}
+	],
+	"paths": {
+		"/membership": {
+			"get": {
+				"description": "List memberships",
+				"operationId": "membership_list",
+				"tags": [
+					"membership"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/limit"
+					},
+					{
+						"$ref": "#/components/parameters/last"
+					},
+					{
+						"$ref": "#/components/parameters/order"
+					},
+					{
+						"$ref": "#/components/parameters/membership_sort"
+					},
+					{
+						"$ref": "#/components/parameters/membership_filter"
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/membership_list"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			},
+			"post": {
+				"description": "Create a membership",
+				"operationId": "membership_create",
+				"tags": [
+					"membership"
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/membership_create"
+				},
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/membership_read"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			}
+		},
+		"/membership/{membership_id}": {
+			"get": {
+				"description": "Get a membership",
+				"operationId": "membership_read",
+				"tags": [
+					"membership"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/membership_id"
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/membership_read"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			},
+			"delete": {
+				"description": "Delete a membership",
+				"operationId": "membership_delete",
+				"tags": [
+					"membership"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/membership_id"
+					}
+				],
+				"responses": {
+					"204": {
+						"description": "successfully deleted"
+					},
+					"400": {
+						"$ref": "#/components/responses/400"
+					},
+					"401": {
+						"$ref": "#/components/responses/401"
+					},
+					"500": {
+						"$ref": "#/components/responses/500"
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"parameters": {
+			"limit": {
+				"name": "limit",
+				"in": "query",
+				"required": false,
+				"schema": {
+					"type": "integer"
+				}
+			},
+			"last": {
+				"name": "last",
+				"in": "query",
+				"required": false,
+				"schema": {
+					"type": "string"
+				}
+			},
+			"order": {
+				"name": "order",
+				"in": "query",
+				"schema": {
+					"type": "string",
+					"enum": [
+						"ASC",
+						"DESC"
+					]
+				}
+			},
+			"membership_id": {
+				"name": "membership_id",
+				"in": "path",
+				"required": true,
+				"schema": {
+					"$ref": "#/components/schemas/membership_id"
+				}
+			},
+			"membership_sort": {
+				"name": "sort",
+				"in": "query",
+				"schema": {
+					"type": "string",
+					"enum": [
+						"membership_id",
+						"date_created",
+						"date_updated"
+					]
+				}
+			},
+			"membership_filter": {
+				"name": "filter",
+				"in": "query",
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"filter": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"democracy_id": {
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"op": {
+											"$ref": "#/components/schemas/op"
+										},
+										"val": {
+											"$ref": "#/components/schemas/democracy_id"
+										}
+									}
+								},
+								"profile_id": {
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"op": {
+											"$ref": "#/components/schemas/op"
+										},
+										"val": {
+											"$ref": "#/components/schemas/profile_id"
+										}
+									}
+								},
+								"is_verified": {
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"op": {
+											"$ref": "#/components/schemas/op"
+										},
+										"val": {
+											"$ref": "#/components/schemas/is_verified"
+										}
+									}
+								},
+								"date_created": {
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"op": {
+											"$ref": "#/components/schemas/op"
+										},
+										"val": {
+											"$ref": "#/components/schemas/date"
+										}
+									}
+								},
+								"date_updated": {
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"op": {
+											"$ref": "#/components/schemas/op"
+										},
+										"val": {
+											"$ref": "#/components/schemas/date"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"requestBodies": {
+			"membership_create": {
+				"required": true,
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/membership_create"
+						}
+					}
+				}
+			}
+		},
+		"responses": {
+			"400": {
+				"description": "Bad Request"
+			},
+			"401": {
+				"description": "Unauthorized"
+			},
+			"500": {
+				"description": "Internal Error"
+			},
+			"membership_list": {
+				"description": "Successfully return list of memberships",
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/membership_list"
+							}
+						}
+					}
+				}
+			},
+			"membership_read": {
+				"description": "Successfully fetched a membership",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/membership_read"
+						}
+					}
+				}
+			}
+		},
+		"schemas": {
+			"op": {
+				"type": "string",
+				"enum": [
+					"=",
+					"!=",
+					">=",
+					">",
+					"<=",
+					"<"
+				]
+			},
+			"date": {
+				"type": "string",
+				"format": "date-time"
+			},
+			"date_created": {
+				"type": "string",
+				"format": "timestamp"
+			},
+			"date_updated": {
+				"type": "string",
+				"format": "timestamp"
+			},
+			"membership_id": {
+				"description": "Membership ID",
+				"type": "string",
+				"format": "uuid"
+			},
+			"democracy_id": {
+				"description": "Democracy ID",
+				"type": "string",
+				"format": "uuid"
+			},
+			"profile_id": {
+				"description": "Profile ID",
+				"type": "string",
+				"format": "uuid"
+			},
+			"is_verified": {
+				"description": "Is the membership verified?",
+				"type": "boolean"
+			},
+			"membership_read": {
+				"description": "Membership - Read",
+				"type": "object",
+				"required": [
+					"membership_id",
+					"democracy_id",
+					"profile_id",
+					"is_verified",
+					"date_created",
+					"date_updated"
+				],
+				"properties": {
+					"membership_id": {
+						"$ref": "#/components/schemas/membership_id"
+					},
+					"democracy_id": {
+						"$ref": "#/components/schemas/democracy_id"
+					},
+					"profile_id": {
+						"$ref": "#/components/schemas/profile_id"
+					},
+					"is_verified": {
+						"$ref": "#/components/schemas/is_verified"
+					},
+					"date_created": {
+						"$ref": "#/components/schemas/date_created"
+					},
+					"date_updated": {
+						"$ref": "#/components/schemas/date_updated"
+					}
+				}
+			},
+			"membership_list": {
+				"description": "Membership - List",
+				"type": "object",
+				"required": [
+					"membership_id",
+					"democracy_id",
+					"profile_id",
+					"is_verified",
+					"date_created",
+					"date_updated"
+				],
+				"properties": {
+					"membership_id": {
+						"$ref": "#/components/schemas/membership_id"
+					},
+					"democracy_id": {
+						"$ref": "#/components/schemas/democracy_id"
+					},
+					"profile_id": {
+						"$ref": "#/components/schemas/profile_id"
+					},
+					"is_verified": {
+						"$ref": "#/components/schemas/is_verified"
+					},
+					"date_created": {
+						"$ref": "#/components/schemas/date_created"
+					},
+					"date_updated": {
+						"$ref": "#/components/schemas/date_updated"
+					}
+				}
+			},
+			"membership_create": {
+				"description": "Membership - Create",
+				"type": "object",
+				"required": [
+					"democracy_id",
+					"profile_id"
+				],
+				"properties": {
+					"democracy_id": {
+						"$ref": "#/components/schemas/democracy_id"
+					},
+					"profile_id": {
+						"$ref": "#/components/schemas/profile_id"
+					}
+				}
+			}
+		}
+	}
 }

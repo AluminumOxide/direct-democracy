@@ -1,0 +1,9 @@
+{
+	"internal_error": "Error: Internal error",
+	"proposal_dne": "Proposal does not exist",
+	"democracy_invalid": "Invalid democracy provided",
+	"membership_dne": "Membership does not exist",
+	"ballots_cast": "Proposal has cast ballots",
+	"voting_closed": "Proposal voting is closed",
+	"ballot_closed": "Ballot voting is closed"
+}
