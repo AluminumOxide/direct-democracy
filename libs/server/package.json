@@ -1,0 +1,21 @@
+{
+  "version": "1.0.1",
+  "name": "@aluminumoxide/direct-democracy-lib-server",
+  "description": "Basic fastify server from spec with knex postgres",
+  "homepage": "https://github.com/AluminumOxide/direct-democracy#readme",
+  "dependencies": {
+    "ajv": "^8.11.0",
+    "fastify": "^3.28.0",
+    "fastify-knexjs": "^1.4.0",
+    "pg": "^8.7.3",
+    "querystring": "^0.2.1"
+  },
+  "main": "index.js",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AluminumOxide/direct-democracy.git"
+  }
+}
