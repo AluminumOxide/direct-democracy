@@ -1,437 +1,366 @@
 {
-	"openapi": "3.1.0",
-	"info": {
-		"description": "API to manage memberships",
-		"version": "1.0.0",
-		"title": "Membership API"
+	"servers": { 
+		"production": "http://0.0.0.0:3003/v1"
 	},
-	"servers": [
-		{
-			"url": "http://0.0.0.0:3003/v1",
-			"description": "local"
+	"headers": {
+	},
+	"schemas": {
+		"op": {
+			"$id": "schemas-op",
+			"type": "string",
+			"enum": [
+				"=",
+				"!=",
+				">=",
+				">",
+				"<=",
+				"<"
+			]
 		},
-		{
-			"url": "http://api-membership:3003/v1",
-			"description": "dev"
+		"uuid": {
+			"$id": "schemas-uuid",
+			"type": "string",
+                        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+		"date": {
+			"$id": "schemas-date",
+			"type": "string",
+			"pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}Z$"
+		},
+		"date_created": {
+			"$id": "schemas-date_created",
+			"$ref": "schemas-date"
+		},
+		"date_updated": {
+			"$id": "schemas-date_updated",
+			"$ref": "schemas-date"
+		},
+		"membership_id": {
+			"$id": "schemas-membership_id",
+			"description": "Membership ID",
+			"$ref": "schemas-uuid"
+		},
+		"democracy_id": {
+			"$id": "schemas-democracy_id",
+			"description": "Democracy ID",
+			"$ref": "schemas-uuid"
+		},
+		"profile_id": {
+			"$id": "schemas-profile_id",
+			"description": "Profile ID",
+			"$ref": "schemas-uuid"
+		},
+		"is_verified": {
+			"$id": "schemas-is_verified",
+			"description": "Is the membership verified?",
+			"type": "boolean"
+		},
+		"membership_read": {
+			"$id": "schemas-membership_read",
+			"description": "Membership - Read",
+			"type": "object",
+			"required": [
+				"membership_id",
+				"democracy_id",
+				"profile_id",
+				"is_verified",
+				"date_created",
+				"date_updated"
+			],
+			"properties": {
+				"membership_id": {
+					"$ref": "schemas-membership_id"
+				},
+				"democracy_id": {
+					"$ref": "schemas-democracy_id"
+				},
+				"profile_id": {
+					"$ref": "schemas-profile_id"
+				},
+				"is_verified": {
+					"$ref": "schemas-is_verified"
+				},
+				"date_created": {
+					"$ref": "schemas-date_created"
+				},
+				"date_updated": {
+					"$ref": "schemas-date_updated"
+				}
+			}
+		},
+		"membership_list": {
+			"$id": "schemas-membership_list",
+			"description": "Membership - List",
+			"type": "object",
+			"required": [
+				"membership_id",
+				"democracy_id",
+				"profile_id",
+				"is_verified",
+				"date_created",
+				"date_updated"
+			],
+			"properties": {
+				"membership_id": {
+					"$ref": "schemas-membership_id"
+				},
+				"democracy_id": {
+					"$ref": "schemas-democracy_id"
+				},
+				"profile_id": {
+					"$ref": "schemas-profile_id"
+				},
+				"is_verified": {
+					"$ref": "schemas-is_verified"
+				},
+				"date_created": {
+					"$ref": "schemas-date_created"
+				},
+				"date_updated": {
+					"$ref": "schemas-date_updated"
+				}
+			}
+		},
+		"membership_create": {
+			"$id": "schemas-membership_create",
+			"description": "Membership - Create",
+			"type": "object",
+			"required": [
+				"democracy_id",
+				"profile_id"
+			],
+			"properties": {
+				"democracy_id": {
+					"$ref": "schemas-democracy_id"
+				},
+				"profile_id": {
+					"$ref": "schemas-profile_id"
+				}
+			}
 		}
-	],
-	"tags": [
-		{
-			"name": "membership"
+	},
+	"params": {
+		"membership_id": {
+			"$id": "params-membership_id",
+			"$ref": "schemas-membership_id"
 		}
-	],
-	"paths": {
-		"/membership": {
-			"get": {
-				"description": "List memberships",
-				"operationId": "membership_list",
-				"tags": [
-					"membership"
-				],
-				"parameters": [
-					{
-						"$ref": "#/components/parameters/limit"
-					},
-					{
-						"$ref": "#/components/parameters/last"
-					},
-					{
-						"$ref": "#/components/parameters/order"
-					},
-					{
-						"$ref": "#/components/parameters/membership_sort"
-					},
-					{
-						"$ref": "#/components/parameters/membership_filter"
+	},
+	"queries": {
+		"limit": {
+			"$id": "queries-limit",
+			"type": "integer"
+		},
+		"last": {
+			"$id": "queries-last",
+			"type": "string"
+		},
+		"order": {
+			"$id": "queries-order",
+			"type": "string",
+			"enum": [
+				"ASC",
+				"DESC"
+			]
+		},
+		"membership_sort": {
+			"$id": "queries-membership_sort",
+			"type": "string",
+			"enum": [
+				"membership_id",
+				"date_created",
+				"date_updated"
+			]
+		},
+		"membership_filter": {
+			"$id": "queries-membership_filter",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"democracy_id": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-democracy_id"
+						}
 					}
-				],
-				"responses": {
-					"200": {
-						"$ref": "#/components/responses/membership_list"
-					},
-					"400": {
-						"$ref": "#/components/responses/400"
-					},
-					"401": {
-						"$ref": "#/components/responses/401"
-					},
-					"500": {
-						"$ref": "#/components/responses/500"
+				},
+				"profile_id": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-profile_id"
+						}
+					}
+				},
+				"is_verified": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-is_verified"
+						}
+					}
+				},
+				"date_created": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-date_created"
+						}
+					}
+				},
+				"date_updated": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-date_updated"
+						}
 					}
 				}
-			},
-			"post": {
-				"description": "Create a membership",
-				"operationId": "membership_create",
-				"tags": [
-					"membership"
-				],
-				"requestBody": {
-					"$ref": "#/components/requestBodies/membership_create"
+			}
+		}
+	},
+	"bodies": {
+		"membership_create": {
+			"$id": "bodies-membership_create",
+			"$ref": "schemas-membership_create"
+		}
+	},
+	"responses": {
+		"400": {
+			"$id": "responses-400",
+			"description": "Bad Request"
+		},
+		"401": {
+			"$id": "responses-401",
+			"description": "Unauthorized"
+		},
+		"500": {
+			"$id": "responses-500",
+			"description": "Internal Error"
+		},
+		"membership_list": {
+			"$id": "responses-membership_list",
+			"description": "Successfully return list of memberships",
+			"type": "array",
+			"items": {
+				"$ref": "schemas-membership_list"
+			}
+		},
+		"membership_read": {
+			"$id": "responses-membership_read",
+			"description": "Successfully fetched a membership",
+			"$ref": "schemas-membership_read"
+		}
+	},
+	"paths": {
+		"/membership": {
+			"GET": {
+				"description": "List memberships",
+				"operationId": "membership_list",
+				"query": {
+					"limit":  {"$ref": "queries-limit"},
+				      	"last":   {"$ref": "queries-last"},
+				      	"order":  {"$ref": "queries-order"},
+				      	"sort":   {"$ref": "queries-membership_sort"},
+				      	"filter": {"$ref": "queries-membership_filter"}
 				},
 				"responses": {
 					"200": {
-						"$ref": "#/components/responses/membership_read"
+						"$ref": "responses-membership_list"
 					},
 					"400": {
-						"$ref": "#/components/responses/400"
+						"$ref": "responses-400"
 					},
 					"401": {
-						"$ref": "#/components/responses/401"
+						"$ref": "responses-401"
 					},
 					"500": {
-						"$ref": "#/components/responses/500"
+						"$ref": "responses-500"
+					}
+				}
+			},
+			"POST": {
+				"description": "Create a membership",
+				"operationId": "membership_create",
+				"body": {
+					"$ref": "bodies-membership_create"
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-membership_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
 					}
 				}
 			}
 		},
 		"/membership/{membership_id}": {
-			"get": {
+			"GET": {
 				"description": "Get a membership",
 				"operationId": "membership_read",
-				"tags": [
-					"membership"
-				],
-				"parameters": [
-					{
-						"$ref": "#/components/parameters/membership_id"
-					}
-				],
+				"param": {
+					"membership_id": { "$ref": "params-membership_id" }
+				},
 				"responses": {
 					"200": {
-						"$ref": "#/components/responses/membership_read"
+						"$ref": "responses-membership_read"
 					},
 					"400": {
-						"$ref": "#/components/responses/400"
+						"$ref": "responses-400"
 					},
 					"401": {
-						"$ref": "#/components/responses/401"
+						"$ref": "responses-401"
 					},
 					"500": {
-						"$ref": "#/components/responses/500"
+						"$ref": "responses-500"
 					}
 				}
 			},
-			"delete": {
+			"DELETE": {
 				"description": "Delete a membership",
 				"operationId": "membership_delete",
-				"tags": [
-					"membership"
-				],
-				"parameters": [
-					{
-						"$ref": "#/components/parameters/membership_id"
-					}
-				],
+				"param": {
+					"membership_id": { "$ref": "params-membership_id" }
+				},
 				"responses": {
 					"204": {
 						"description": "successfully deleted"
 					},
 					"400": {
-						"$ref": "#/components/responses/400"
+						"$ref": "responses-400"
 					},
 					"401": {
-						"$ref": "#/components/responses/401"
+						"$ref": "responses-401"
 					},
 					"500": {
-						"$ref": "#/components/responses/500"
-					}
-				}
-			}
-		}
-	},
-	"components": {
-		"parameters": {
-			"limit": {
-				"name": "limit",
-				"in": "query",
-				"required": false,
-				"schema": {
-					"type": "integer"
-				}
-			},
-			"last": {
-				"name": "last",
-				"in": "query",
-				"required": false,
-				"schema": {
-					"type": "string"
-				}
-			},
-			"order": {
-				"name": "order",
-				"in": "query",
-				"schema": {
-					"type": "string",
-					"enum": [
-						"ASC",
-						"DESC"
-					]
-				}
-			},
-			"membership_id": {
-				"name": "membership_id",
-				"in": "path",
-				"required": true,
-				"schema": {
-					"$ref": "#/components/schemas/membership_id"
-				}
-			},
-			"membership_sort": {
-				"name": "sort",
-				"in": "query",
-				"schema": {
-					"type": "string",
-					"enum": [
-						"membership_id",
-						"date_created",
-						"date_updated"
-					]
-				}
-			},
-			"membership_filter": {
-				"name": "filter",
-				"in": "query",
-				"schema": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"filter": {
-							"type": "object",
-							"additionalProperties": false,
-							"properties": {
-								"democracy_id": {
-									"type": "object",
-									"additionalProperties": false,
-									"properties": {
-										"op": {
-											"$ref": "#/components/schemas/op"
-										},
-										"val": {
-											"$ref": "#/components/schemas/democracy_id"
-										}
-									}
-								},
-								"profile_id": {
-									"type": "object",
-									"additionalProperties": false,
-									"properties": {
-										"op": {
-											"$ref": "#/components/schemas/op"
-										},
-										"val": {
-											"$ref": "#/components/schemas/profile_id"
-										}
-									}
-								},
-								"is_verified": {
-									"type": "object",
-									"additionalProperties": false,
-									"properties": {
-										"op": {
-											"$ref": "#/components/schemas/op"
-										},
-										"val": {
-											"$ref": "#/components/schemas/is_verified"
-										}
-									}
-								},
-								"date_created": {
-									"type": "object",
-									"additionalProperties": false,
-									"properties": {
-										"op": {
-											"$ref": "#/components/schemas/op"
-										},
-										"val": {
-											"$ref": "#/components/schemas/date"
-										}
-									}
-								},
-								"date_updated": {
-									"type": "object",
-									"additionalProperties": false,
-									"properties": {
-										"op": {
-											"$ref": "#/components/schemas/op"
-										},
-										"val": {
-											"$ref": "#/components/schemas/date"
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		},
-		"requestBodies": {
-			"membership_create": {
-				"required": true,
-				"content": {
-					"application/json": {
-						"schema": {
-							"$ref": "#/components/schemas/membership_create"
-						}
-					}
-				}
-			}
-		},
-		"responses": {
-			"400": {
-				"description": "Bad Request"
-			},
-			"401": {
-				"description": "Unauthorized"
-			},
-			"500": {
-				"description": "Internal Error"
-			},
-			"membership_list": {
-				"description": "Successfully return list of memberships",
-				"content": {
-					"application/json": {
-						"schema": {
-							"type": "array",
-							"items": {
-								"$ref": "#/components/schemas/membership_list"
-							}
-						}
-					}
-				}
-			},
-			"membership_read": {
-				"description": "Successfully fetched a membership",
-				"content": {
-					"application/json": {
-						"schema": {
-							"$ref": "#/components/schemas/membership_read"
-						}
-					}
-				}
-			}
-		},
-		"schemas": {
-			"op": {
-				"type": "string",
-				"enum": [
-					"=",
-					"!=",
-					">=",
-					">",
-					"<=",
-					"<"
-				]
-			},
-			"date": {
-				"type": "string",
-				"format": "date-time"
-			},
-			"date_created": {
-				"type": "string",
-				"format": "timestamp"
-			},
-			"date_updated": {
-				"type": "string",
-				"format": "timestamp"
-			},
-			"membership_id": {
-				"description": "Membership ID",
-				"type": "string",
-				"format": "uuid"
-			},
-			"democracy_id": {
-				"description": "Democracy ID",
-				"type": "string",
-				"format": "uuid"
-			},
-			"profile_id": {
-				"description": "Profile ID",
-				"type": "string",
-				"format": "uuid"
-			},
-			"is_verified": {
-				"description": "Is the membership verified?",
-				"type": "boolean"
-			},
-			"membership_read": {
-				"description": "Membership - Read",
-				"type": "object",
-				"required": [
-					"membership_id",
-					"democracy_id",
-					"profile_id",
-					"is_verified",
-					"date_created",
-					"date_updated"
-				],
-				"properties": {
-					"membership_id": {
-						"$ref": "#/components/schemas/membership_id"
-					},
-					"democracy_id": {
-						"$ref": "#/components/schemas/democracy_id"
-					},
-					"profile_id": {
-						"$ref": "#/components/schemas/profile_id"
-					},
-					"is_verified": {
-						"$ref": "#/components/schemas/is_verified"
-					},
-					"date_created": {
-						"$ref": "#/components/schemas/date_created"
-					},
-					"date_updated": {
-						"$ref": "#/components/schemas/date_updated"
-					}
-				}
-			},
-			"membership_list": {
-				"description": "Membership - List",
-				"type": "object",
-				"required": [
-					"membership_id",
-					"democracy_id",
-					"profile_id",
-					"is_verified",
-					"date_created",
-					"date_updated"
-				],
-				"properties": {
-					"membership_id": {
-						"$ref": "#/components/schemas/membership_id"
-					},
-					"democracy_id": {
-						"$ref": "#/components/schemas/democracy_id"
-					},
-					"profile_id": {
-						"$ref": "#/components/schemas/profile_id"
-					},
-					"is_verified": {
-						"$ref": "#/components/schemas/is_verified"
-					},
-					"date_created": {
-						"$ref": "#/components/schemas/date_created"
-					},
-					"date_updated": {
-						"$ref": "#/components/schemas/date_updated"
-					}
-				}
-			},
-			"membership_create": {
-				"description": "Membership - Create",
-				"type": "object",
-				"required": [
-					"democracy_id",
-					"profile_id"
-				],
-				"properties": {
-					"democracy_id": {
-						"$ref": "#/components/schemas/democracy_id"
-					},
-					"profile_id": {
-						"$ref": "#/components/schemas/profile_id"
+						"$ref": "responses-500"
 					}
 				}
 			}

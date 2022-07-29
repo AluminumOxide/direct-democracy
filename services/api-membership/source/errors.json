@@ -2,5 +2,6 @@
 	"internal_error": "Error: Internal error",	
 	"democracy_dne": "Democracy does not exist",
 	"membership_dne": "Membership does not exist",
-	"membership_exist": "Membership already exists"
+	"membership_exist": "Membership already exists",
+	"profile_invalid": "Profile does not match membership"
 }

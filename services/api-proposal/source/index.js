@@ -1,16 +1,16 @@
-const fastify = require('fastify')({ logger: true })
-const { start } = require('@aluminumoxide/openapi-3.1-server')
 
+const { start } = require('@aluminumoxide/direct-democracy-lib-server')
+  
 start({
 	address: process.env.API_PROPOSAL_URL,
 	port: process.env.API_PROPOSAL_PORT,
-	spec: './spec.json',
+	spec: require('./spec.json'),
 	version: 'v1',
 	handlers: require('./handlers/'),
 	db_user: process.env.DB_PROPOSAL_USER,
 	db_password: process.env.DB_PROPOSAL_PASSWORD,
 	db_name: process.env.DB_NAME,
 	db_port: process.env.DB_PORT,
-	db_address: process.env.DB_PROPOSAL_DB,
-	fastify
+	db_address: process.env.DB_PROPOSAL_DB
 })
+
