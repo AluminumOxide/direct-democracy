@@ -30,7 +30,7 @@ class ApiClient {
 	async load () {
 
 		// load spec
-		this.schema = require(this.spec_file)
+		this.schema = this.spec_file
 		this.add_defn('schemas')
 		this.add_defn('headers')
 		this.add_defn('params')
@@ -55,7 +55,7 @@ class ApiClient {
 
 				// add endpoint function
 				this[opid] = async function(args) {
-					let request = { params: {}, query: {}, body: args}
+					let request = { params: {}, query: {}, body: Object.assign({}, args)}
 
 					// verify params
 					if('param' in defn) {
@@ -112,7 +112,11 @@ class ApiClient {
 					}).join('/')
 					if(Object.keys(request.query).length > 0) {
 						uri = uri + '?' + Object.keys(request.query).map(a => {
-							return a+'='+request.query[a]
+							if(typeof(request.query[a]) === 'object') {
+								return a+'='+JSON.stringify(request.query[a])
+							} else {
+								return a+'='+request.query[a]
+							}
 						}).join('&')
 					}
 

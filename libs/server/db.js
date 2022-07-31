@@ -24,6 +24,12 @@ const pageQuery = async function(limit=100, last, sort='date_updated', order='AS
 			} else {
 				query.whereNot(field, val)
 			}
+		} else if(op === 'BETWEEN') {
+			query.where(field, '>=', val[0])
+			query.andWhere(field, '<=', val[1])
+		} else if(op === 'XBETWEEN') {
+			query.where(field, '>', val[0])
+			query.andWhere(field, '<', val[1])
 		} else {
 			query.where(field, op, val)
 		}

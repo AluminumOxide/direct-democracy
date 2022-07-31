@@ -1,6 +1,7 @@
-{
+{ 
 	"servers": { 
-		"production": "http://0.0.0.0:3003/v1"
+		"local": "http://0.0.0.0:3003/v1",
+		"dev": "http://api-membership:3003/v1"
 	},
 	"headers": {
 	},
@@ -14,7 +15,10 @@
 				">=",
 				">",
 				"<=",
-				"<"
+				"<",
+				"IN",
+				"NOT IN",
+				"BETWEEN"
 			]
 		},
 		"uuid": {
@@ -137,6 +141,22 @@
 					"$ref": "schemas-profile_id"
 				}
 			}
+		},
+		"population_list": {
+			"$id": "schemas-population_list",
+			"description": "Population - List",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"democracy_id": {
+						"$ref": "schemas-democracy_id"
+					},
+					"population": {
+						"type": "integer"
+					}	
+				}
+			}
 		}
 	},
 	"params": {
@@ -171,6 +191,15 @@
 				"date_updated"
 			]
 		},
+		"population_sort": {
+			"$id": "queries-population_sort",
+			"type": "string",
+			"enum": [
+				"democracy_id",
+				"population",
+				"date_updated"
+			]
+		},
 		"membership_filter": {
 			"$id": "queries-membership_filter",
 			"type": "object",
@@ -184,7 +213,13 @@
 							"$ref": "schemas-op"
 						},
 						"val": {
-							"$ref": "schemas-democracy_id"
+							"oneOf": [
+								{ "$ref": "schemas-democracy_id" },
+								{
+									"type": "array",
+									"items": { "$ref": "schemas-democracy_id" }
+								}	
+							]
 						}
 					}
 				},
@@ -196,7 +231,13 @@
 							"$ref": "schemas-op"
 						},
 						"val": {
-							"$ref": "schemas-profile_id"
+							"oneOf": [
+								{ "$ref": "schemas-profile_id" },
+								{
+									"type": "array",
+									"items": { "$ref": "schemas-profile_id" }
+								}	
+							]
 						}
 					}
 				},
@@ -220,7 +261,13 @@
 							"$ref": "schemas-op"
 						},
 						"val": {
-							"$ref": "schemas-date_created"
+							"oneOf": [
+								{ "$ref": "schemas-date_created" },
+								{
+									"type": "array",
+									"items": { "$ref": "schemas-date_created" }
+								}	
+							]
 						}
 					}
 				},
@@ -232,7 +279,74 @@
 							"$ref": "schemas-op"
 						},
 						"val": {
-							"$ref": "schemas-date_updated"
+							"oneOf": [
+								{ "$ref": "schemas-date_updated" },
+								{
+									"type": "array",
+									"items": { "$ref": "schemas-date_updated" }
+								}	
+							]
+						}
+					}
+				}
+			}
+		},
+		"population_filter": {
+			"$id": "queries-population_filter",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"democracy_id": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"oneOf": [
+								{ "$ref": "schemas-democracy_id" },
+								{
+									"type": "array",
+									"items": { "$ref": "schemas-democracy_id" }
+								}	
+							]
+						}
+					}
+				},
+				"population": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"oneOf": [
+								{ "type": "integer" },
+								{
+									"type": "array",
+									"items": { "type": "integer" }
+								}	
+							]
+						}
+					}
+				},
+				"date_updated": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"oneOf": [
+								{ "$ref": "schemas-date_updated" },
+								{
+									"type": "array",
+									"items": { "$ref": "schemas-date_updated" }
+								}	
+							]
 						}
 					}
 				}
@@ -270,9 +384,14 @@
 			"$id": "responses-membership_read",
 			"description": "Successfully fetched a membership",
 			"$ref": "schemas-membership_read"
+		},
+		"population": {
+			"$id": "responses-population_list",
+			"description": "Democracy populations from memberships",
+			"$ref": "schemas-population_list"
 		}
 	},
-	"paths": {
+	"routes": {
 		"/membership": {
 			"GET": {
 				"description": "List memberships",
@@ -321,7 +440,7 @@
 				}
 			}
 		},
-		"/membership/{membership_id}": {
+		"/membership/:membership_id": {
 			"GET": {
 				"description": "Get a membership",
 				"operationId": "membership_read",
@@ -363,6 +482,34 @@
 						"$ref": "responses-500"
 					}
 				}
+			}
+		},
+		"/population": {
+			"GET": {
+				"description": "Fetch democracy populations",
+				"operationId": "membership_population",
+				"query": {
+					"limit":  {"$ref": "queries-limit"},
+				      	"last":   {"$ref": "queries-last"},
+				      	"order":  {"$ref": "queries-order"},
+				      	"sort":   {"$ref": "queries-population_sort"},
+					"filter": {"$ref": "queries-population_filter"}
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-population_list"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+
 			}
 		}
 	}

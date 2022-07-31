@@ -7,7 +7,7 @@ const membership_create = async function(request, reply, db, log) {
 	// check democracy_id is valid
 	try {
 		await api_democracy_client.democracy_read({ democracy_id })
-	}	catch (e) {
+	} catch (e) {
 		if(e.message === api_democracy_client.errors.democracy_dne) {
 			log.warn(`Membership/Create: Failure: ${democracy_id},${profile_id} Error: Democracy does not exist`)
 			return reply.code(400).send(new Error(democracy_dne))
@@ -30,32 +30,15 @@ const membership_create = async function(request, reply, db, log) {
 		return reply.code(500).send(new Error(internal_error))
 	}
 
-	// update democracy population
-	try {
-		await api_democracy_client.democracy_population_increase({ democracy_id })
-	} catch (e) {
-		if(e.message === api_democracy_client.errors.democracy_dne) {
-			log.warn(`Membership/Create: Failure: ${democracy_id},${profile_id} Error: Democracy does not exist`)
-			return reply.code(400).send(new Error(democracy_dne))
-		}
-		log.error(`Membership/Create: Failure: ${democracy_id},${profile_id} Error: democracy population increase ${e}`)
-		return reply.code(500).send(new Error(internal_error))
-	}
-
 	// create membership
 	try {
 		const rows = await db('membership')
 			.insert({ democracy_id, profile_id })
 			.returning('*')
 
-		// decrease population, if membership creation fails
+		// handle membership creation failure
 		if(!rows || rows.length < 1) {
 			log.error(`Membership/Create: Failure: ${democracy_id},${profile_id} Error: membership insertion`)
-			try {
-				await api_democracy_client.democracy_population_decrease({ democracy_id })
-			} catch(e) {
-				log.error(`Membership/Create: Failure: ${democracy_id},${profile_id} Error: !!!OFF BY 1!!! population decrease failed after failed membership insertion ${e}`)
-			}
 			return reply.code(500).send(new Error(internal_error))
 		}
 

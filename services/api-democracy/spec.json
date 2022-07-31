@@ -1,4 +1,4 @@
-{ 
+{  
 	"servers": {	
 		"local": "http://0.0.0.0:3001/v1",
 		"dev": "http://api-democracy:3001/v1"	
@@ -456,6 +456,26 @@
 				"responses": {
 					"200": {
 						"$ref": "responses-democracy_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/trigger/population": {
+			"POST": {
+				"description": "Trigger democracy population updates",
+				"operationId": "democracy_population_update",
+				"responses": {
+					"200": {
+						"$ref": "responses-200"
 					},
 					"400": {
 						"$ref": "responses-400"

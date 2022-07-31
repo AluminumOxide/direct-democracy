@@ -2,11 +2,12 @@ const { internal_error, democracy_dne } = require('../../errors.json')
 
 const democracy_read = async function(request, reply, db, log) {
 	const { democracy_id } = request
-
 	try {
 		const rows = await db('democracy')
 		.select({
 			democracy_id: 'democracy.id',
+			democracy_parent: 'democracy.parent_id',
+			democracy_children: db('democracy').select(db.raw('array_agg(democracy.id)')).where('democracy.parent_id', democracy_id).groupBy('democracy.parent_id'),
 			democracy_name: 'democracy.name',
 			democracy_description: 'democracy.description',
 			democracy_population: 'democracy.population',
