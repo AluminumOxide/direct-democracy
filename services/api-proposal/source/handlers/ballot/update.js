@@ -1,9 +1,9 @@
-const api_proposal_client = require('@aluminumoxide/direct-democracy-proposal-api-client')
+const api_proposal_client = new (require('@aluminumoxide/direct-democracy-proposal-api-client'))()
 const { proposal_dne, ballot_dne, membership_dne, ballot_closed, internal_error } =  require('../../errors.json')
 
 const ballot_update = async function(request, reply, db, log) {
 	const { ballot_id, proposal_id, membership_id, is_approved, ballot_comments } = request
-
+	// TODO: get rid of proposal_id
 	// check the proposal_id is valid
 	let prop_check
 	try {
@@ -80,7 +80,7 @@ const ballot_update = async function(request, reply, db, log) {
 		'ballot_id': rows[0].id,
 		'proposal_id': rows[0].proposal_id,
 		'membership_id': rows[0].membership_id,
-		'is_approved': rows[0].is_approved,
+		'ballot_approved': rows[0].is_approved,
 		'ballot_comments': rows[0].comments,
 		'ballot_modifiable': rows[0].modifiable,
 		'date_created': rows[0].date_created,

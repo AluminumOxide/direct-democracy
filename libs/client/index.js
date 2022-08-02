@@ -1,12 +1,25 @@
 const Ajv = require('ajv/dist/2019')
 const axios = require('axios')
 
+function get_client(schema, errors) {
+	class ApiClientProvider {
+		constructor(env) {
+			const api_client = new ApiClient(schema, errors)
+			if(!env) {
+				env = process.env.ENV
+			}
+			api_client.load(env)
+			return api_client
+		}
+	}
+	return ApiClientProvider
+}
+
 class ApiClient {
 
-	constructor(spec_file, env = 'production', error_file = {}) {
-		this.spec_file = spec_file
-		this.errors = require(error_file)
-		this.env = env
+	constructor(schema = {}, errors = {}) {
+		this.schema = schema
+		this.errors = errors
 		this.ajv = new Ajv({
 			coerceTypes: false,
 			removeAdditional: true,
@@ -17,33 +30,30 @@ class ApiClient {
 			strictTuples: true,
 			strictRequired: true
 		})
-		this.ready = this.load()
 	}
 
-	add_defn(x) {
-		for(const x_id in this.schema[x]) {
-			let x_defn = this.schema[x][x_id]
-			this.ajv.addSchema(x_defn)
-		}
-	}
+	load (env) {
 
-	async load () {
+		// get env from caller
+		this.env = env
 
 		// load spec
-		this.schema = this.spec_file
-		this.add_defn('schemas')
-		this.add_defn('headers')
-		this.add_defn('params')
-		this.add_defn('queries')
-		this.add_defn('bodies')
-		this.add_defn('responses')
+		function add_defn(that, x) {
+			for(const x_id in that.schema[x]) {
+				let x_defn = that.schema[x][x_id]
+				that.ajv.addSchema(x_defn)
+			}
+		}
+		add_defn(this, 'schemas')
+		add_defn(this, 'headers')
+		add_defn(this, 'params')
+		add_defn(this, 'queries')
+		add_defn(this, 'bodies')
+		add_defn(this, 'responses')
 		
 		// get server
-		if(!this.env in this.schema.servers) {
-			this.env = "production"
-			if(!this.env in this.schema.servers) {
-				this.env = this.schema.servers[this.schema.servers.keys()[0]]
-			}	
+		if(!(this.env in this.schema.servers)) {
+			this.env = Object.keys(this.schema.servers)[0]
 		}
 		this.url = this.schema.servers[this.env]
 
@@ -60,11 +70,13 @@ class ApiClient {
 					// verify params
 					if('param' in defn) {
 						for(const param in defn.param) {
-							if(!!args && param in args && !!args[param]) {
-								if(! this.ajv.validate(defn.param[param], args[param])) {
-									throw new Error(`Invalid parameter type ${param} expected ${JSON.stringify(defn.param[param])}`)
+							if(!!args && param in args) {
+								if(!!args[param]) {
+									if(! this.ajv.validate(defn.param[param], args[param])) {
+										throw new Error(`Invalid parameter type ${param} expected ${JSON.stringify(defn.param[param])}`)
+									}
+									request.params[param] = args[param]
 								}
-								request.params[param] = args[param]
 								delete request.body[param]
 							}
 						}
@@ -73,14 +85,16 @@ class ApiClient {
 					// verify query
 					if('query' in defn) {
 						for(const query in defn.query) {
-							if(!!args && query in args && !!args[query]) {
-								if(! this.ajv.validate(defn.query[query], args[query])) {
-									throw new Error(`Invalid query type ${query} expected ${JSON.stringify(defn.query[query])}`)
-								}
-								if(defn.type === "object") {
-									request.query[query] = JSON.stringify(args[query])
-								} else {
-									request.query[query] = args[query]
+							if(!!args && query in args) {
+								if(!!args[query]) {
+									if(! this.ajv.validate(defn.query[query], args[query])) {
+										throw new Error(`Invalid query type ${query} expected ${JSON.stringify(defn.query[query])}`)
+									}
+									if(defn.type === "object") {
+										request.query[query] = JSON.stringify(args[query])
+									} else {
+										request.query[query] = args[query]
+									}
 								}
 								delete request.body[query]
 							}
@@ -133,7 +147,7 @@ class ApiClient {
 						}
 						return response.data
 					} catch(e) {
-						throw new Error(e)
+						throw new Error(e.response.data.message)
 					}
 				}
 			}
@@ -141,4 +155,4 @@ class ApiClient {
 	}	
 }
 
-module.exports = ApiClient
+module.exports = get_client

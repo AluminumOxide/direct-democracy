@@ -1,7 +1,7 @@
 const { ballot_dne, internal_error } = require('../../errors.json')
 
 const ballot_read = async function(request, reply, db, log) {
-	const { ballot_id, proposal_id } = request
+	const { ballot_id } = request
 
 	try {
 		// get ballot
@@ -10,15 +10,14 @@ const ballot_read = async function(request, reply, db, log) {
 			'ballot_id': 'id',
 			'proposal_id': 'proposal_id',
 			'membership_id': 'membership_id',
-			'is_approved': 'is_approved',
+			'ballot_approved': 'is_approved',
 			'ballot_comments': 'comments',
 			'ballot_modifiable': 'modifiable',
 			'date_created': 'date_created',
 			'date_updated': 'date_updated'
 		})
 		.where({
-			'id': ballot_id,
-			'proposal_id': proposal_id
+			'id': ballot_id
 		})
 
 		// error if ballot dne

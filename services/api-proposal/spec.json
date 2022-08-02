@@ -1,6 +1,7 @@
 {
        "servers": {
-		"production": "http://localhost:3002/v1"
+		"local": "http://0.0.0.0:3002/v1",
+		"dev": "http://api-proposal:3002/v1"
 	},	       
 	"headers": {
 	},
@@ -340,7 +341,11 @@
 				">=",
 				">",
 				"<=",
-				"<"
+				"<",
+				"IN",
+				"NOT IN",
+				"BETWEEN",
+				"XBETWEEN"
 			]
 		},
 		"uuid": {

@@ -13,7 +13,11 @@
 				">=",
 				">",
 				"<=",
-				"<"
+				"<",
+				"IN",
+				"NOT IN",
+				"BETWEEN",
+				"XBETWEEN"
 			]
 		},
 		"uuid": {
@@ -423,7 +427,7 @@
 			"GET": {
 				"description": "List democracies",
 				"operationId": "democracy_list",
-				"queries": {
+				"query": {
 					"limit": { "$ref": "queries-limit"},
 				      	"last": { "$ref": "queries-last"},
 				      	"order": { "$ref": "queries-order"},
@@ -469,7 +473,7 @@
 				}
 			}
 		},
-		"/trigger/population": {
+		"/population": {
 			"POST": {
 				"description": "Trigger democracy population updates",
 				"operationId": "democracy_population_update",

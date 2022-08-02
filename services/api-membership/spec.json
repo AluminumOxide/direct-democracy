@@ -18,7 +18,8 @@
 				"<",
 				"IN",
 				"NOT IN",
-				"BETWEEN"
+				"BETWEEN",
+				"XBETWEEN"
 			]
 		},
 		"uuid": {
@@ -199,6 +200,10 @@
 				"population",
 				"date_updated"
 			]
+		},
+		"profile_id": {
+			"$id": "queries-profile_id",
+			"$ref": "schemas-profile_id"
 		},
 		"membership_filter": {
 			"$id": "queries-membership_filter",
@@ -467,6 +472,9 @@
 				"operationId": "membership_delete",
 				"param": {
 					"membership_id": { "$ref": "params-membership_id" }
+				},
+				"query": {
+					"profile_id": { "$ref": "queries-profile_id" }
 				},
 				"responses": {
 					"204": {

@@ -1,5 +1,5 @@
 const { democracy_invalid, membership_dne, internal_error } = require('../../errors.json')
-const api_membership_client = require('@aluminumoxide/direct-democracy-membership-api-client')
+const api_membership_client = new (require('@aluminumoxide/direct-democracy-membership-api-client'))()
 
 const proposal_create = async function(request, reply, db, log) {
 	const { proposal_name, proposal_description, proposal_target, proposal_changes, democracy_id, membership_id } = request
@@ -41,6 +41,7 @@ const proposal_create = async function(request, reply, db, log) {
 		// return results
 		const proposal = {
 			proposal_id: rows[0].id,
+			democracy_id: rows[0].democracy_id,
 			membership_id: rows[0].membership_id,
 			proposal_name: rows[0].name,
 			proposal_description: rows[0].description,

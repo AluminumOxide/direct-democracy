@@ -1,4 +1,4 @@
-const api_proposal_client = require('@aluminumoxide/direct-democracy-proposal-api-client')
+const api_proposal_client = new (require('@aluminumoxide/direct-democracy-proposal-api-client'))()
 const { ballot_dne, internal_error, ballot_closed, membership_dne } = require('../../errors.json')
 
 const ballot_delete = async function(request, reply, db, log) {
@@ -7,6 +7,7 @@ const ballot_delete = async function(request, reply, db, log) {
 	// check the ballot_id and proposal_id are valid
 	let ballot_check
 	try {
+		// TODO: Remove proposal_id
 		ballot_check = await api_proposal_client.ballot_read({ proposal_id, ballot_id })
 	} catch (e) {
 		if(e.message === ballot_dne) {

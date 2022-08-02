@@ -1,9 +1,18 @@
+const mem_client = new (require('@aluminumoxide/direct-democracy-membership-api-client'))()
 const { internal_error } = require('../../errors.json')
 
 const proposal_list = async function(request, reply, db, log) {
-	const { limit, last, sort, order, filter } = request
-
+	let { limit, last, sort, order, filter } = request
 	try {
+		// handle filter by profile_id
+		if(!!filter && 'profile_id' in filter) {
+			await mem_client.ready()
+			const memberships = await mem_client.membership_list({ filter: { profile_id: { op: '=', val: profile_id }}})
+			filter["membership_id"] = { "op": "IN", "val": memberships.map(x => x.membership_id)}
+			delete filter['profile_id']
+		}
+
+		// list proposals
 		const rows = await db.pageQuery(limit, last, sort, order, filter,
 			db('proposal').select({
 				'proposal_id': 'id',

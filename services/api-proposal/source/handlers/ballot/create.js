@@ -1,5 +1,5 @@
-const api_proposal_client = require('@aluminumoxide/direct-democracy-proposal-api-client')
-const api_membership_client = require('@aluminumoxide/direct-democracy-membership-api-client')
+const api_proposal_client = new (require('@aluminumoxide/direct-democracy-proposal-api-client'))()
+const api_membership_client = new (require('@aluminumoxide/direct-democracy-membership-api-client'))()
 const { voting_closed, proposal_dne, membership_dne, internal_error } = require('../../errors.json')
 
 const ballot_create = async function(request, reply, db, log) {
@@ -66,7 +66,7 @@ const ballot_create = async function(request, reply, db, log) {
 		'ballot_id': rows[0].id,
 		'proposal_id': rows[0].proposal_id,
 		'membership_id': rows[0].membership_id,
-		'is_approved': rows[0].is_approved,
+		'ballot_approved': rows[0].is_approved,
 		'ballot_comments': rows[0].comments,
 		'ballot_modifiable': rows[0].modifiable,
 		'date_created': rows[0].date_created,
