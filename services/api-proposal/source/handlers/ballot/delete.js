@@ -2,7 +2,7 @@ const api_proposal_client = new (require('@aluminumoxide/direct-democracy-propos
 const { ballot_dne, internal_error, ballot_closed, membership_dne } = require('../../errors.json')
 
 const ballot_delete = async function(request, reply, db, log) {
-	const { ballot_id, proposal_id, membership_id } = request
+	const { ballot_id, proposal_id } = request
 
 	// check the ballot_id and proposal_id are valid
 	let ballot_check
@@ -23,12 +23,6 @@ const ballot_delete = async function(request, reply, db, log) {
 	if(!ballot_check.ballot_modifiable) {
 		log.warn(`Ballot/Delete: Failure: ${ballot_id} Error: Ballot closed`)
 		return reply.code(400).send(new Error(ballot_closed))
-	}
-
-	// check membership_id and ballot_id match
-	if(ballot_check.membership_id !== membership_id) {
-		log.warn(`Ballot/Delete: Failure: ${membership_id} Error: Membership does not exist`)
-		return reply.code(400).send(new Error(membership_dne))
 	}
 
 	// delete ballot

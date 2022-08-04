@@ -1,0 +1,1640 @@
+{    
+	"servers": {	
+		"local": "http://0.0.0.0:3001/v1",
+		"dev": "http://api-democracy:3001/v1"	
+	},
+	"schemas": {
+		"op": {
+			"$id": "schemas-op",
+			"type": "string",
+			"enum": [
+				"=",
+				"!=",
+				">=",
+				">",
+				"<=",
+				"<",
+				"IN",
+				"NOT IN",
+				"BETWEEN",
+				"XBETWEEN"
+			]
+		},
+		"uuid": {
+			"$id": "schemas-uuid",
+			"type": "string",
+			"pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+		},
+		"date": {
+			"$id": "schemas-date",
+			"type": "string",
+			"pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}Z$"
+		},
+		"date_created": {
+			"$id": "schemas-date_created",
+			"$ref": "schemas-date"
+		},
+		"date_updated": {
+			"$id": "schemas-date_updated",
+			"$ref": "schemas-date"
+		},
+		"democracy_id": {
+			"$id": "schemas-democracy_id",
+			"description": "Democracy ID",
+			"$ref": "schemas-uuid"
+		},
+		"membership_id": {
+			"$id": "schemas-membership_id",
+			"description": "Membership ID",
+			"$ref": "schemas-uuid"
+		},
+		"proposal_id": {
+			"$id": "schemas-proposal_id",
+			"description": "Proposal ID",
+			"$ref": "schemas-uuid"
+		},
+		"proposal_name": {
+			"$id": "schemas-proposal_name",
+			"description": "Proposal name",
+			"type": "string"
+		},
+		"proposal_description": {
+			"$id": "schemas-proposal_description",
+			"description": "Proposal description",
+			"type": "string"
+		},
+		"proposal_target": {
+			"$id": "schemas-proposal_target",
+			"description": "Proposal target",
+			"type": "string"
+		},
+		"proposal_votable": {
+			"$id": "schemas-proposal_votable",
+			"description": "Proposal is votable",
+			"type": "string"
+		},
+		"proposal_votes": {
+			"$id": "schemas-proposal_votes",
+			"description": "Proposal votes",
+			"type": "object",
+			"properties": {
+				"yes": {
+					"type": "integer"
+				},
+				"no": {
+					"type": "integer"
+				}
+			}
+		},
+		"proposal_changes": {
+			"$id": "schemas-proposal_changes",
+			"description": "Proposal changes",
+			"type": "object",
+			"patternProperties": {
+				".*": {
+					"oneOf": [
+						{ "$ref": "schemas-proposal_changes_leaf" },
+						{ "$ref": "schemas-proposal_changes" }
+
+					]
+				}
+			},
+			"additionalProperties": false
+		},
+		"proposal_changes_leaf": {
+			"$id": "schemas-proposal_changes_leaf",
+			"type": "object",
+			"required": ["add", "update", "delete"],
+			"properties": {
+				"add": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "string"
+					}
+				},
+				"update": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "string"
+					}
+				},
+				"delete": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"additionalProperties": false
+		},
+		"proposal_read": {
+			"$id": "schemas-proposal_read",
+			"description": "Proposal - Read",
+			"type": "object",
+			"required": [
+				"proposal_id",
+				"democracy_id",
+				"membership_id",
+				"proposal_name",
+				"proposal_description",
+				"proposal_target",
+				"proposal_changes",
+				"proposal_votable",
+				"date_created",
+				"date_updated"
+			],
+			"properties": {
+				"proposal_id": {
+					"$ref": "schemas-proposal_id"
+				},
+				"democracy_id": {
+					"$ref": "schemas-democracy_id"
+				},
+				"membership_id": {
+					"$ref": "schemas-membership_id"
+				},
+				"proposal_name": {
+					"$ref": "schemas-proposal_name"
+				},
+				"proposal_description": {
+					"$ref": "schemas-proposal_description"
+				},
+				"proposal_target": {
+					"$ref": "schemas-proposal_target"
+				},
+				"proposal_changes": {
+					"$ref": "schemas-proposal_changes"
+				},
+				"proposal_votes": {
+					"$ref": "schemas-proposal_votes"
+				},
+				"proposal_votable": {
+					"$ref": "schemas-proposal_votable"
+				},
+				"date_created": {
+					"$ref": "schemas-date_created"
+				},
+				"date_updated": {
+					"$ref": "schemas-date_updated"
+				}
+			}
+		},
+		"proposal_create": {
+			"$id": "schemas-proposal_create",
+			"description": "Proposal - Create",
+			"type": "object",
+			"required": [
+				"democracy_id",
+				"membership_id",
+				"proposal_name",
+				"proposal_description",
+				"proposal_target",
+				"proposal_changes"
+			],
+			"properties": {
+				"democracy_id": {
+					"$ref": "schemas-democracy_id"
+				},
+				"membership_id": {
+					"$ref": "schemas-membership_id"
+				},
+				"proposal_name": {
+					"$ref": "schemas-proposal_name"
+				},
+				"proposal_description": {
+					"$ref": "schemas-proposal_description"
+				},
+				"proposal_target": {
+					"$ref": "schemas-proposal_target"
+				},
+				"proposal_changes": {
+					"$ref": "schemas-proposal_changes"
+				}
+			},
+			"additionalProperties": false
+		},
+		"ballot_id": {
+			"$id": "schemas-ballot_id",
+			"description": "Ballot ID",
+			"$ref": "schemas-uuid"
+		},
+		"ballot_approved": {
+			"$id": "schemas-ballot_approved",
+			"description": "Do you approve the proposal?",
+			"type": "boolean"
+		},
+		"ballot_comments": {
+			"$id": "schemas-ballot_comments",
+			"description": "Ballot comments",
+			"type": "string"
+		},
+		"ballot_modifiable": {
+			"$id": "schemas-ballot_modifiable",
+			"description": "Can the ballot be updated?",
+			"type": "boolean"
+		},
+		"ballot_read": {
+			"$id": "schemas-ballot_read",
+			"description": "Ballot - Read",
+			"type": "object",
+			"required": [
+				"ballot_id",
+				"proposal_id",
+				"membership_id",
+				"ballot_approved",
+				"ballot_comments",
+				"ballot_modifiable",
+				"date_created",
+				"date_updated"
+			],
+			"properties": {
+				"ballot_id": {
+					"$ref": "schemas-ballot_id"
+				},
+				"proposal_id": {
+					"$ref": "schemas-proposal_id"
+				},
+				"membership_id": {
+					"$ref": "schemas-membership_id"
+				},
+				"ballot_approved": {
+					"$ref": "schemas-ballot_approved"
+				},
+				"ballot_comments": {
+					"$ref": "schemas-ballot_comments"
+				},
+				"ballot_modifiable": {
+					"$ref": "schemas-ballot_modifiable"
+				},
+				"date_created": {
+					"$ref": "schemas-date_created"
+				},
+				"date_updated": {
+					"$ref": "schemas-date_updated"
+				}
+			}
+		},
+		"ballot_create": {
+			"$id": "schemas-ballot_create",
+			"description": "Ballot - Create",
+			"type": "object",
+			"required": [
+				"membership_id",
+				"ballot_approved"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"membership_id": {
+					"$ref":"schemas-membership_id"
+				},
+				"ballot_approved": {
+					"$ref": "schemas-ballot_approved"
+				},
+				"ballot_comments": {
+					"$ref": "schemas-ballot_comments"
+				}
+			}
+		},
+		"ballot_update": {
+			"$id": "schemas-ballot_update",
+			"description": "Ballot - Update",
+			"type": "object",
+			"required": [
+				"membership_id",
+				"ballot_approved"
+			],
+			"properties": {
+				"membership_id": {
+					"$ref": "schemas-membership_id"
+				},
+				"ballot_approved": {
+					"$ref": "schemas-ballot_approved"
+				},
+				"ballot_comments": {
+					"$ref": "schemas-ballot_comments"
+				}
+			}
+		},
+		"profile_id": {
+			"$id": "schemas-profile_id",
+			"description": "Profile ID",
+			"$ref": "schemas-uuid"
+		},
+		"is_verified": {
+			"$id": "schemas-is_verified",
+			"description": "Is the membership verified?",
+			"type": "boolean"
+		},
+		"membership_read": {
+			"$id": "schemas-membership_read",
+			"description": "Membership - Read",
+			"type": "object",
+			"required": [
+				"membership_id",
+				"democracy_id",
+				"profile_id",
+				"is_verified",
+				"date_created",
+				"date_updated"
+			],
+			"properties": {
+				"membership_id": {
+					"$ref": "schemas-membership_id"
+				},
+				"democracy_id": {
+					"$ref": "schemas-democracy_id"
+				},
+				"profile_id": {
+					"$ref": "schemas-profile_id"
+				},
+				"is_verified": {
+					"$ref": "schemas-is_verified"
+				},
+				"date_created": {
+					"$ref": "schemas-date_created"
+				},
+				"date_updated": {
+					"$ref": "schemas-date_updated"
+				}
+			}
+		},
+		"membership_list": {
+			"$id": "schemas-membership_list",
+			"description": "Membership - List",
+			"type": "object",
+			"required": [
+				"membership_id",
+				"democracy_id",
+				"profile_id",
+				"is_verified",
+				"date_created",
+				"date_updated"
+			],
+			"properties": {
+				"membership_id": {
+					"$ref": "schemas-membership_id"
+				},
+				"democracy_id": {
+					"$ref": "schemas-democracy_id"
+				},
+				"profile_id": {
+					"$ref": "schemas-profile_id"
+				},
+				"is_verified": {
+					"$ref": "schemas-is_verified"
+				},
+				"date_created": {
+					"$ref": "schemas-date_created"
+				},
+				"date_updated": {
+					"$ref": "schemas-date_updated"
+				}
+			}
+		},
+		"membership_create": {
+			"$id": "schemas-membership_create",
+			"description": "Membership - Create",
+			"type": "object",
+			"required": [
+				"democracy_id",
+				"profile_id"
+			],
+			"properties": {
+				"democracy_id": {
+					"$ref": "schemas-democracy_id"
+				},
+				"profile_id": {
+					"$ref": "schemas-profile_id"
+				}
+			}
+		},
+		"population_list": {
+			"$id": "schemas-population_list",
+			"description": "Population - List",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"democracy_id": {
+						"$ref": "schemas-democracy_id"
+					},
+					"population": {
+						"type": "integer"
+					}	
+				}
+			}
+		},
+		"democracy_name": {
+			"$id": "schemas-democracy_name",
+			"description": "Democracy name",
+			"type": "string"
+		},
+		"democracy_description": {
+			"$id": "schemas-democracy_description",
+			"description": "Democracy description",
+			"type": "string"
+		},
+		"democracy_population": {
+			"$id": "schemas-democracy_population",
+			"description": "Democracy population",
+			"type": "integer"
+		},
+		"democracy_conduct": {
+			"$id": "schemas-democracy_conduct",
+			"description": "Democracy's code of conduct",
+			"type": "object",
+			"additionalProperties": {
+				"type": "string"
+			}
+		},
+		"democracy_content": {
+			"$id": "schemas-democracy_content",
+			"description": "Democratically decided content",
+			"type": "object"
+		},
+		"democracy_parent": {
+			"$id":  "schemas-democracy_parent",
+			"description": "Parent democracy ID",
+			"$ref": "schemas-uuid"
+		},
+		"democracy_children": {
+			"$id": "schemas-democracy_children",
+			"description": "Child democracy IDs",
+			"type": "array",
+			"items": {
+				"$ref": "schemas-uuid"
+			}
+		},
+		"democracy_meta": {
+			"$id": "schemas-democracy_meta",
+			"description": "Democracy meta rules",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"name": {
+					"type": "object",
+					"description": "Conditions to update democracy name",
+					"additionalProperties": false,
+					"properties": {
+						"update": { "$ref": "schemas-democracy_meta_cond" }
+					}
+				},
+				"description": {
+					"type": "object",
+					"description": "Conditions to update democracy description",
+					"additionalProperties": false,
+					"properties": {
+						"update": { "$ref": "schemas-democracy_meta_cond" }
+					}
+				},
+				"democracies": {
+					"type": "object",
+					"description": "Conditions to add or remove child democracies",
+					"additionalProperties": false,
+					"properties": {
+						"add": { "$ref": "schemas-democracy_meta_cond" },
+						"delete": { "$ref": "schemas-democracy_meta_cond" }
+					}
+				},
+				"members": {
+					"description": "Conditions to add, remove or update memberships",
+					"$ref": "schemas-democracy_meta_leaf"
+				},
+				"timeouts": {
+					"description": "Conditions to add, remove or update timeouts",
+					"$ref": "schemas-democracy_meta_leaf"
+				},
+				"conduct": {
+					"description": "Conditions to add, remove or update rules of conduct",
+					"$ref": "schemas-democracy_meta_leaf"
+				},
+				"content": {
+					"type": "object",
+					"description": "Conditions to add, remove or update content",
+					"allOf": [
+						{ "$ref": "schemas-democracy_meta_leaf" },
+						{ "$ref": "schemas-democracy_meta_branch" }
+					]
+				},
+				"meta": {
+					"description": "Conditions to add, remove or update meta rules",
+					"$ref": "schemas-democracy_meta_leaf"
+				}
+			}
+		},
+		"democracy_meta_leaf": {
+			"$id": "schemas-democracy_meta_leaf",
+			"description": "Democracy meta leaf",
+			"type": "object",
+			"properties": {
+				"add": { "$ref": "schemas-democracy_meta_cond" },
+				"update": { "$ref": "schemas-democracy_meta_cond" },
+				"delete": { "$ref": "schemas-democracy_meta_cond" }
+			},
+			"additionalProperties": false
+		},
+		"democracy_meta_leaf": {
+			"$id": "schemas-democracy_meta_cond",
+			"description": "Democracy meta leaf",
+			"type": "object",
+			"properties": {
+				"approval_percent_minimum": {
+					"type": "integer"
+				},
+				"approval_number_minimum": {
+					"type": "integer"
+				},
+				"disapproval_percent_maximum": {
+					"type": "integer"
+				},
+				"disapproval_number_maximum": {
+					"type": "integer"
+				},
+				"proposal_lifetime_minimum": {
+					"type": "integer"
+				},
+				"proposal_lifetime_maximum": {
+					"type": "integer"
+				}
+			}
+		},
+		"democracy_meta_branch": {
+			"$id": "schemas-democracy_meta_branch",
+			"description": "Meta rules for recursive structures",
+			"type": "object",
+			"patternProperties": {
+				".*": {
+					"oneOf": [
+						{ "$ref": "schemas-democracy_meta_leaf" },
+						{ "$ref": "schemas-democracy_meta_branch" }
+					]
+				}
+			},
+			"additionalProperties": false
+		},
+		"democracy_read": {
+			"$id": "schemas-democracy_read",
+			"description": "Democracy - Read",
+			"type": "object",
+			"required": [
+				"democracy_id",
+				"democracy_name",
+				"democracy_description",
+				"democracy_parent",
+				"democracy_children",
+				"democracy_population",
+				"democracy_conduct",
+				"democracy_content",
+				"democracy_meta",
+				"date_created",
+				"date_updated"
+			],
+			"properties": {
+				"democracy_id": {
+					"$ref": "schemas-democracy_id"
+				},
+				"democracy_name": {
+					"$ref": "schemas-democracy_name"
+				},
+				"democracy_description": {
+					"$ref": "schemas-democracy_description"
+				},
+				"democracy_parent": {
+					"$ref": "schemas-democracy_parent"
+				},
+				"democracy_children": {
+					"$ref": "schemas-democracy_children"
+				},
+				"democracy_population": {
+					"$ref": "schemas-democracy_population"
+				},
+				"democracy_conduct": {
+					"$ref": "schemas-democracy_conduct"
+				},
+				"democracy_content": {
+					"$ref": "schemas-democracy_content"
+				},
+				"democracy_meta": {
+					"$ref": "schemas-democracy_meta"
+				},
+				"date_created": {
+					"$ref": "schemas-date_created"
+				},
+				"date_updated": {
+					"$ref": "schemas-date_updated"
+				}
+			}
+		},
+		"democracy_list": {
+			"$id": "schemas-democracy_list",
+			"description": "Democracy - List",
+			"type": "object",
+			"required": [
+				"democracy_id",
+				"democracy_name",
+				"democracy_description",
+				"democracy_population",
+				"date_created",
+				"date_updated"
+			],
+			"properties": {
+				"democracy_id": {
+					"$ref": "schemas-democracy_id"
+				},
+				"democracy_name": {
+					"$ref": "schemas-democracy_name"
+				},
+				"democracy_description": {
+					"$ref": "schemas-democracy_description"
+				},
+				"democracy_population": {
+					"$ref": "schemas-democracy_population"
+				},
+				"date_created": {
+					"$ref": "schemas-date_created"
+				},
+				"date_updated": {
+					"$ref": "schemas-date_updated"
+				}
+			}
+		}
+	},
+	"params": {
+		"proposal_id": {
+			"$id": "params-proposal_id",
+			"$ref": "schemas-proposal_id"
+		},
+		"ballot_id": {
+			"$id": "params-ballot_id",
+			"$ref": "schemas-ballot_id"
+		},
+		"membership_id": {
+			"$id": "params-membership_id",
+			"$ref": "schemas-membership_id"
+		},
+		"democracy_id": {
+			"$id": "params-democracy_id",
+			"$ref": "schemas-democracy_id"
+		}
+	},
+	"queries": {
+		"limit": {
+			"$id": "queries-limit",
+			"type": "integer"
+		},
+		"last": {
+			"$id": "queries-last",
+			"type": "string"
+		},
+		"order": {
+			"$id": "queries-order",
+			"type": "string",
+			"enum": [
+				"ASC",
+				"DESC"
+			]
+		},
+		"proposal_sort": {
+			"$id": "queries-proposal_sort",
+			"type": "string",
+			"enum": [
+				"proposal_name",
+				"date_created",
+				"date_updated"
+			]
+		},
+		"proposal_filter": {
+			"$id": "queries-proposal_filter",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"democracy_id": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							 "$ref": "schemas-op" 
+						},
+						"val": {
+							"$ref": "schemas-democracy_id"
+						}
+					}
+				},
+				"membership_id": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-membership_id"
+						}
+					}
+				},
+				"proposal_name": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-proposal_name"
+						}
+					}
+				},
+				"proposal_description": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"type": "string",
+							"enum": [
+								"~"
+							]
+						},
+						"val": {
+							"$ref": "schemas-proposal_description"
+						}
+					}
+				},
+				"proposal_target": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-proposal_target"
+						}
+					}
+				},
+				"proposal_votes_yes": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"type": "integer"
+						}
+					}
+				},
+				"proposal_votes_no": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"type": "integer"
+						}
+					}
+				},
+				"proposal_votable": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"type": "string",
+							"enum": [ "=" ]
+						},
+						"val": {
+							"type": "boolean"
+						}
+					}
+				},
+				"date_created": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-date_created"
+						}
+					}
+				},
+				"date_updated": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-date_updated"
+						}
+					}
+				}
+			}
+		},
+		"ballot_sort": {
+			"$id": "queries-ballot_sort",
+			"type": "string",
+			"enum": [
+				"date_created",
+				"date_updated"
+			]
+		},
+		"ballot_filter": {
+			"$id": "queries-ballot_filter",
+			"type": "object",
+			"properties": {
+				"membership_id": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-membership_id"
+						}
+					}
+				},
+				"ballot_approved": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"type": "string",
+							"enum": [
+								"="
+							]
+						},
+						"val": {
+							"type": "boolean"
+						}
+					}
+				},
+				"ballot_comments": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"type": "string",
+							"enum": [
+								"~"
+							]
+						},
+						"val": {
+							"$ref": "schemas-ballot_comments"
+						}
+					}
+				},
+				"date_created": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+						 "$ref": "schemas-date_created" 
+						}
+					}
+				},
+				"date_updated": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op" 
+						},
+						"val": {
+							"$ref": "schemas-date_updated" 
+						}
+					}
+				}
+			}
+		},
+		"membership_sort": {
+			"$id": "queries-membership_sort",
+			"type": "string",
+			"enum": [
+				"membership_id",
+				"date_created",
+				"date_updated"
+			]
+		},
+		"population_sort": {
+			"$id": "queries-population_sort",
+			"type": "string",
+			"enum": [
+				"democracy_id",
+				"population",
+				"date_updated"
+			]
+		},
+		"profile_id": {
+			"$id": "queries-profile_id",
+			"$ref": "schemas-profile_id"
+		},
+		"membership_filter": {
+			"$id": "queries-membership_filter",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"democracy_id": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"oneOf": [
+								{ "$ref": "schemas-democracy_id" },
+								{
+									"type": "array",
+									"items": { "$ref": "schemas-democracy_id" }
+								}	
+							]
+						}
+					}
+				},
+				"profile_id": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"oneOf": [
+								{ "$ref": "schemas-profile_id" },
+								{
+									"type": "array",
+									"items": { "$ref": "schemas-profile_id" }
+								}	
+							]
+						}
+					}
+				},
+				"is_verified": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-is_verified"
+						}
+					}
+				},
+				"date_created": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"oneOf": [
+								{ "$ref": "schemas-date_created" },
+								{
+									"type": "array",
+									"items": { "$ref": "schemas-date_created" }
+								}	
+							]
+						}
+					}
+				},
+				"date_updated": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"oneOf": [
+								{ "$ref": "schemas-date_updated" },
+								{
+									"type": "array",
+									"items": { "$ref": "schemas-date_updated" }
+								}	
+							]
+						}
+					}
+				}
+			}
+		},
+		"population_filter": {
+			"$id": "queries-population_filter",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"democracy_id": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"oneOf": [
+								{ "$ref": "schemas-democracy_id" },
+								{
+									"type": "array",
+									"items": { "$ref": "schemas-democracy_id" }
+								}	
+							]
+						}
+					}
+				},
+				"population": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"oneOf": [
+								{ "type": "integer" },
+								{
+									"type": "array",
+									"items": { "type": "integer" }
+								}	
+							]
+						}
+					}
+				},
+				"date_updated": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"oneOf": [
+								{ "$ref": "schemas-date_updated" },
+								{
+									"type": "array",
+									"items": { "$ref": "schemas-date_updated" }
+								}	
+							]
+						}
+					}
+				}
+			}
+		},
+		"democracy_sort": {
+			"$id": "queries-democracy_sort",
+			"type": "string",
+			"enum": [
+				"democracy_name",
+				"democracy_population",
+				"date_created",
+				"date_updated"
+			]
+		},
+		"democracy_filter": {
+			"$id": "queries-democracy_filter",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"democracy_id": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-democracy_id"
+						}
+					}
+				},
+				"democracy_name": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-democracy_name"
+						}
+					}
+				},
+				"democracy_description": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"type": "string",
+							"enum": [
+								"~"
+							]
+						},
+						"val": {
+							"$ref": "schemas-democracy_description"
+						}
+					}
+				},
+				"democracy_population": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-democracy_population"
+						}
+					}
+				},
+				"date_created": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-date_created"
+						}
+					}
+				},
+				"date_updated": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-date_updated"
+						}
+					}
+				}
+			}		
+		}
+	},
+	"bodies": {
+		"proposal_create": {
+			"$id": "bodies-proposal_create",
+			"$ref": "schemas-proposal_create" 
+		},
+		"ballot_create": { 
+			"$id": "bodies-ballot_create",
+			"$ref": "schemas-ballot_create"
+		},
+		"ballot_update": {
+			"$id": "bodies-ballot_update",
+			"$ref": "schemas-ballot_update"
+		},
+		"membership_create": {
+			"$id": "bodies-membership_create",
+			"$ref": "schemas-membership_create"
+		}
+	},
+	"responses": {
+		"400": {
+			"$id": "responses-400",
+			"description": "Bad Request"
+		},
+		"401": {
+			"$id": "responses-401",
+			"description": "Unauthorized"
+		},
+		"500": {
+			"$id": "responses-500",
+			"description": "Internal Error"
+		},
+		"proposal_list": {
+			"$id": "responses-proposal_list",
+			"description": "Successfully return list of proposals",
+			"type": "array",
+			"items": {
+				"$ref": "schemas-proposal_read"
+			}
+		},
+		"proposal_create": {
+			"$id": "responses-proposal_create",
+			"description": "Successfully created a proposal",
+			"$ref": "schemas-proposal_read"
+		},
+		"proposal_read": {
+			"$id": "responses-proposal_read",
+			"description": "Successfully fetched a proposal",
+			"$ref": "schemas-proposal_read"
+		},
+		"proposal_delete": {
+			"$id": "responses-proposal_delete",
+			"description": "Successfully deleted a proposal"
+		},
+		"ballot_list": {
+			"$id": "responses-ballot_list",
+			"description": "Successfully return list of ballots",
+			"type": "array",
+			"items": {
+				"$ref": "schemas-ballot_read"
+			}
+		},
+		"ballot_create": {
+			"$id": "responses-ballot_create",
+			"description": "Successfully created a ballot",
+			"$ref": "schemas-ballot_read"
+		},
+		"ballot_read": {
+			"$id": "responses-ballot_read",
+			"description": "Successfully fetched a ballot",
+			"$ref": "schemas-ballot_read"
+		},
+		"ballot_update": {
+			"$id": "responses-ballot_update",
+			"description": "Successfully updated a ballot",
+			"$ref": "schemas-ballot_read"
+		},
+		"ballot_delete": {
+			"$id": "responses-ballot_delete",
+			"description": "Successfully deleted a ballot"
+		},
+		"membership_list": {
+			"$id": "responses-membership_list",
+			"description": "Successfully return list of memberships",
+			"type": "array",
+			"items": {
+				"$ref": "schemas-membership_list"
+			}
+		},
+		"membership_read": {
+			"$id": "responses-membership_read",
+			"description": "Successfully fetched a membership",
+			"$ref": "schemas-membership_read"
+		},
+		"population": {
+			"$id": "responses-population_list",
+			"description": "Democracy populations from memberships",
+			"$ref": "schemas-population_list"
+		},
+		"democracy_list": {
+			"$id": "responses-democracy_list",
+			"description": "Successfully return list of democracies",
+			"type": "array",
+			"items": {
+				"$ref": "schemas-democracy_list"
+			}
+		},
+		"democracy_read": {
+			"$id": "responses-democracy_read",
+			"description": "Successfully fetched a democracy",
+			"$ref": "schemas-democracy_read"
+		}
+	},
+	"routes": {
+		"/democracy": {
+			"GET": {
+				"description": "List democracies",
+				"operationId": "democracy_list",
+				"query": {
+					"limit": { "$ref": "queries-limit"},
+				      	"last": { "$ref": "queries-last"},
+				      	"order": { "$ref": "queries-order"},
+				      	"sort": { "$ref": "queries-democracy_sort"},
+				      	"filter": { "$ref": "queries-democracy_filter"}
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-democracy_list"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/democracy/:democracy_id": {
+			"GET": {
+				"description": "Get a democracy",
+				"operationId": "democracy_read",
+				"param": {
+					"democracy_id": { "$ref": "params-democracy_id" }
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-democracy_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/membership": {
+			"GET": {
+				"description": "List memberships",
+				"operationId": "membership_list",
+				"query": {
+					"limit":  {"$ref": "queries-limit"},
+				      	"last":   {"$ref": "queries-last"},
+				      	"order":  {"$ref": "queries-order"},
+				      	"sort":   {"$ref": "queries-membership_sort"},
+				      	"filter": {"$ref": "queries-membership_filter"},
+					"profile_id": {"$ref": "queries-profile_id"}
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-membership_list"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			},
+			"POST": {
+				"description": "Create a membership",
+				"operationId": "membership_create",
+				"body": {
+					"$ref": "bodies-membership_create"
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-membership_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/membership/:membership_id": {
+			"GET": {
+				"description": "Get a membership",
+				"operationId": "membership_read",
+				"param": {
+					"membership_id": { "$ref": "params-membership_id" }
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-membership_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			},
+			"DELETE": {
+				"description": "Delete a membership",
+				"operationId": "membership_delete",
+				"param": {
+					"membership_id": { "$ref": "params-membership_id" }
+				},
+				"responses": {
+					"204": {
+						"description": "successfully deleted"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/democracy/:democracy_id/proposal": {
+			"GET": {
+				"description": "List proposals",
+				"operationId": "proposal_list",
+				"param": {
+					"democracy_id": { "$ref": "params-democracy_id" }
+				},
+				"query": {
+					"limit": { "$ref": "queries-limit" },
+					"last": { "$ref": "queries-last" },
+					"order": { "$ref": "queries-order" },
+					"sort": { "$ref": "queries-proposal_sort" },
+					"filter": { "$ref": "queries-proposal_filter" }
+				},
+				"response": {
+					"200": {
+						"$ref": "responses-proposal_list"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			},
+			"POST": {
+				"description": "Create a proposal",
+				"operationId": "proposal_create",
+				"param": {
+					"democracy_id": { "$ref": "params-democracy_id" }
+				},
+				"body": {
+					"$ref": "bodies-proposal_create"
+				},
+				"response": {
+					"201": {
+						"$ref": "responses-proposal_create"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/democracy/:democracy_id/proposal/:proposal_id": {
+			"GET": {
+				"description": "Read a proposal",
+				"operationId": "proposal_read",
+				"param": {
+					"democracy_id": { "$ref": "params-democracy_id" },
+					"proposal_id": { "$ref": "params-proposal_id" }
+				},
+				"response": {
+					"200": {
+						"$ref": "responses-proposal_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			},
+			"DELETE": {
+				"description": "Delete a proposal",
+				"operationId": "proposal_delete",
+				"param": {
+					"democracy_id": { "$ref": "params-democracy_id" },
+					"proposal_id": { "$ref": "params-proposal_id" }
+				},
+				"response": {
+					"204": {
+						"$ref": "responses-proposal_delete"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/democracy/:democracy_id/proposal/:proposal_id/ballot": {
+			"POST": {
+				"description": "Cast my ballot",
+				"operationId": "ballot_create",
+				"param": {
+					"democracy_id": { "$ref": "params-democracy_id" },
+					"proposal_id": { "$ref": "params-proposal_id" }
+				},
+				"body": {
+					"$ref": "bodies-ballot_create"
+				},
+				"response": {
+					"201": {
+						"$ref": "responses-ballot_create"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			},
+			"GET": {
+				"description": "Get my ballot",
+				"operationId": "ballot_read",
+				"param": {
+					"democracy_id": { "$ref": "params-democracy_id" },
+					"proposal_id": { "$ref": "params-proposal_id" }
+				},
+				"response": {
+					"200": {
+						"$ref": "responses-ballot_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+
+			},
+			"PATCH": {
+				"description": "Edit my ballot",
+				"operationId": "ballot_update",
+				"param": {
+					"democracy_id": { "$ref": "params-democracy_id" },
+					"proposal_id": { "$ref": "params-proposal_id" }
+				},
+				"body": {
+					"$ref": "bodies-ballot_update"
+				},
+				"response": {
+					"200": {
+						"$ref": "responses-ballot_update"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			},
+			"DELETE": {
+				"description": "Delete my ballot",
+				"operationId": "ballot_delete",
+				"param": {
+					"democracy_id": { "$ref": "params-democracy_id" },
+					"proposal_id": { "$ref": "params-proposal_id" }
+				},
+				"response": {
+					"204": {
+						"$ref": "responses-ballot_delete"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+
+		}
+			
+	}
+}

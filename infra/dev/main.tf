@@ -41,7 +41,7 @@ resource "docker_container" "local-database" {
 	image = "local-database:latest"
 	name = "local-database"
 	env = [
-		"ENV=local",
+		"ENV=dev",
 		"DB_NETWORK=db-network",
 		"DB_PORT=5432",
 		"DB_NAME=local-database",
@@ -51,6 +51,9 @@ resource "docker_container" "local-database" {
 		"DB_DEMOCRACY_USER=democracy",
 		"DB_DEMOCRACY_DB=democracy",
 		"DB_DEMOCRACY_PASSWORD=democracy",
+		"DB_MEMBERSHIP_USER=membership",
+		"DB_MEMBERSHIP_DB=membership",
+		"DB_MEMBERSHIP_PASSWORD=membership",
 		"DB_PROPOSAL_USER=proposal",
 		"DB_PROPOSAL_DB=proposal",
 		"DB_PROPOSAL_PASSWORD=proposal"
@@ -61,6 +64,36 @@ resource "docker_container" "local-database" {
 	ports {
 		internal = 5432
 		external = 5432
+	}
+}
+
+resource "docker_image" "api-external" {
+	depends_on = [ time_sleep.wait_5_seconds ]
+	name = "api-external:latest"
+	keep_locally = false
+}
+
+resource "docker_container" "api-external" {
+	depends_on = [ time_sleep.wait_5_seconds ]
+	image = "api-external:latest"
+	name = "api-external"
+	env = [
+		"ENV=dev",
+		"DB_NETWORK=db-network",
+		"API_EXTERNAL_NAME=api-external",
+		"API_EXTERNAL_URL=0.0.0.0",
+		"API_EXTERNAL_PORT=3000"
+	]
+	volumes {
+		host_path = abspath("../../services/api/source")
+		container_path = "/app"
+	}
+	networks_advanced { 
+		name = "db-network"
+	}
+	ports {
+		internal = 3000
+		external = 3000
 	}
 }
 
@@ -75,13 +108,13 @@ resource "docker_container" "api-democracy" {
 	image = "api-democracy:latest"
 	name = "api-democracy"
 	env = [
-		"ENV=local",
+		"ENV=dev",
 		"DB_NETWORK=db-network",
 		"DB_PORT=5432",
 		"DB_NAME=local-database",
 		"API_DEMOCRACY_NAME=api-democracy",
 		"API_DEMOCRACY_URL=0.0.0.0",
-		"API_DEMOCRACY_PORT=3000",
+		"API_DEMOCRACY_PORT=3001",
 		"DB_DEMOCRACY_USER=democracy",
 		"DB_DEMOCRACY_DB=democracy",
 		"DB_DEMOCRACY_PASSWORD=democracy",
@@ -94,8 +127,8 @@ resource "docker_container" "api-democracy" {
 		name = "db-network"
 	}
 	ports {
-		internal = 3000
-		external = 3000
+		internal = 3001
+		external = 3001
 	}
 }
 
@@ -110,13 +143,13 @@ resource "docker_container" "api-proposal" {
 	image = "api-proposal:latest"
 	name = "api-proposal"
 	env = [
-		"ENV=local",
+		"ENV=dev",
 		"DB_NETWORK=db-network",
 		"DB_PORT=5432",
 		"DB_NAME=local-database",
 		"API_PROPOSAL_NAME=api-proposal",
 		"API_PROPOSAL_URL=0.0.0.0",
-		"API_PROPOSAL_PORT=3001",
+		"API_PROPOSAL_PORT=3002",
 		"DB_PROPOSAL_USER=proposal",
 		"DB_PROPOSAL_DB=proposal",
 		"DB_PROPOSAL_PASSWORD=proposal",
@@ -129,7 +162,42 @@ resource "docker_container" "api-proposal" {
 		name = "db-network"
 	}
 	ports {
-		internal = 3001
-		external = 3001
+		internal = 3002
+		external = 3002
+	}
+}
+
+resource "docker_image" "api-membership" {
+	depends_on = [ time_sleep.wait_5_seconds ]
+	name = "api-membership:latest"
+	keep_locally = false
+}
+
+resource "docker_container" "api-membership" {
+	depends_on = [ time_sleep.wait_5_seconds ]
+	image = "api-membership:latest"
+	name = "api-membership"
+	env = [
+		"ENV=dev",
+		"DB_NETWORK=db-network",
+		"DB_PORT=5432",
+		"DB_NAME=local-database",
+		"API_MEMBERSHIP_NAME=api-membership",
+		"API_MEMBERSHIP_URL=0.0.0.0",
+		"API_MEMBERSHIP_PORT=3003",
+		"DB_MEMBERSHIP_USER=membership",
+		"DB_MEMBERSHIP_DB=membership",
+		"DB_MEMBERSHIP_PASSWORD=membership",
+	]
+	volumes {
+		host_path = abspath("../../services/api-membership/source")
+		container_path = "/app"
+	}
+	networks_advanced { 
+		name = "db-network"
+	}
+	ports {
+		internal = 3003
+		external = 3003
 	}
 }

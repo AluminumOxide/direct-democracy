@@ -28,7 +28,7 @@ const ballot_create = async function(request, reply, db, log) {
 
 	// check the membership_id & democracy_id are valid
 	try {
-		await api_membership_client.membership_read({ democracy_id: prop_check.democracy_id, membership_id })
+		await api_membership_client.membership_read({ membership_id })
 	} catch (e) {
 		if(e.message === membership_dne) {
 			log.warn(`Ballot/Create: Failure: ${membership_id} Error: Membership does not exist`)

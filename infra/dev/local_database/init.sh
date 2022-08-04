@@ -1,9 +1,10 @@
 #!/bin/bash
 set -e
 
-SERVICES=(DEMOCRACY PROPOSAL)
+SERVICES=(DEMOCRACY PROPOSAL MEMBERSHIP)
 
 for s in ${SERVICES[@]}; do 
+	echo "***SERVICE "$s"***"
 	db_user_var="\$DB_"$s"_USER"
 	db_user=`eval echo $db_user_var`
 	db_name_var="\$DB_"$s"_DB"
