@@ -6,7 +6,7 @@
 	"dependencies": {
 		"@aluminumoxide/direct-democracy-lib-server": "^1.0.2",
 		"@aluminumoxide/direct-democracy-membership-api-client": "^1.0.12",
-		"nodemon": "^2.0.15"
+		"nodemon": "^2.0.19"
 	},
 	"devDependencies": {},
 	"scripts": {
