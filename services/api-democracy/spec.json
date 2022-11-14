@@ -38,6 +38,11 @@
 			"$id": "schemas-date_updated",
 			"$ref": "schemas-date"
 		},
+		"proposal_id": {
+			"$id": "schemas-proposal_id",
+			"description": "Proposal ID",
+			"$ref": "schemas-uuid"
+		},
 		"democracy_id": {
 			"$id": "schemas-democracy_id",
 			"description": "Democracy ID",
@@ -244,6 +249,51 @@
 				}
 			}
 		},
+		"democracy_root": {
+			"$id": "schemas-democracy_root",
+			"description": "Democracy - Root",
+			"type": "object",
+			"required": [
+				"democracy_id",
+				"democracy_name",
+				"democracy_description",
+				"democracy_population",
+				"democracy_conduct",
+				"democracy_content",
+				"democracy_meta",
+				"date_created",
+				"date_updated"
+			],
+			"properties": {
+				"democracy_id": {
+					"$ref": "schemas-democracy_id"
+				},
+				"democracy_name": {
+					"$ref": "schemas-democracy_name"
+				},
+				"democracy_description": {
+					"$ref": "schemas-democracy_description"
+				},
+				"democracy_population": {
+					"$ref": "schemas-democracy_population"
+				},
+				"democracy_conduct": {
+					"$ref": "schemas-democracy_conduct"
+				},
+				"democracy_content": {
+					"$ref": "schemas-democracy_content"
+				},
+				"democracy_meta": {
+					"$ref": "schemas-democracy_meta"
+				},
+				"date_created": {
+					"$ref": "schemas-date_created"
+				},
+				"date_updated": {
+					"$ref": "schemas-date_updated"
+				}
+			}
+		},
 		"democracy_list": {
 			"$id": "schemas-democracy_list",
 			"description": "Democracy - List",
@@ -282,6 +332,10 @@
 		"democracy_id": {
 			"$id": "params-democracy_id",
 			"$ref": "schemas-democracy_id"
+		},
+		"proposal_id": {
+			"$id": "params-proposal_id",
+			"$ref": "schemas-proposal_id"
 		}
 	},
 	"queries": {
@@ -415,8 +469,13 @@
 				"$ref": "schemas-democracy_list"
 			}
 		},
+		"democracy_root": {
+			"$id": "responses-democracy_root",
+			"description": "Successfully fetched a democracy",
+			"$ref": "schemas-democracy_root"
+		},
 		"democracy_read": {
-			"$id": "responses-",
+			"$id": "responses-democracy_read",
 			"description": "Successfully fetched a democracy",
 			"$ref": "schemas-democracy_read"
 		}
@@ -473,10 +532,53 @@
 				}
 			}
 		},
+		"/democracy/root": {
+			"GET": {
+				"description": "Get root democracy",
+				"operationId": "democracy_root",
+				"responses": {
+					"200": {
+						"$ref": "responses-democracy_root"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
 		"/population": {
 			"POST": {
 				"description": "Trigger democracy population updates",
 				"operationId": "democracy_population_update",
+				"responses": {
+					"200": {
+						"$ref": "responses-200"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/proposal/:proposal_id": {
+			"POST": {
+				"description": "Check if proposal passes and apply",
+				"operationId": "apply_proposal",	
+				"param": {
+					"proposal_id": { "$ref": "params-proposal_id" }
+				},
 				"responses": {
 					"200": {
 						"$ref": "responses-200"

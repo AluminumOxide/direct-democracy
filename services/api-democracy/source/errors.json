@@ -1,5 +1,6 @@
 {
 	"internal_error": "Error: Internal error",
 	"democracy_dne": "Democracy does not exist",
-	"democracy_pop": "Democracy has population of 0"
+	"democracy_pop": "Democracy has population of 0",
+	"algo_missing": "Root democracy is missing algo"
 }
