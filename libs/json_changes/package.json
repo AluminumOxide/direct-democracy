@@ -1,0 +1,23 @@
+{
+	"name": "@aluminumoxide/direct-democracy-lib-json-changes",
+	"version": "1.0.2",
+	"description": "JSON changes tools",
+	"main": "index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/AluminumOxide/direct-democracy.git"
+	},
+	"publishConfig": {
+		"registry": "https://npm.pkg.github.com"
+	},
+	"files": [
+		"errors.json"
+	],
+	"author": "Sapphyre Gervais",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/AluminumOxide/direct-democracy/issues"
+	},
+	"homepage": "https://github.com/AluminumOxide/direct-democracy#readme",
+	"dependencies": {}
+}

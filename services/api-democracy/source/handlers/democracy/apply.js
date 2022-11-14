@@ -1,3 +1,4 @@
+const json_changes = require('@aluminumoxide/direct-democracy-lib-json-changes')
 const api_proposal_client = new (require('@aluminumoxide/direct-democracy-proposal-api-client'))()
 const api_democracy_client = new (require('@aluminumoxide/direct-democracy-democracy-api-client'))()
 const { democracy_dne, democracy_pop, algo_missing, internal_error } = require('../../errors.json')
@@ -69,7 +70,7 @@ const apply_proposal = async function(request, reply, db, log) {
 		// targeted contents
 		const contents = democracy['democracy_'+target]
 		console.log(target, democracy, contents)
-		if(!check_changes(changes, contents)) {
+		if(!json_changes.check_changes(changes, contents)) {
 			log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal changes do not map to democracy contents`)
 			// close proposal and return applicable error
 			return await close_proposal(reply, log, proposal_id, 400, false, api_proposal_client.errors.changes_invalid)
@@ -116,7 +117,7 @@ const apply_proposal = async function(request, reply, db, log) {
 				if(target === 'name' || target === 'description') {
 					a[target] = changes.update
 				} else {
-					a[target] = apply_changes(changes, contents)
+					a[target] = json_changes.apply_changes(changes, contents)
 				}
 
 				// save changes
@@ -242,74 +243,6 @@ const check_rules = function(rules, approved_votes, disapproved_votes, democracy
        		}
 	}
 	return true
-}
-
-/*
- * Verify that changes can be applied to contents
- * Input:
- * 	changes: { a: { add: { b: 1 }, update: { c: 2}, delete: ['d'] }, add: { e: 3 }, update: { f: 4 }, delete: ['g'] }
- * 	contents: { a: { c: 1, d: 2}, f: 3, g: 4 }
- * Output: boolean 
- */
-const check_changes = function(changes, contents) {
-	console.log("CHECK", changes, contents)
-	for(const change in changes) {
-		if(change === 'add') {
-			for(const i in changes[change]) {
-				if(i in contents) {
-					return false
-				}
-			}
-		} else if(change === 'update') {
-			for(const i in changes[change]) {
-				if(!(i in contents)) {
-					return false
-				}
-			}
-		} else if(change === 'delete') {
-			for(const i of changes[change]) {
-				if(!(i in contents)) {
-					return false
-				}
-			}
-		} else if(change in contents) {
-			if(!check_changes(changes[change], contents[change])) {
-				return false
-			}
-		} else {
-			return false
-		}
-	}
-	return true
-}
-
-/*
- * Apply changes to contents
- * Input:
- * 	changes: { a: { add: { b: 1 }, update: { c: 2}, delete: ['d'] }, add: { e: 3 }, update: { f: 4 }, delete: ['g'] }
- * 	contents: { a: { c: 1, d: 2}, f: 3, g: 4 }
- * Output: { a: { b: 1, c: 2 }, e: 3, f: 4 }
- * Error:
- * 	changes_invalid: changes cannot be applied to contents	
- */
-const apply_changes = function(changes, content) {
-	for(const i in changes) {
-		if(i === 'add' || i === 'update') {
-			for(const j in changes[i]) {
-				content[j] = changes[i][j]
-			}
-		} else if(i === 'delete') {
-			for(const j of changes[i]) {
-				delete content[j]
-			}
-		} else {
-			if(!(i in content)) {
-				throw new Error(api_proposal_client.errors.changes_invalid)
-			}
-			content[i] = apply_changes(changes[i], content[i])
-		}
-	}
-	return content
 }
 
 // yes... i like to live dangerously
