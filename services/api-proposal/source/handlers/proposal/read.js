@@ -14,6 +14,7 @@ const proposal_read = async function(request, reply, db, log) {
 			'proposal_target': 'target',
 			'proposal_changes': 'changes',
 			'proposal_votable': 'votable',
+			'proposal_passed': 'passed',
 			'date_created': 'date_created',
 			'date_updated': 'date_updated'
 		})
@@ -29,16 +30,26 @@ const proposal_read = async function(request, reply, db, log) {
 		// count ballots
 		const counts = await db('ballot')
 		.select([
-			'is_approved'
+			'is_approved',
+			'is_verified'
 		])
 		.count('id', {as: 'cnt'})
-		.groupBy('is_approved')
-		.orderBy('is_approved')
+		.groupBy(['is_approved', 'is_verified'])
+		.orderBy(['is_verified', 'is_approved'])
 		.where({ 'proposal_id': proposal_id})
-		if(!counts || counts.length < 1) {
-			proposal.proposal_votes = {'yes': 0, 'no': 0}
-		} else {
-			proposal.proposal_votes = {'yes': counts[0].cnt, 'no': counts.length > 1 ? counts[1].cnt : 0}
+		let cnts = {}
+		for(i of counts) {
+			cnts[Boolean(i.is_verified).toString()+Boolean(i.is_approved).toString()] = parseInt(i.cnt)
+		}
+		proposal.proposal_votes = { 
+			'unverified': {
+				'no': cnts['falsefalse'] ? cnts['falsefalse'] : 0,
+				'yes': cnts['falsetrue'] ? cnts['falsetrue'] : 0
+			},
+			'verified': {
+				'no': cnts['truefalse'] ? cnts['truefalse'] : 0,
+				'yes': cnts['truetrue'] ? cnts['truetrue'] : 0
+			}
 		}
 
 		// return results

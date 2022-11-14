@@ -11,7 +11,7 @@ const democracy_population_update = async function(request, reply, db, log) {
 
 		// use time window in request
 		let args = {
-			limit: 1,
+			limit: 100,
 			order: 'ASC',
 			sort: 'democracy_id',
 			filter: {
@@ -31,7 +31,8 @@ const democracy_population_update = async function(request, reply, db, log) {
 			for(let pop of pops) {
 				await db('democracy')
 					.update({
-						population: pop.population
+						population_verified: pop.verified,
+						population_unverified: pop.unverified
 					})
 					.where({
 						id: pop.democracy_id

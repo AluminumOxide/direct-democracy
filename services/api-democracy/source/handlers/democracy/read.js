@@ -10,8 +10,10 @@ const democracy_read = async function(request, reply, db, log) {
 			democracy_children: db('democracy').select(db.raw('array_agg(democracy.id)')).where('democracy.parent_id', democracy_id).groupBy('democracy.parent_id'),
 			democracy_name: 'democracy.name',
 			democracy_description: 'democracy.description',
-			democracy_population: 'democracy.population',
-			democracy_rules: 'democracy.rules',
+			democracy_population_verified: 'democracy.population_verified',
+			democracy_population_unverified: 'democracy.population_unverified',
+			democracy_conduct: 'democracy.conduct',
+			democracy_content: 'democracy.content',
 			democracy_metas: 'democracy.metas',
 			date_created: 'democracy.date_created',
 			date_updated: 'democracy.date_updated'

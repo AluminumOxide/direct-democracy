@@ -23,6 +23,7 @@ const proposal_list = async function(request, reply, db, log) {
 				'democracy_id': 'democracy_id',
 				'membership_id': 'membership_id',
 				'proposal_votable': 'votable',
+				'proposal_passed': 'passed',
 				'date_created': 'date_created',
 				'date_updated': 'date_updated'
 			}))

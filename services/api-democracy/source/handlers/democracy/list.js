@@ -9,7 +9,8 @@ const democracy_list = async function(request, reply, db, log) {
 				democracy_id: 'democracy.id',
 				democracy_name: 'democracy.name',
 				democracy_description: 'democracy.description',
-				democracy_population: 'democracy.population',
+				democracy_population_verified: 'democracy.population_verified',
+				democracy_population_unverified: 'democracy.population_unverified',
 				date_created: 'democracy.date_created',
 				date_updated: 'democracy.date_updated'
 			})

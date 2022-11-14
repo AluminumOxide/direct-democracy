@@ -3,7 +3,7 @@ const api_membership_client = new (require('@aluminumoxide/direct-democracy-memb
 const { voting_closed, proposal_dne, membership_dne, internal_error } = require('../../errors.json')
 
 const ballot_create = async function(request, reply, db, log) {
-	const { proposal_id, membership_id, is_approved, ballot_comments } = request
+	const { proposal_id, membership_id, ballot_approved, ballot_comments } = request
 
 	// check the proposal_id is valid
 	let prop_check
@@ -27,8 +27,9 @@ const ballot_create = async function(request, reply, db, log) {
 	}
 
 	// check the membership_id & democracy_id are valid
+	let membership
 	try {
-		await api_membership_client.membership_read({ membership_id })
+		membership = await api_membership_client.membership_read({ membership_id })
 	} catch (e) {
 		if(e.message === membership_dne) {
 			log.warn(`Ballot/Create: Failure: ${membership_id} Error: Membership does not exist`)
@@ -46,7 +47,8 @@ const ballot_create = async function(request, reply, db, log) {
 		.insert({
 			'proposal_id': proposal_id,
 			'membership_id': membership_id,
-			'is_approved': is_approved,
+			'is_approved': ballot_approved,
+			'is_verified': membership.is_verified,
 			'comments': ballot_comments
 		})
 		.returning('*')
