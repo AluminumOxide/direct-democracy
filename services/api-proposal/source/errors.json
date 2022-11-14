@@ -6,5 +6,8 @@
 	"membership_invalid": "Invalid membership provided",
 	"ballots_cast": "Proposal has cast ballots",
 	"voting_closed": "Proposal voting is closed",
-	"ballot_closed": "Ballot voting is closed"
+	"ballot_closed": "Ballot voting is closed",
+	"changes_dne": "Proposal has no changes",
+	"target_invalid": "Proposal target is invalid",
+	"changes_invalid": "Proposal changes do not map to democracy contents"
 }

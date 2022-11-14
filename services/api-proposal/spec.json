@@ -1,7 +1,6 @@
 {
        "servers": {
-		"local": "http://0.0.0.0:3002/v1",
-		"dev": "http://api-proposal:3002/v1"
+		"production": "http://localhost:3002/v1"
 	},	       
 	"headers": {
 	},
@@ -40,6 +39,48 @@
 				"date_created",
 				"date_updated"
 			]
+		},
+		"proposal_order_date": {
+			"$id": "queries-proposal_sort_date",
+			"type":"object",
+			"properties": {
+				"limit": { "$ref": "queries-limit" },
+				"order": { "$ref": "queries-order" },
+				"filter": { "$ref": "queries-proposal_filter" },
+				"sort": { 
+					"type": "string",
+					"enum": [
+						"date_created",
+						"date_updated"
+					]
+				},
+				"last": { "$ref": "schemas-date" }
+			}
+		},
+		"proposal_order_string": {
+			"$id": "queries-proposal_sort_string",
+			"type":"object",
+			"properties": {
+				"limit": { "$ref": "queries-limit" },
+				"order": { "$ref": "queries-order" },
+				"filter": { "$ref": "queries-proposal_filter" },
+				"sort": { 
+					"type": "string",
+					"enum": [ "proposal_name" ]
+				},
+				"last": { "type": "string" }
+			}
+		},
+		"ballot_order": {
+			"$id": "queries-ballot_order",
+			"type": "object",
+			"properties": {
+				"limit": { "$ref": "queries-limit" },
+				"order": { "$ref": "queries-order" },
+				"filter": { "$ref": "queries-ballot_filter" },
+				"sort": { "$ref": "queries-proposal_sort" },
+				"last": { "$ref": "queries-last" }
+			}
 		},
 		"proposal_filter": {
 			"$id": "queries-proposal_filter",
@@ -146,6 +187,19 @@
 						}
 					}
 				},
+				"proposal_passed": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"type": "string",
+							"enum": [ "=" ]
+						},
+						"val": {
+							"type": "boolean"
+						}
+					}
+				},
 				"date_created": {
 					"type": "object",
 					"additionalProperties": false,
@@ -175,11 +229,20 @@
 
 		"ballot_sort": {
 			"$id": "queries-ballot_sort",
-			"type": "string",
-			"enum": [
-				"date_created",
-				"date_updated"
-			]
+			"type": "object",
+			"properties": {
+					"limit": { "$ref": "queries-limit" },
+					"order": { "$ref": "queries-order" },
+					"filter": { "$ref": "queries-ballot_filter" },
+					"sort": {
+						"type": "string",
+						"enum": [
+							"date_created",
+							"date_updated"
+						]
+					},
+					"last": { "$ref": "schemas-date" }
+			}
 		},
 		"ballot_filter": {
 			"$id": "queries-ballot_filter",
@@ -299,6 +362,10 @@
 			"description": "Successfully fetched a proposal",
 			"$ref": "schemas-proposal_read"
 		},
+		"proposal_close": {
+			"$id": "responses-proposal_close",
+			"description": "Successfully closed a proposal"
+		},
 		"proposal_delete": {
 			"$id": "responses-proposal_delete",
 			"description": "Successfully deleted a proposal"
@@ -417,12 +484,20 @@
 		"proposal_changes": {
 			"$id": "schemas-proposal_changes",
 			"description": "Proposal changes",
+			"oneOf": [
+				{ "$ref": "schemas-proposal_changes_leaf" },
+				{ "$ref": "schemas-proposal_changes_branch" }
+			]
+		},
+		"proposal_changes_branch": {
+			"$id": "schemas-proposal_changes_branch",
+			"description": "Proposal changes branch",
 			"type": "object",
 			"patternProperties": {
 				".*": {
 					"oneOf": [
 						{ "$ref": "schemas-proposal_changes_leaf" },
-						{ "$ref": "schemas-proposal_changes" }
+						{ "$ref": "schemas-proposal_changes_branch" }
 
 					]
 				}
@@ -468,6 +543,7 @@
 				"proposal_target",
 				"proposal_changes",
 				"proposal_votable",
+				"proposal_passed",
 				"date_created",
 				"date_updated"
 			],
@@ -498,6 +574,9 @@
 				},
 				"proposal_votable": {
 					"$ref": "schemas-proposal_votable"
+				},
+				"proposal_passed": {
+					"$ref": "schemas-proposal_passed"
 				},
 				"date_created": {
 					"$ref": "schemas-date_created"
@@ -655,11 +734,10 @@
 				"description": "List proposals",
 				"operationId": "proposal_list",
 				"query": {
-					"limit": { "$ref": "queries-limit" },
-					"last": { "$ref": "queries-last" },
-					"order": { "$ref": "queries-order" },
-					"sort": { "$ref": "queries-proposal_sort" },
-					"filter": { "$ref": "queries-proposal_filter" }
+					"anyOf": [
+						{ "$ref": "queries-proposal_sort_string" },
+						{ "$ref": "queries-proposal_sort_date" }
+					]
 				},
 				"response": {
 					"200": {
@@ -720,6 +798,27 @@
 					}
 				}
 			},
+			"POST": {
+				"description": "Close a proposal",
+				"operationId": "proposal_close",
+				"param": { 
+					"proposal_id": { "$ref": "params-proposal_id" }
+				},
+				"response": {
+					"200": {
+						"$ref": "responses-proposal_close"
+					},
+					"400": {
+					        "$ref": "responses-400"
+					},
+					"401": {
+					        "$ref": "responses-401"
+					},
+					"500": {
+					        "$ref": "responses-500"
+					}
+				}
+			},
 			"DELETE": {
 				"description": "Delete a proposal",
 				"operationId": "proposal_delete",
@@ -750,11 +849,8 @@
 					"proposal_id": { "$ref": "params-proposal_id" }
 				},
 				"query": {
-					"limit": { "$ref": "queries-limit" },
-					"last": { "$ref": "queries-last" },
-					"order": { "$ref": "queries-order" },
-					"sort": { "$ref": "queries-proposal_sort" },
-					"filter": { "$ref": "queries-ballot_filter" }
+					"$ref": "queries-ballot_sort"
+
 				},
 				"response": {
 					"200": {
