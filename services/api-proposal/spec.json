@@ -484,51 +484,38 @@
 		"proposal_changes": {
 			"$id": "schemas-proposal_changes",
 			"description": "Proposal changes",
-			"oneOf": [
-				{ "$ref": "schemas-proposal_changes_leaf" },
-				{ "$ref": "schemas-proposal_changes_branch" }
-			]
-		},
-		"proposal_changes_branch": {
-			"$id": "schemas-proposal_changes_branch",
-			"description": "Proposal changes branch",
 			"type": "object",
-			"patternProperties": {
-				".*": {
-					"oneOf": [
-						{ "$ref": "schemas-proposal_changes_leaf" },
-						{ "$ref": "schemas-proposal_changes_branch" }
-
-					]
-				}
-			},
-			"additionalProperties": false
-		},
-		"proposal_changes_leaf": {
-			"$id": "schemas-proposal_changes_leaf",
-			"type": "object",
-			"required": ["add", "update", "delete"],
 			"properties": {
-				"add": {
+				"_add": {
 					"type": "object",
-					"additionalProperties": {
-						"type": "string"
+					"patternProperties": {
+						".*": {
+							"oneOf": [
+								{ "type": "string"},
+								{ "type": "integer"}
+							]
+						}
 					}
 				},
-				"update": {
+				"_update": {
 					"type": "object",
-					"additionalProperties": {
-						"type": "string"
+					"patternProperties": {
+						".*": {
+							"oneOf": [
+								{ "type": "string"},
+								{ "type": "integer"}
+							]
+						}
 					}
 				},
-				"delete": {
+				"_delete": {
 					"type": "array",
 					"items": {
 						"type": "string"
 					}
 				}
 			},
-			"additionalProperties": false
+			"additionalProperties": { "$ref": "schemas-proposal_changes" }
 		},
 		"proposal_read": {
 			"$id": "schemas-proposal_read",

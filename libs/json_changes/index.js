@@ -3,25 +3,25 @@ const { changes_invalid } = require('./errors.json')
 /*
  * Verify that changes can be applied to contents
  * Input:
- * 	changes: { a: { add: { b: 1 }, update: { c: 2}, delete: ['d'] }, add: { e: 3 }, update: { f: 4 }, delete: ['g'] }
+ * 	changes: { a: { _add: { b: 1 }, _update: { c: 2}, _delete: ['d'] }, _add: { e: 3 }, _update: { f: 4 }, _delete: ['g'] }
  * 	contents: { a: { c: 1, d: 2}, f: 3, g: 4 }
  * Output: boolean 
  */
 const check_changes = function(changes, contents) {
 	for(const change in changes) {
-		if(change === 'add') {
+		if(change === '_add') {
 			for(const i in changes[change]) {
 				if(i in contents) {
 					return false
 				}
 			}
-		} else if(change === 'update') {
+		} else if(change === '_update') {
 			for(const i in changes[change]) {
 				if(!(i in contents)) {
 					return false
 				}
 			}
-		} else if(change === 'delete') {
+		} else if(change === '_delete') {
 			for(const i of changes[change]) {
 				if(!(i in contents)) {
 					return false
@@ -41,7 +41,7 @@ const check_changes = function(changes, contents) {
 /*
  * Apply changes to contents
  * Input:
- * 	changes: { a: { add: { b: 1 }, update: { c: 2}, delete: ['d'] }, add: { e: 3 }, update: { f: 4 }, delete: ['g'] }
+ * 	changes: { a: { _add: { b: 1 }, _update: { c: 2}, _delete: ['d'] }, _add: { e: 3 }, _update: { f: 4 }, _delete: ['g'] }
  * 	contents: { a: { c: 1, d: 2}, f: 3, g: 4 }
  * Output: { a: { b: 1, c: 2 }, e: 3, f: 4 }
  * Error:
@@ -49,11 +49,11 @@ const check_changes = function(changes, contents) {
  */
 const apply_changes = function(changes, content) {
 	for(const i in changes) {
-		if(i === 'add' || i === 'update') {
+		if(i === '_add' || i === '_update') {
 			for(const j in changes[i]) {
 				content[j] = changes[i][j]
 			}
-		} else if(i === 'delete') {
+		} else if(i === '_delete') {
 			for(const j of changes[i]) {
 				delete content[j]
 			}
