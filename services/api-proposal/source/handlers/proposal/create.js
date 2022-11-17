@@ -1,5 +1,7 @@
-const { democracy_invalid, membership_dne, internal_error } = require('../../errors.json')
+const json_changes = require('@aluminumoxide/direct-democracy-lib-json-changes')
+const { democracy_dne, democracy_invalid, membership_dne, changes_invalid, internal_error } = require('../../errors.json')
 const api_membership_client = new (require('@aluminumoxide/direct-democracy-membership-api-client'))()
+const api_democracy_client = new (require('@aluminumoxide/direct-democracy-democracy-api-client'))()
 
 const proposal_create = async function(request, reply, db, log) {
 	const { proposal_name, proposal_description, proposal_target, proposal_changes, democracy_id, membership_id } = request
@@ -16,10 +18,29 @@ const proposal_create = async function(request, reply, db, log) {
 			log.warn(`Proposal/Create: Failure: ${membership_id} Error: Membership does not exist`)
 			return reply.code(400).send(new Error(membership_dne))
 		}
-		log.error(`Proposal/Create: Failure: ${membership_id} Error: ${e}`)
+		log.error(`Proposal/Create: Failure: ${membership_id} Error: Failure fetching membership - ${e}`)
 		return reply.code(500).send(new Error(internal_error))
 	}
 
+	// fetch democracy
+	let democracy
+	try {
+		democracy = await api_democracy_client.democracy_read({ democracy_id })
+	} catch (e) {
+		if(e.message === api_democracy_client.errors.democracy_dne) {
+			log.warn(`Proposal/Create: Failure: ${democracy_id} Error: Democracy does not exist`)
+			return reply.code(400).send(new Error(democracy_dne))
+		}
+		log.error(`Proposal/Create: Failure: ${democracy_id} Error: Failure fetching democracy - ${e}`)
+		return reply.code(500).send(new Error(internal_error))
+	}
+
+	// check the proposed changes are valid
+	if(!json_changes.check_changes(proposal_changes, democracy['democracy_'+proposal_target])) {
+		log.warn(`Proposal/Create: Failure: ${membership_id} Invalid changes`)
+		return reply.code(400).send(new Error(changes_invalid))
+	}
+	
 	// save the proposal
 	try {
 		const rows = await db('proposal')

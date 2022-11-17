@@ -69,13 +69,7 @@ const apply_proposal = async function(request, reply, db, log) {
 
 		// targeted contents
 		const contents = democracy['democracy_'+target]
-		if(target === 'name' || target === 'description') {
-			if(Object.keys(changes).toString() !== '_update' || Object.keys(changes['_update']).toString() !== target || typeof(changes['_update'][target]) != "string") {
-				log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal changes are invalid for target`)
-				// close proposal and return applicable error
-				return await close_proposal(reply, log, proposal_id, 400, false, api_proposal_client.errors.changes_invalid)
-			}
-		} else if(!json_changes.check_changes(changes, contents)) {
+		if(!json_changes.check_changes(changes, contents)) {
 			log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal changes do not map to democracy contents`)
 			// close proposal and return applicable error
 			return await close_proposal(reply, log, proposal_id, 400, false, api_proposal_client.errors.changes_invalid)
@@ -119,11 +113,7 @@ const apply_proposal = async function(request, reply, db, log) {
 
 				// apply changes
 				let a = {}
-				if(target === 'name' || target === 'description') {
-					a[target] = changes['_update'][target]
-				} else {
-					a[target] = json_changes.apply_changes(changes, contents)
-				}
+				a[target] = json_changes.apply_changes(changes, contents)
 
 				// save changes
 				let rows = await db('democracy').update(a).where({ id: democracy_id }).returning('*')

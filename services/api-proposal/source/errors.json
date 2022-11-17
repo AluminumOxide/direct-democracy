@@ -2,6 +2,7 @@
 	"internal_error": "Error: Internal error",
 	"proposal_dne": "Proposal does not exist",
 	"democracy_invalid": "Invalid democracy provided",
+	"democracy_dne": "Democracy does not exist",
 	"membership_dne": "Membership does not exist",
 	"membership_invalid": "Invalid membership provided",
 	"ballots_cast": "Proposal has cast ballots",
