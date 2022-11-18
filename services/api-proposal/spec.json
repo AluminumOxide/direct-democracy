@@ -491,26 +491,10 @@
 			"type": "object",
 			"properties": {
 				"_add": {
-					"type": "object",
-					"patternProperties": {
-						".*": {
-							"oneOf": [
-								{ "type": "string"},
-								{ "type": "integer"}
-							]
-						}
-					}
+					"type": "object"
 				},
 				"_update": {
-					"type": "object",
-					"patternProperties": {
-						".*": {
-							"oneOf": [
-								{ "type": "string"},
-								{ "type": "integer"}
-							]
-						}
-					}
+					"type": "object"
 				},
 				"_delete": {
 					"type": "array",
