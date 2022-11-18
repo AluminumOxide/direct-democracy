@@ -8,5 +8,6 @@ module.exports = {
 	ballot_create: require('./ballot/create'),
 	ballot_read: require('./ballot/read'),
 	ballot_update: require('./ballot/update'),
-	ballot_delete: require('./ballot/delete')
+	ballot_delete: require('./ballot/delete'),
+	ballot_verified: require('./ballot/verified')
 }

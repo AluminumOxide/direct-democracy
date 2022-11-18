@@ -1,4 +1,4 @@
-{
+{ 
        "servers": {
 		"production": "http://localhost:3002/v1"
 	},	       
@@ -393,6 +393,10 @@
 			"description": "Successfully updated a ballot",
 			"$ref": "schemas-ballot_read"
 		},
+		"ballot_verified": {
+			"$id": "responses-ballot_verified",
+			"description": "Successfully updated ballot verification statuses"
+		},
 		"ballot_delete": {
 			"$id": "responses-ballot_delete",
 			"description": "Successfully deleted a ballot"
@@ -716,6 +720,26 @@
 		}
 	},
 	"routes": {
+		"/verified": {
+			"POST": {
+                                "description": "Update ballot verified statuses",
+                                "operationId": "ballot_verified",
+                                "response": {
+                                        "200": {
+                                                "$ref": "responses-ballot_verified"
+                                        },
+                                        "400": {
+                                                "$ref": "responses-400"
+                                        },
+                                        "401": {
+                                                "$ref": "responses-401"
+                                        },
+                                        "500": {
+                                                "$ref": "responses-500"
+                                        }
+                                }
+                        }
+		},
 		"/proposal": {
 			"GET": {
 				"description": "List proposals",
