@@ -1,6 +1,6 @@
 ```
 { 
-	parent_id: <root_democracy_id>
+	parent_id: <student_democracy_id>
 	name: "Super Cool Club"
 	description: "Only the coolest people"
 	population: 45

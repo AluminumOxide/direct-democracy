@@ -20,9 +20,28 @@ This project is in active development, pre-release.
 
 ## License
 
-This project is licensed under GPL3, with the exception of Nazis. Nazis are not welcome here.
+This project is licensed under GPL3, with the exception of nazis. Nazis are not welcome here.
 
 ## Site Plans
+
+### Concepts
+#### Democracy
+Democracies are at the core of the website. They are user-defined, except for the root, or site-wide democracy. The root democracy manages the site-wide code of conduct, voting algorithms, procedures and the creation/deletion of all other democracies.
+
+##### Content
+Each democracy maintains content. The content is determined by the context of the democracy. For example, the content of a democracy made for a government, might be it's legislation, by-laws or budgets. The content of a democracy made for some housemates, might be bill or chore schedules. The content of a democracy made for a research group, might be a data structure containing arguments about or results of experiments. All that's required, is that the content is in JSON format.
+
+##### Inheritance
+Democracies can have child democracies. These can be useful for subcommittees or other smaller groups within a democracy. All democracies have a parent, except for the root (site-wide) democracy. The root democracy is the default parent for a democracy, unless it is made under another.
+
+##### Conduct
+
+##### Meta Rules
+##### Algorithms
+##### Procedures
+#### Membership
+#### Proposals
+#### Polls
 
 ### Processes
 #### Modify Democracy
@@ -41,9 +60,17 @@ This project is licensed under GPL3, with the exception of Nazis. Nazis are not 
 #### Handling Member Conduct Violations
 1. Member reports conduct violation(s) by other members. They are required to select which rule(s) have been violated.
 2. Member timeout proposal is automatically generated. If a conduct violation is from an inherited rule, the timeout proposal will be created in the applicable parent democracy. The duration for the proposed timeout will be set based on number of previous infractions, and the configuration in `content.procedures` of the site-wide democracy.
-3. The system periodically checks if conditions have been met in `meta.timeouts.add` have been met.
+3. The system periodically checks if conditions have been met in `meta.timeouts.add`.
 4. The system puts the member in timeout, if those conditions have been met.
 5. The member in timeout can still cast votes, but they cannot make proposals, polls or, if the timeout is site-wide, democracies. Their comments will also be hidden. These restrictions will be applied in the timeout democracy, and all of its descendent democracies.
+
+TODO: removing timeouts via vote and timeout period expiration
+
+#### Creating a Democracy
+1.  
+
+#### Deleting a Democracy
+1. 
 
 ## Technical Plans
 ### Domain Model
@@ -72,7 +99,7 @@ Feed --> Poll
 ```
 #### Democracy Structure
 
-| Field |  Description | 
+| Field |  Description |
 |--|--|
 | parent_id | ID of parent democracy. |
 | name | Name of the democracy. |
@@ -88,6 +115,13 @@ Feed --> Poll
 | meta_conduct | Conditions to add, update and remove rules of conduct. |
 | meta_content | Conditions to add, update and remove the democracy's content. |
 | meta_meta | Conditions to add, update or remove meta conditions. |
+
+##### Examples:
+- [Student Club](./docs/example-club.md)
+- [Student Government](./docs/example-student.md)
+- [Representative Government](./docs/example-representative.md)
+- [Consolidated Knowledge](./docs/example-knowledge.md)
+- [Site-Wide Democracy](./docs/example-root.md)
 
 ### Architecture
 
