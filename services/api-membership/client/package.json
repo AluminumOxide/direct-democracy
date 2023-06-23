@@ -1,10 +1,10 @@
 {
-	"name": "@aluminumoxide/direct-democracy-membership-api-client",
-	"version": "1.0.12",
+	"name": "@AluminumOxide/direct-democracy-membership-api-client",
+	"version": "1.0.14",
 	"description": "Client library for membership API",
 	"main": "index.js",
 	"dependencies": {
-		"@aluminumoxide/direct-democracy-lib-client": "^1.0.6"
+		"@AluminumOxide/direct-democracy-lib-client": "^1.0.9"
 	},
 	"files": [
 		"spec.json",

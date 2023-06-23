@@ -1,4 +1,4 @@
-const dem_client = new (require('@aluminumoxide/direct-democracy-democracy-api-client'))()
+const dem_client = new (require('@AluminumOxide/direct-democracy-democracy-api-client'))()
 
 const democracy_list = async function(request, reply, db, log) {
 	const { limit, last, sort, order, filter } = request

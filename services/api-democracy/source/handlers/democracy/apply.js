@@ -1,6 +1,6 @@
-const json_changes = require('@aluminumoxide/direct-democracy-lib-json-changes')
-const api_proposal_client = new (require('@aluminumoxide/direct-democracy-proposal-api-client'))()
-const api_democracy_client = new (require('@aluminumoxide/direct-democracy-democracy-api-client'))()
+const json_changes = require('@AluminumOxide/direct-democracy-lib-json-changes')
+const api_proposal_client = new (require('@AluminumOxide/direct-democracy-proposal-api-client'))()
+const api_democracy_client = new (require('@AluminumOxide/direct-democracy-democracy-api-client'))()
 const { democracy_dne, democracy_pop, algo_missing, internal_error } = require('../../errors.json')
 
 // Response Codes:

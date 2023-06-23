@@ -9,7 +9,7 @@ const start = async function({ address, port, spec, version, handlers, db_user, 
 		const fastify = require('fastify')({ logger: true, querystringParser: queryParser })
 
 		// connect to db
-		await fastify.register(require('fastify-knexjs'), {
+		await fastify.register(require('./fastify-knexjs'), {
 			client: 'pg',
 			connection: `postgres://${db_user}:${db_password}@${db_name}:${db_port}/${db_address}`
 		})

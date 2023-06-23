@@ -1,4 +1,4 @@
-const prop_client = new (require('@aluminumoxide/direct-democracy-proposal-api-client'))()
+const prop_client = new (require('@AluminumOxide/direct-democracy-proposal-api-client'))()
 
 const proposal_read = async function(request, reply, db, log) {
 	const { democracy_id, proposal_id } = request

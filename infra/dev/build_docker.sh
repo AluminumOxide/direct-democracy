@@ -1,5 +1,11 @@
 #!/bin/bash
 
+cp ~/.npmrc .
+cp .npmrc ../../services/api-democracy/
+cp .npmrc ../../services/api-membership/
+cp .npmrc ../../services/api-proposal/
+cp .npmrc ../../services/api/
+
 cd ../../services/api-democracy/source && cp ../spec.json . && npm install
 
 cd ../../api-proposal/source && cp ../spec.json . && npm install
