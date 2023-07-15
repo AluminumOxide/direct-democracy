@@ -4,13 +4,12 @@
   "description": "Direct Democracy API server",
   "main": "index.js",
   "dependencies": {
-    "@AluminumOxide/direct-democracy-lib-server": "^1.0.3",
     "@AluminumOxide/direct-democracy-democracy-api-client": "^1.0.36",
+    "@AluminumOxide/direct-democracy-lib-server": "^1.0.3",
     "@AluminumOxide/direct-democracy-membership-api-client": "^1.0.14",
     "@AluminumOxide/direct-democracy-proposal-api-client": "^1.0.20",
-    "nodemon": "^2.0.19"
+    "nodemon": "^3.0.1"
   },
-  "devDependencies": {},
   "scripts": {
     "server": "nodemon index.js"
   },
