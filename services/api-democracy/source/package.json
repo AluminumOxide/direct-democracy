@@ -9,6 +9,7 @@
 		"@AluminumOxide/direct-democracy-lib-server": "^1.0.3",
 		"@AluminumOxide/direct-democracy-membership-api-client": "^1.0.14",
 		"@AluminumOxide/direct-democracy-proposal-api-client": "^1.0.20",
+		"axios": "^1.4.0",
 		"nodemon": "^2.0.19"
 	},
 	"devDependencies": {},

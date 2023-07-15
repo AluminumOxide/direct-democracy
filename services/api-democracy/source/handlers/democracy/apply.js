@@ -2,9 +2,10 @@ const json_changes = require('@AluminumOxide/direct-democracy-lib-json-changes')
 const api_proposal_client = new (require('@AluminumOxide/direct-democracy-proposal-api-client'))()
 const api_democracy_client = new (require('@AluminumOxide/direct-democracy-democracy-api-client'))()
 const { democracy_dne, democracy_pop, algo_missing, internal_error } = require('../../errors.json')
-
+   
 // Response Codes:
 // 	200 - Passed & successfully applied
+//	204 - Closers passed, proposal closed
 // 	304 - Not passing yet, try again later
 // 	400 - Problem with proposal, it's been closed
 // 	500 - System error, try again later
@@ -24,6 +25,12 @@ const apply_proposal = async function(request, reply, db, log) {
 			}
 			log.error(`Proposal/Apply: Failure: ${proposal_id} Error: Internal error fetching proposal: ${e.message}`)
 			return reply.code(500).send(new Error(internal_error))
+		}
+
+		// verify proposal is votable
+		if(!proposal.proposal_votable) {
+				log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal is not votable`)
+				return reply.code(400).send(new Error(api_proposal_client.errors.voting_closed))
 		}
 
 		// grab the democracy
@@ -98,6 +105,14 @@ const apply_proposal = async function(request, reply, db, log) {
 		const votes_yes = proposal.proposal_votes.verified.yes
 		const votes_no = proposal.proposal_votes.verified.no
 
+		// proposal creation date
+		if(!proposal.date_created || !(new Date(proposal.date_created))) {
+			// should never happen
+			log.error(`Proposal/Apply: Failure: ${proposal_id} Error: Invalid proposal creation date`)
+			return reply.code(500).send(new Error(internal_error))
+		}
+		const proposal_days = Math.ceil(((new Date()).getTime() - (new Date(proposal.date_created)).getTime()) / 86400000)
+
 		// democracy population
 		const population = democracy.democracy_population_verified
 		if(population === 0) {
@@ -107,27 +122,36 @@ const apply_proposal = async function(request, reply, db, log) {
 			return await close_proposal(reply, log, proposal_id, 400, false, democracy_pop)
 		}
 
-		// check all applicable democracy rules pass
+
 		try {
-			if(check_rules(get_rules(changes, rules, algos), votes_yes, votes_no, population)) {
-
-				// apply changes
-				let a = {}
-				a[target] = json_changes.apply_changes(changes, contents)
-
-				// save changes
-				let rows = await db('democracy').update(a).where({ id: democracy_id }).returning('*')
-				if(!rows || rows.length < 1) {
-					log.error(`Proposal/Apply: Failure: ${proposal_id},${democracy_id} Error: Unable to update democracy`)
-					return reply.code(500).send(new Error(internal_error))
-				}
-
-				// close proposal and return successfully applied
-				log.info(`Proposal/Apply: Success: ${proposal_id} passed and applied!`)
-				return await close_proposal(reply, log, proposal_id, 200, true, false)
+			// check if any closers pass
+			if(check_rules(get_rules(changes, rules, algos, true), true, votes_yes, votes_no, population, proposal_days)) {
+				
+				// close proposal and return that closers passed
+				log.info(`Proposal/Apply: Failure: ${proposal_id} Closing conditions passed`)
+				return await close_proposal(reply, log, proposal_id, 204, false, false)
 			}
 
-			// return successfully ran but did not pass
+			// check all applicable democracy rules pass
+			if(check_rules(get_rules(changes, rules, algos, false), false, votes_yes, votes_no, population, proposal_days)) {
+
+					// apply changes
+					let a = {}
+					a[target] = json_changes.apply_changes(changes, contents)
+
+					// save changes
+					let rows = await db('democracy').update(a).where({ id: democracy_id }).returning('*')
+					if(!rows || rows.length < 1) {
+						log.error(`Proposal/Apply: Failure: ${proposal_id},${democracy_id} Error: Unable to update democracy`)
+						return reply.code(500).send(new Error(internal_error))
+					}
+
+					// close proposal and return successfully applied
+					log.info(`Proposal/Apply: Success: ${proposal_id} passed and applied!`)
+					return await close_proposal(reply, log, proposal_id, 200, true, false)
+				}
+
+			// return successfully ran but did not pass or close
 			log.info(`Proposal/Apply: Failure: ${proposal_id} has not passed yet`)
 			return reply.code(304).send()
 
@@ -180,14 +204,25 @@ const close_proposal = async function(reply, log, proposal_id, code, passed, msg
  * 		add: { approval_percent_minimum: 50 },
  * 		update: { approval_percent_minimum: 51 },
  * 		delete: { approval_percent_minimum: 52 },
+ * 		close: { lifetime_maximum_days: 14 },
  * 		a: {
  * 			add: { approval_percent_minimum: 53 },
  * 			update: { approval_percent_minimum: 54 },
- * 			delete: { approval_percent_minimum: 55 }
+ * 			delete: { approval_percent_minimum: 55 },
+ * 			close: { lifetime_maximum_days: 3 }
  * 		} 
  * 	}
- * 	algos: { approval_percent_minimum: 'approved_votes > value' }
- * Output: [
+ * 	algos: { 
+ * 		approval_percent_minimum: 'approved_votes > value' 
+ * 		lifetime_maximum_days: 'proposal_days <= value'
+ * 	}
+ * 	close: boolean
+ * Output: 
+ * 	if close is true: [
+ * 		{ 'proposal_days <= value': 14 },
+ * 		{ 'proposal_days <= value': 3 }
+ * 	]
+ * 	if close is false: [
  * 		{ 'approved_votes > value': 50 },
  * 		{ 'approved_votes > value': 51 },
  * 		{ 'approved_votes > value': 52 },
@@ -198,24 +233,29 @@ const close_proposal = async function(reply, log, proposal_id, code, passed, msg
  * Error:
  *	algo_missing: algo in rules missing from algos
  */
-const get_rules = function(changes, rules, algos) {
-	let to_pass = []
-	const lookup = { 'add': '_add', 'update': '_update', 'delete': '_delete' }
+const get_rules = function(changes, rules, algos, close) {
+	let to_check = []
+	let lookup
+	if(close) {
+		lookup = { 'close': '_close' }
+	} else {
+		lookup = { 'add': '_add', 'update': '_update', 'delete': '_delete' }
+	}
 	for(const i in rules) {
-		if(i in lookup && lookup[i] in changes) {
+		if(i in lookup && (lookup[i] in changes || i === 'close')) {
 			for(const j in rules[i]) {
 				if(!(j in algos)) {
 					throw new Error(algo_missing)
 				}
 				a = {}
                         	a[ algos[j] ] = rules[i][j]
-                        	to_pass.push(a)
-			}	
+				to_check.push(a)
+			}
 		} else if(i in changes) {
-	       		to_pass = to_pass.concat(get_rules(changes[i], rules[i], algos))
+	       		to_check = to_check.concat(get_rules(changes[i], rules[i], algos, close))
 		}	
 	}
-	return to_pass 
+	return to_check 
 }
 
 /*
@@ -225,21 +265,23 @@ const get_rules = function(changes, rules, algos) {
  * 	approved_votes: number
  * 	disapproved_votes: number
  * 	democracy_population: number
+ * 	proposal_days: number
  * Output: boolean
  */
-const check_rules = function(rules, approved_votes, disapproved_votes, democracy_population) {
+const check_rules = function(rules, close, approved_votes, disapproved_votes, democracy_population, proposal_days) {
 	for(const i of rules) {
        		for(const src in i) {
-       			if(!(eval_algo(src, parseInt(i[src]), parseInt(approved_votes), parseInt(disapproved_votes), parseInt(democracy_population)))) {
-       				return false
+       			if(!(eval_algo(src, parseInt(i[src]), parseInt(approved_votes), parseInt(disapproved_votes), parseInt(democracy_population), proposal_days))) {
+				return close ? true : false
        			}
        		}
 	}
-	return true
+	return close ? false : true
 }
 
+
 // yes... i like to live dangerously
-const eval_algo = function(src, value, approved_votes, disapproved_votes, democracy_population) {
+const eval_algo = function(src, value, approved_votes, disapproved_votes, democracy_population, proposal_days) {
 	return eval(src)
 }
 

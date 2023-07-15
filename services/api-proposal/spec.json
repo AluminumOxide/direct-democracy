@@ -1,7 +1,8 @@
 { 
        "servers": {
-		"production": "http://localhost:3002/v1"
-	},	       
+	       "local": "http://0.0.0.0:3002/v1",
+	       "dev": "http://api-proposal:3002/v1"
+	},   
 	"headers": {
 	},
 	"params": {
@@ -322,6 +323,10 @@
 			"$id": "bodies-proposal_create",
 			"$ref": "schemas-proposal_create" 
 		},
+		"proposal_close": {
+			"$id": "bodies-proposal_close",
+			"$ref": "schemas-proposal_close" 
+		},
 		"ballot_create": { 
 			"$id": "bodies-ballot_create",
 			"$ref": "schemas-ballot_create"
@@ -595,6 +600,20 @@
 			},
 			"additionalProperties": false
 		},
+		"proposal_close": {
+			"$id": "schemas-proposal_close",
+			"description": "Proposal - Close",
+			"type": "object",
+			"required": [
+				"passed"
+			],
+			"properties": {
+				"passed": {
+					"type": "boolean"
+				}
+			},
+			"additionalProperties": false
+		},
 		"ballot_id": {
 			"$id": "schemas-ballot_id",
 			"description": "Ballot ID",
@@ -799,6 +818,9 @@
 				"param": { 
 					"proposal_id": { "$ref": "params-proposal_id" }
 				},
+                                "body": {
+                                        "$ref": "bodies-proposal_close"
+                                },
 				"response": {
 					"200": {
 						"$ref": "responses-proposal_close"

@@ -153,7 +153,8 @@
 			"properties": {
 				"add": { "$ref": "schemas-democracy_meta_cond" },
 				"update": { "$ref": "schemas-democracy_meta_cond" },
-				"delete": { "$ref": "schemas-democracy_meta_cond" }
+				"delete": { "$ref": "schemas-democracy_meta_cond" },
+				"close": { "$ref": "schemas-democracy_meta_cond" }
 			},
 			"additionalProperties": false
 		},
@@ -174,10 +175,10 @@
 				"disapproval_number_maximum": {
 					"type": "integer"
 				},
-				"proposal_lifetime_minimum": {
+				"lifetime_minimum_days": {
 					"type": "integer"
 				},
-				"proposal_lifetime_maximum": {
+				"lifetime_maximum_days": {
 					"type": "integer"
 				}
 			}
@@ -449,6 +450,18 @@
 		}
 	},
 	"responses": {
+		"200": {
+			"$id": "responses-200",
+			"description": "Success"
+		},
+		"204": {
+			"$id": "responses-204",
+			"description": "No Content"
+		},
+		"304": {
+			"$id": "responses-304",
+			"description": "Not Modified"
+		},
 		"400": {
 			"$id": "responses-400",
 			"description": "Bad Request"
@@ -582,6 +595,12 @@
 				"responses": {
 					"200": {
 						"$ref": "responses-200"
+					},
+					"204": {
+						"$ref": "responses-204"
+					},
+					"304": {
+						"$ref": "responses-304"
 					},
 					"400": {
 						"$ref": "responses-400"
