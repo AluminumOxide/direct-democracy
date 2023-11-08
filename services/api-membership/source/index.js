@@ -1,5 +1,6 @@
 const { start } = require('@AluminumOxide/direct-democracy-lib-server')
 start({
+	env: process.env.ENV,
 	address: process.env.API_MEMBERSHIP_URL,
 	port: process.env.API_MEMBERSHIP_PORT,
 	spec: require('./spec.json'),

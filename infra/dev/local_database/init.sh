@@ -17,9 +17,22 @@ for s in ${SERVICES[@]}; do
 	        GRANT ALL PRIVILEGES ON DATABASE $db_name TO $db_user;
 		ALTER USER $db_user WITH SUPERUSER;
 	EOSQL
-	for d in /docker-entrypoint-initdb.d/$s/; do
+	TABLES=`ls /docker-entrypoint-initdb.d/$s/*.json | xargs -n 1 basename -s .json`
+	echo $TABLES
+	for t in $TABLES; do
+		psql -v ON_ERROR_STOP=1 --username="$db_user" --dbname="$db_name" <<-EOSQL
+			CREATE TABLE temp$t (data jsonb);
+			\COPY temp$t (data) FROM '/docker-entrypoint-initdb.d/$s/$t.json';
+		EOSQL
+	done
+	for d in /docker-entrypoint-initdb.d/$s/*.sql; do
 		for f in $d*; do
 			psql -v ON_ERROR_STOP=1 --username="$db_user" --dbname="$db_name" -f $f;
 		done
+	done
+	for t in $TABLES; do
+		psql -v ON_ERROR_STOP=1 --username="$db_user" --dbname="$db_name" <<-EOSQL
+			DROP TABLE temp$t;
+		EOSQL
 	done
 done	

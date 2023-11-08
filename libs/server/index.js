@@ -1,8 +1,9 @@
 const { queryParser } = require('./request')
 const { pageQuery } = require('./db')
 const { add_defn, add_routes } = require('./spec')
+const { spawn } = require('child_process')
 
-const start = async function({ address, port, spec, version, handlers, db_user, db_password, db_name, db_port, db_address }) {
+const start = async function({ env, address, port, spec, version, handlers, db_user, db_password, db_name, db_port, db_address }) {
 
 	try {
 		// set up fastify
@@ -42,6 +43,20 @@ const start = async function({ address, port, spec, version, handlers, db_user, 
 
 		// startup server
 		await fastify.listen(port, address)
+
+		// run tests if applicable
+		if(env === "dev") {
+			const s = spawn("jest")
+			s.stdout.on("data", data => {
+				console.log(`${data}`)
+			})
+			s.stderr.on("data", data => {
+				console.log(`${data}`)
+			})
+			s.on('error', (error) => {
+				console.log(`error running jest: ${error}`)
+			})
+		}
 
 	// handle errors
 	} catch (err) {
