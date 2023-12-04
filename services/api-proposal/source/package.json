@@ -4,11 +4,11 @@
 	"description": "Proposal API server",
 	"main": "index.js",
 	"dependencies": {
-		"@AluminumOxide/direct-democracy-democracy-api-client": "^1.0.36",
+		"@AluminumOxide/direct-democracy-democracy-api-client": "^1.0.37",
 		"@AluminumOxide/direct-democracy-lib-json-changes": "^1.0.4",
 		"@AluminumOxide/direct-democracy-lib-server": "^1.0.7",
-		"@AluminumOxide/direct-democracy-membership-api-client": "^1.0.14",
-		"@AluminumOxide/direct-democracy-proposal-api-client": "^1.0.20"
+		"@AluminumOxide/direct-democracy-membership-api-client": "^1.0.15",
+		"@AluminumOxide/direct-democracy-proposal-api-client": "^1.0.21"
 	},
 	"scripts": {
 		"start": "node index.js",

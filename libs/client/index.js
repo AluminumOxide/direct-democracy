@@ -140,7 +140,7 @@ class ApiClient {
 							method: op.toLowerCase(),
 							url: uri,
 							headers: { 'content-type': 'application/json' },
-							data: request.body
+							data: request.body ? request.body : {}
 						})
 						if(response.status >= 400) {
 							throw new Error(response.data.message)

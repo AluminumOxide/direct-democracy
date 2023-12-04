@@ -1,9 +1,9 @@
-FROM node:latest
+FROM node:21
 
 WORKDIR /app
 
-COPY [".npmrc", "./.npmrc"]
+COPY ["./source/entry.sh", "./entry.sh"]
 
 EXPOSE ${API_PORT}
 
-CMD ["npm", "run", "server"]
+CMD ["./entry.sh"]

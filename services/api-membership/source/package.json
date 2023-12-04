@@ -4,9 +4,9 @@
 	"description": "Membership API server",
 	"main": "index.js",
 	"dependencies": {
-		"@AluminumOxide/direct-democracy-democracy-api-client": "^1.0.36",
+		"@AluminumOxide/direct-democracy-democracy-api-client": "^1.0.37",
 		"@AluminumOxide/direct-democracy-lib-server": "^1.0.7",
-		"@AluminumOxide/direct-democracy-membership-api-client": "^1.0.14"
+		"@AluminumOxide/direct-democracy-membership-api-client": "^1.0.15"
 	},
 	"scripts": {
 		"start": "node index.js",
