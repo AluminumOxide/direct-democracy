@@ -46,16 +46,18 @@ const start = async function({ env, address, port, spec, version, handlers, db_u
 
 		// run tests if applicable
 		if(env === "dev") {
-			const s = spawn("jest")
-			s.stdout.on("data", data => {
-				console.log(`${data}`)
-			})
-			s.stderr.on("data", data => {
-				console.log(`${data}`)
-			})
-			s.on('error', (error) => {
-				console.log(`error running jest: ${error}`)
-			})
+			setTimeout(function() {
+				const s = spawn("jest")
+				s.stdout.on("data", data => {
+					console.log(`${data}`)
+				})
+				s.stderr.on("data", data => {
+					console.log(`${data}`)
+				})
+				s.on('error', (error) => {
+					console.log(`error running jest: ${error}`)
+				})
+			}, 30000)
 		}
 
 	// handle errors

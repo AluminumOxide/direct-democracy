@@ -1,6 +1,6 @@
 const api_membership_client = new (require('@AluminumOxide/direct-democracy-membership-api-client'))()
 
-const test_data = require('./test.json')
+const test_data = require('./.testdata.json')
 let memid
 
 describe('Membership', () => {

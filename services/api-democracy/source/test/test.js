@@ -1,6 +1,6 @@
 const api_democracy_client = new (require('@AluminumOxide/direct-democracy-democracy-api-client'))()
 
-const test_data = require('./test.json')
+const test_data = require('./.testdata.json')
 
 describe('Democracy', () => {
 	

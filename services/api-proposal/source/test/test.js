@@ -1,6 +1,6 @@
 const api_proposal_client = new (require('@AluminumOxide/direct-democracy-proposal-api-client'))()
 
-const test_data = require('./test.json')
+const test_data = require('./.testdata.json')
 let demid = test_data['democracy']['root_child']['id']
 let memid = test_data['membership']['verified_child_1']['id']
 let propid, bltid
