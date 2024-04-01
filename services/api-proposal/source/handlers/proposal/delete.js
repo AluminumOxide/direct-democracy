@@ -6,7 +6,7 @@ const proposal_delete = async function(request, reply, db, log) {
 	try {
 		// check proposal_id
 		const prop = await db('proposal').select('membership_id').where({ id: proposal_id })
-		if(!prop || prop.length < 0) {
+		if(!prop || prop.length < 1) {
 			log.warn(`Proposal/Delete: Failure: ${proposal_id} Error: Proposal does not exist`)
 			return reply.code(400).send(new Error(proposal_dne))	
 		}

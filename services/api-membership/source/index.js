@@ -1,4 +1,5 @@
 const { start } = require('@AluminumOxide/direct-democracy-lib-server')
+
 start({
 	env: process.env.ENV,
 	address: process.env.API_MEMBERSHIP_URL,
