@@ -1,4 +1,4 @@
-const mem_client = new (require('@AluminumOxide/direct-democracy-membership-api-client'))()
+const mem_client = require('@AluminumOxide/direct-democracy-membership-api-client')
 const { internal_error } = require('../../errors.json')
 
 const proposal_list = async function(request, reply, db, log) {

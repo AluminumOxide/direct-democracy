@@ -1,4 +1,4 @@
-const api_proposal_client = new (require('@AluminumOxide/direct-democracy-proposal-api-client'))()
+const api_proposal_client = require('@AluminumOxide/direct-democracy-proposal-api-client')
 const { proposal_dne, ballot_dne, membership_dne, ballot_closed, voting_closed, internal_error } =  require('../../errors.json')
 
 const ballot_update = async function(request, reply, db, log) {

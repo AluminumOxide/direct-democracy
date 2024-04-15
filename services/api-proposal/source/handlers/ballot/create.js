@@ -1,5 +1,5 @@
-const api_proposal_client = new (require('@AluminumOxide/direct-democracy-proposal-api-client'))()
-const api_membership_client = new (require('@AluminumOxide/direct-democracy-membership-api-client'))()
+const api_proposal_client = require('@AluminumOxide/direct-democracy-proposal-api-client')
+const api_membership_client = require('@AluminumOxide/direct-democracy-membership-api-client')
 const { voting_closed, proposal_dne, membership_dne, internal_error } = require('../../errors.json')
 
 const ballot_create = async function(request, reply, db, log) {

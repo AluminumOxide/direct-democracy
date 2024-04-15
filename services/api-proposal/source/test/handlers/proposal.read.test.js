@@ -1,4 +1,4 @@
-const api_proposal_client = new (require('@AluminumOxide/direct-democracy-proposal-api-client'))()
+const api_proposal_client = require('@AluminumOxide/direct-democracy-proposal-api-client')
 const { reset_test_data } = require('../helper')
 
 describe('Read', () => {

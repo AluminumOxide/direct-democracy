@@ -1,4 +1,4 @@
-const prop_client = new (require('@AluminumOxide/direct-democracy-proposal-api-client'))()
+const prop_client = require('@AluminumOxide/direct-democracy-proposal-api-client')
 const auth = require('../../helpers/auth')
 
 const proposal_delete = async function(request, reply, db, log) {

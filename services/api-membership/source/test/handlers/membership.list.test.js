@@ -1,4 +1,4 @@
-const api_membership_client = new (require('@AluminumOxide/direct-democracy-membership-api-client'))()
+const api_membership_client = require('@AluminumOxide/direct-democracy-membership-api-client')
 const { reset_test_data } = require('../helper')
 
 describe('List', () => {

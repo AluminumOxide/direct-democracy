@@ -1,4 +1,4 @@
-const mem_client = new (require('@AluminumOxide/direct-democracy-membership-api-client'))()
+const mem_client = require('@AluminumOxide/direct-democracy-membership-api-client')
 const auth = require('../../helpers/auth')
 
 const membership_create = async function(request, reply, db, log) {

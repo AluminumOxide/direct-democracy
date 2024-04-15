@@ -2,17 +2,10 @@ const Ajv = require('ajv/dist/2019')
 const axios = require('axios')
 
 function get_client(schema, errors) {
-	class ApiClientProvider {
-		constructor(env) {
-			const api_client = new ApiClient(schema, errors)
-			if(!env) {
-				env = process.env.ENV
-			}
-			api_client.load(env)
-			return api_client
-		}
-	}
-	return ApiClientProvider
+	const api_client = new ApiClient(schema, errors)
+	const env = process.env.ENV
+	api_client.load(env)
+	return api_client
 }
 
 class ApiClient {
