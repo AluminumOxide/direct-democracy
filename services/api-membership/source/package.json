@@ -6,11 +6,23 @@
 	"dependencies": {
 		"@AluminumOxide/direct-democracy-democracy-api-client": "^1.0.37",
 		"@AluminumOxide/direct-democracy-lib-server": "^1.0.7",
-		"@AluminumOxide/direct-democracy-membership-api-client": "^1.0.15"
+		"@AluminumOxide/direct-democracy-membership-api-client": "^1.0.15",
+		"sinon": "^17.0.1"
 	},
 	"scripts": {
 		"start": "node index.js",
-		"dev": "nodemon index.js"
+		"dev": "nodemon --inspect index.js"
+	},
+	"jest": {
+		"verbose": true,
+		"collectCoverage": true,
+		"collectCoverageFrom": [
+			"./handlers/**"
+		],
+		"coveragePathIgnorePatterns": [
+			"index.js"
+		],
+		"coverageDirectory": "./test/coverage"
 	},
 	"publishConfig": {
 		"registry": "https://npm.pkg.github.com"

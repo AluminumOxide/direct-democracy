@@ -8,11 +8,23 @@
 		"@AluminumOxide/direct-democracy-lib-json-changes": "^1.0.4",
 		"@AluminumOxide/direct-democracy-lib-server": "^1.0.7",
 		"@AluminumOxide/direct-democracy-membership-api-client": "^1.0.15",
-		"@AluminumOxide/direct-democracy-proposal-api-client": "^1.0.21"
+		"@AluminumOxide/direct-democracy-proposal-api-client": "^1.0.21",
+		"sinon": "^17.0.1"
 	},
 	"scripts": {
 		"start": "node index.js",
-		"dev": "nodemon index.js"
+		"dev": "nodemon --inspect=0.0.0.0:9229 index.js"
+	},
+	"jest": {
+		"verbose": true,
+		"collectCoverage": true,
+		"collectCoverageFrom": [
+			"./handlers/**"
+		],
+		"coveragePathIgnorePatterns": [
+			"index.js"
+		],
+		"coverageDirectory": "./test/coverage"
 	},
 	"publishConfig": {
 		"registry": "https://npm.pkg.github.com"
