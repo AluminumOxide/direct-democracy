@@ -3,6 +3,7 @@ const { pageQuery } = require('./db')
 const { add_defn, add_routes } = require('./spec')
 const { spawn } = require('child_process')
 const { test_config } = require('./jest')
+const { AutoDoc } = require('./docs')
 
 const start = async function({ env, address, port, spec, version, handlers, db_user, db_password, db_name, db_port, db_address }) {
 
@@ -18,7 +19,7 @@ const start = async function({ env, address, port, spec, version, handlers, db_u
 	  	fastify.knex.pageQuery = pageQuery
 
 		// use custom ajv instance
-		const Ajv = require('ajv/dist/2019')
+		const Ajv = require('ajv')
 		const ajv = new Ajv({
 			coerceTypes: false,
 			removeAdditional: true,
@@ -31,16 +32,22 @@ const start = async function({ env, address, port, spec, version, handlers, db_u
 		})
 		fastify.setValidatorCompiler(({ schema }) => { return ajv.compile(schema) })
 
+		// set up autodocs
+		const autodoc = new AutoDoc()
+
 		// add definitions from spec
-		add_defn('schemas', spec, ajv)
-		add_defn('headers', spec, ajv)
-		add_defn('params', spec, ajv)
-		add_defn('queries', spec, ajv)
-		add_defn('bodies', spec, ajv)
-		add_defn('responses', spec, ajv)
+		add_defn('schemas', spec, ajv, autodoc)
+		add_defn('headers', spec, ajv, autodoc)
+		add_defn('params', spec, ajv, autodoc)
+		add_defn('queries', spec, ajv, autodoc)
+		add_defn('bodies', spec, ajv, autodoc)
+		add_defn('responses', spec, ajv, autodoc)
 
 		// add routes from spec
-		add_routes(spec.routes, version, handlers, fastify)
+		add_routes(spec.routes, version, handlers, fastify, autodoc)
+
+		// write autodocs
+		await autodoc.write_docs('./README.md')
 
 		// startup server
 		await fastify.listen(port, address)

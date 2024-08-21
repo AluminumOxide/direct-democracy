@@ -1,4 +1,10 @@
 # Contributing
 
-## Code Standards
+## Pull Request Guidelines
+TODO
+
+## Development Setup
+TODO
+
+## Project Structure
 TODO

@@ -50,4 +50,5 @@ External API->>Web UI:
 ## Libraries
 * [Server](../libs/server/) - Server configuration and tools
 * [Client](../libs/client) - Generates a client to use server's API
+* [JSON Changes](../libs/json_changes) - Checks and applies changes formatted in JSON
 

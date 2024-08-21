@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"dependencies": {
 		"@AluminumOxide/direct-democracy-democracy-api-client": "^1.0.37",
-		"@AluminumOxide/direct-democracy-lib-server": "^1.0.7",
+		"@AluminumOxide/direct-democracy-lib-server": "^1.0.9",
 		"@AluminumOxide/direct-democracy-membership-api-client": "^1.0.15",
 		"sinon": "^17.0.1"
 	},
