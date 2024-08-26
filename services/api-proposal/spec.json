@@ -727,7 +727,7 @@
 			"POST": {
                                 "description": "Update ballot verified statuses",
                                 "operationId": "ballot_verified",
-                                "response": {
+                                "responses": {
                                         "200": {
                                                 "$ref": "responses-ballot_verified"
                                         },
@@ -753,7 +753,7 @@
 						{ "$ref": "queries-proposal_sort_date" }
 					]
 				},
-				"response": {
+				"responses": {
 					"200": {
 						"$ref": "responses-proposal_list"
 					},
@@ -774,7 +774,7 @@
 				"body": {
 					"$ref": "bodies-proposal_create"
 				},
-				"response": {
+				"responses": {
 					"201": {
 						"$ref": "responses-proposal_create"
 					},
@@ -797,7 +797,7 @@
 				"param": { 
 					"proposal_id": { "$ref": "params-proposal_id" }
 				},
-				"response": {
+				"responses": {
 					"200": {
 						"$ref": "responses-proposal_read"
 					},
@@ -821,7 +821,7 @@
                                 "body": {
                                         "$ref": "bodies-proposal_close"
                                 },
-				"response": {
+				"responses": {
 					"200": {
 						"$ref": "responses-proposal_close"
 					},
@@ -842,7 +842,7 @@
 				"param": { 
 					"proposal_id": { "$ref": "params-proposal_id" }
 				},
-				"response": {
+				"responses": {
 					"204": {
 						"$ref": "responses-proposal_delete"
 					},
@@ -869,7 +869,7 @@
 					"$ref": "queries-ballot_sort"
 
 				},
-				"response": {
+				"responses": {
 					"200": {
 						"$ref": "responses-ballot_list"
 					},
@@ -894,7 +894,7 @@
                                 "body": {
                                         "$ref": "bodies-ballot_create"
                                 },
-                                "response": {
+                                "responses": {
                                         "201": {
                                                 "$ref": "responses-ballot_create"
                                         },
@@ -918,7 +918,7 @@
 					"proposal_id": { "$ref": "params-proposal_id" },
 					"ballot_id": { "$ref": "params-ballot_id" }
 				},
-				"response": {
+				"responses": {
 					"200": {
 						"$ref": "responses-ballot_read"
 					},
@@ -943,7 +943,7 @@
                                 "body": {
                                         "$ref": "bodies-ballot_update"
                                 },
-                                "response": {
+                                "responses": {
                                         "200": {
                                                 "$ref": "responses-ballot_update"
                                         },
@@ -965,7 +965,7 @@
 					"proposal_id": { "$ref": "params-proposal_id" },
 					"ballot_id": { "$ref": "params-ballot_id" }
 				},
-				"response": {
+				"responses": {
 					"204": {
 						"$ref": "responses-ballot_delete"
 					},

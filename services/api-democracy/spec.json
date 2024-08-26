@@ -392,7 +392,13 @@
 							"$ref": "schemas-op"
 						},
 						"val": {
-							"$ref": "schemas-democracy_name"
+							"oneOf":[
+								{"$ref": "schemas-democracy_name"},
+								{
+									"type": "array",
+									"items": {"$ref": "schemas-democracy_name"}
+								}
+							]
 						}
 					}
 				},

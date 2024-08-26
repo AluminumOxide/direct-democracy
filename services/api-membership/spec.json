@@ -365,6 +365,10 @@
 		}
 	},
 	"responses": {
+		"204": {
+			"$id": "responses-204",
+			"description": "Successfully Deleted"
+		},
 		"400": {
 			"$id": "responses-400",
 			"description": "Bad Request"
@@ -478,7 +482,7 @@
 				},
 				"responses": {
 					"204": {
-						"description": "successfully deleted"
+						"$ref": "responses-204"
 					},
 					"400": {
 						"$ref": "responses-400"
