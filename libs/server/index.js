@@ -2,7 +2,7 @@ const { queryParser } = require('./request')
 const { pageQuery } = require('./db')
 const { add_defn, add_routes } = require('./spec')
 const { spawn } = require('child_process')
-const { test_config } = require('./jest')
+const testing = require('./jest')
 const { AutoDoc } = require('./docs')
 
 const start = async function({ env, address, port, spec, version, handlers, db_user, db_password, db_name, db_port, db_address }) {
@@ -73,4 +73,4 @@ const start = async function({ env, address, port, spec, version, handlers, db_u
 	}
 }
 
-module.exports = { start, test_config }
+module.exports = { start, testing }

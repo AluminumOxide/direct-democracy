@@ -1,7 +1,7 @@
 {
-  "version": "1.0.9",
+  "version": "1.0.10",
   "name": "@aluminumoxide/direct-democracy-lib-server",
-  "description": "Basic fastify server from spec with knex postgres",
+  "description": "Basic fastify server from spec with knex postgres and jest setup",
   "homepage": "https://github.com/AluminumOxide/direct-democracy#readme",
   "dependencies": {
     "ajv": "^8.12.0",
