@@ -8,7 +8,7 @@ const {
 	reset_test_data,
 	proposal_create_integration: prop_create_i
 } = require('../helper') 
-const json_changes = require('@AluminumOxide/direct-democracy-lib-json-changes')
+const json_changes = require('@aluminumoxide/direct-democracy-lib-json-changes')
 
 describe('Proposal Create', () => {
 

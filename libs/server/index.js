@@ -50,7 +50,7 @@ const start = async function({ env, address, port, spec, version, handlers, db_u
 		await autodoc.write_docs('./README.md')
 
 		// startup server
-		await fastify.listen(port, address)
+		await fastify.listen({ port, address })
 
 		// run tests if applicable
 		if(env === "dev") {

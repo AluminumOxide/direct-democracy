@@ -1,7 +1,7 @@
-const json_changes = require('@AluminumOxide/direct-democracy-lib-json-changes')
+const json_changes = require('@aluminumoxide/direct-democracy-lib-json-changes')
 const { democracy_dne, democracy_invalid, membership_dne, changes_invalid, internal_error } = require('../../errors.json')
-const api_membership_client = require('@AluminumOxide/direct-democracy-membership-api-client')
-const api_democracy_client = require('@AluminumOxide/direct-democracy-democracy-api-client')
+const api_membership_client = require('@aluminumoxide/direct-democracy-membership-api-client')
+const api_democracy_client = require('@aluminumoxide/direct-democracy-democracy-api-client')
 
 const proposal_create = async function(request, reply, db, log) {
 	const { proposal_name, proposal_description, proposal_target, proposal_changes, democracy_id, membership_id } = request

@@ -20,7 +20,7 @@ module.exports = get_client(require('./spec.json'), require('./errors.json'))
         "description": "Client library for yourapi",
         "main": "index.js",
         "dependencies": {
-                "@AluminumOxide/direct-democracy-lib-client": "^1.0.10"
+                "@aluminumoxide/direct-democracy-lib-client": "^1.0.10"
         },
         "files": [
                 "spec.json",

@@ -20,7 +20,7 @@ Tests are automatically run when a code file is saved. Test results can be viewe
 
 #### index.js
 ```
-const { start } = require('@AluminumOxide/direct-democracy-lib-server')
+const { start } = require('@aluminumoxide/direct-democracy-lib-server')
                        
 start({
 	version: 'v1',
