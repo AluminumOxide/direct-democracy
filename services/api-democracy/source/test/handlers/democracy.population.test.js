@@ -211,7 +211,7 @@ describe('Population', () => {
 console.log(dem1.democracy_population_unverified, dem1.democracy_population_verified)
 			// create democracy memberships
 			try {
-			const mem_api = require('@AluminumOxide/direct-democracy-membership-api-client')
+			const mem_api = require('@aluminumoxide/direct-democracy-membership-api-client')
 			jest.restoreAllMocks()
 			console.log(mem_api.membership_create)
 			const mem1 = await mem_api.membership_create({

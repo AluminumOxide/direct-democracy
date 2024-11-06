@@ -65,7 +65,7 @@ const get_dummy_db = function(mocks) {
 }
 
 const get_dummy_api = function(lib, mocks) {
-	const api_client = require('@AluminumOxide/direct-democracy-'+lib+'-api-client')
+	const api_client = require('@aluminumoxide/direct-democracy-'+lib+'-api-client')
 	Object.keys(api_client).forEach(key => {
 		if(['schema','errors','ajv','env','url'].indexOf(key) === -1) {
 			api_client[key] = sinon.stub()

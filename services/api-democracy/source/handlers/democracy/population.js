@@ -1,4 +1,4 @@
-const api_membership_client = require('@AluminumOxide/direct-democracy-membership-api-client')
+const api_membership_client = require('@aluminumoxide/direct-democracy-membership-api-client')
   
 const democracy_population_update = async function(request, reply, db, log) {
 

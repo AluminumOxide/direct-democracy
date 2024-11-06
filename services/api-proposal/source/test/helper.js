@@ -1,11 +1,11 @@
-const api_proposal_client = require('@AluminumOxide/direct-democracy-proposal-api-client')
+const api_proposal_client = require('@aluminumoxide/direct-democracy-proposal-api-client')
 const {
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
 	get_dummy_api,
 	reset_test_data
-} = require('@AluminumOxide/direct-democracy-lib-server').testing
+} = require('@aluminumoxide/direct-democracy-lib-server').testing
 
 // errors
 const errors = api_proposal_client.errors

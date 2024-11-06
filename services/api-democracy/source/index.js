@@ -1,4 +1,4 @@
-const { start } = require('@AluminumOxide/direct-democracy-lib-server')
+const { start } = require('@aluminumoxide/direct-democracy-lib-server')
                        
 start({
 	env: process.env.ENV,

@@ -1,5 +1,5 @@
 const { democracy_dne, internal_error, membership_exist } = require('../../errors.json')
-const api_democracy_client = require('@AluminumOxide/direct-democracy-democracy-api-client')
+const api_democracy_client = require('@aluminumoxide/direct-democracy-democracy-api-client')
 
 const membership_create = async function(request, reply, db, log) {
 	const { democracy_id, profile_id } = request

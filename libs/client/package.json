@@ -1,11 +1,11 @@
 {
-	"name": "@AluminumOxide/direct-democracy-lib-client",
-	"version": "1.0.10",
+	"name": "@aluminumoxide/direct-democracy-lib-client",
+	"version": "1.0.11",
 	"description": "Basic fastify API client from AJV spec",
 	"main": "index.js",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/AluminumOxide/direct-democracy.git"
+		"url": "git+https://github.com/aluminumoxide/direct-democracy.git"
 	},
 	"publishConfig": {
 		"registry": "https://npm.pkg.github.com"
@@ -13,9 +13,9 @@
 	"author": "Sapphyre Gervais",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/AluminumOxide/direct-democracy/issues"
+		"url": "https://github.com/aluminumoxide/direct-democracy/issues"
 	},
-	"homepage": "https://github.com/AluminumOxide/direct-democracy#readme",
+	"homepage": "https://github.com/aluminumoxide/direct-democracy#readme",
 	"dependencies": {
 		"ajv": "^8.12.0",
 		"axios": "^1.6.2"
