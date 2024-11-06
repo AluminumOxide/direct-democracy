@@ -7,6 +7,7 @@ To get a local instance running in development mode:
 ```
 git clone https://github.com/AluminumOxide/direct-democracy.git
 cd direct-democracy/infra/dev/
+terraform init
 terraform apply
 ```
 [More information on contributing](../CONTRIBUTING.md)
@@ -45,7 +46,7 @@ External API->>Web UI:
 * [Proposal](../services/api-proposal/) - Manages proposals and their votes
 
 ## Infrastructure
-* [Local Development Mode](./infra-local.md) - Simple infrastructure to run locally for development.
+* [Local Development Mode](../infra/dev/) - Simple infrastructure to run locally for development.
 
 ## Libraries
 * [Server](../libs/server/) - Server configuration and tools
