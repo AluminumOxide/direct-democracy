@@ -92,10 +92,10 @@ describe('Democracy Root', () => {
 	})
 
 	describe('Integration Tests', () => {
-		const test_data = reset_test_data()
 
 		// success
 		test('Success', async () => {
+			const test_data = await reset_test_data()
 			const expected = test_data['democracy']['root']
 			const actual = await dem_root_i()
 			expect(actual.democracy_id).toBe(expected.id)

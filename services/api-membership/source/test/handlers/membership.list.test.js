@@ -68,14 +68,14 @@ describe('Membership List', () => {
 	})
 
 	describe('Integration Tests', () => {
-
-		const test_data = reset_test_data()
 	
 		test('List all', async () => {
+			const test_data = await reset_test_data()
 			const mems = await mem_list_i({})
 			expect(mems.length).toBe(30)
 		})
 		test('Sort by membership_id asc', async() => {
+			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
 				sort: 'membership_id',
 				order: 'ASC'
@@ -98,6 +98,7 @@ describe('Membership List', () => {
 	//		expect(mems[0].membership_id).toBe(test_data['membership']['verified_root_1']['id'])	
 	//	})
 		test('Filter by democracy_id equals', async() => {
+			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
 				filter: {
 					democracy_id: {
@@ -109,6 +110,7 @@ describe('Membership List', () => {
 			expect(mems.length).toBe(10)
 		})
 		test('Filter by profile_id in list', async() => {
+			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
 				filter: {
 					profile_id: {
@@ -123,6 +125,7 @@ describe('Membership List', () => {
 			expect(mems.length).toBe(2)
 		})
 		test('Filter by is_verified not equals', async() => {
+			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
 				filter: {
 					is_verified: {
@@ -134,6 +137,7 @@ describe('Membership List', () => {
 			expect(mems.length).toBe(14)
 		})
 		test('Filter by date_created less than', async() => {
+			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
 				filter: {
 					date_created: {
@@ -145,6 +149,7 @@ describe('Membership List', () => {
 			expect(mems.length).toBe(30)
 		})
 		test('Filter by date_updated greater than', async() => {
+			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
 				filter: {
 					date_updated: {
@@ -156,6 +161,7 @@ describe('Membership List', () => {
 			expect(mems.length).toBe(0)
 		})
 		test('Limit & last', async() => {
+			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
 				sort: 'membership_id',
 				order: 'ASC',

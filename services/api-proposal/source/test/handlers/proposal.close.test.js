@@ -214,10 +214,9 @@ describe('Proposal Close', () => {
 
 	describe('Integration Tests', () => {
 
-		const test_data = reset_test_data()
-	
 		// success: close passed proposal
 		test('Success: Passed', async () => {		
+			const test_data = await reset_test_data()
 			let test_prop = test_data['proposal']['gchild_content_close']
 			await expect(prop_read_i(test_prop.id)).resolves.toMatchObject({
 				'proposal_votable': true,
@@ -232,6 +231,7 @@ describe('Proposal Close', () => {
 	
 		// success: close failed proposal
 		test('Success: Failed', async () => {		
+			const test_data = await reset_test_data()
 			let test_prop = test_data['proposal']['root_conduct_fail']
 			await expect(prop_read_i(test_prop.id)).resolves.toMatchObject({
 				'proposal_votable': true,
@@ -246,12 +246,14 @@ describe('Proposal Close', () => {
 	
 		// error: invalid proposal id
 		test('Error: Invalid proposal_id', async () => {
+			const test_data = await reset_test_data()
 			await expect(prop_close_i('01cad47c-3ad2-4b95-aa50-fb1b835fda61', true))
 				.rejects.toThrow(new Error(errors.proposal_dne))
 		})
 	
 		// error: already closed
 		test('Error: Already closed', async () => {
+			const test_data = await reset_test_data()
 			await expect(prop_close_i(test_data['proposal']['child_desc_passed']['id'], true))
 				.rejects.toThrow(new Error(errors.voting_closed))
 		})

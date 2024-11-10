@@ -183,10 +183,9 @@ describe('Membership Delete', () => {
 
 	describe('Integration Tests', () => {
 
-		const test_data = reset_test_data()
-
 		// success: verified
 		test('Success: Verified', async () => {
+			const test_data = await reset_test_data()
 			const mem_id = test_data['membership']['verified_root_1']['id']
 			const pro_id = test_data['membership']['verified_root_1']['profile_id']
 			await expect(mem_read_i(mem_id)).resolves.toBeInstanceOf(Object)
@@ -196,6 +195,7 @@ describe('Membership Delete', () => {
 
 		// success: unverified
 		test('Success: Unverified', async () => {
+			const test_data = await reset_test_data()
 			const mem_id = test_data['membership']['unverified_root_1']['id']
 			const pro_id = test_data['membership']['unverified_root_1']['profile_id']
 			await expect(mem_read_i(mem_id)).resolves.toBeInstanceOf(Object)
@@ -205,12 +205,14 @@ describe('Membership Delete', () => {
 
 		// error: membership id invalid
 		test('Error: Invalid membership id', async () => {
+			const test_data = await reset_test_data()
 			await expect(mem_del_i('68cd7ef4-5fd2-4745-9a7a-e67a6d62ecfc','a60f9594-a763-435e-b8a0-b31e7f21a881'))
 				.rejects.toThrow(new Error(errors.membership_dne))
 		})
 
 		// error: profile id invalid
 		test('Error: Invalid profile id', async () => {
+			const test_data = await reset_test_data()
 			await expect(mem_del_i('58cd7ef4-5fd2-4745-9a7a-e67a6d62ecfc','b60f9594-a763-435e-b8a0-b31e7f21a881'))
 				.rejects.toThrow(new Error(errors.profile_invalid))
 		})

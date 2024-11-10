@@ -147,10 +147,9 @@ describe('Proposal Delete', () => {
 
 	describe('Integration Tests', () => {
 
-		const test_data = reset_test_data()
-	
 		// success
 		test('Success', async () => {
+			const test_data = await reset_test_data()
 			const prop_id = test_data['proposal']['gchild_content_close']['id']
 			await expect(prop_read_i(prop_id)).resolves.toBeInstanceOf(Object)
 			await prop_del_i(prop_id)	
@@ -159,12 +158,14 @@ describe('Proposal Delete', () => {
 	
 		// error: invalid proposal_id
 		test('Error: Invalid proposal id', async () => {
+			const test_data = await reset_test_data()
 			await expect(prop_del_i('301d37ea-6597-4ec1-8491-6175220089f2'))
 				.rejects.toThrow(new Error(errors.proposal_dne))
 		})
 		
 		// error: ballots have been cast
 		test('Error: Ballots have been cast', async () => {
+			const test_data = await reset_test_data()
 			await expect(prop_del_i(test_data['proposal']['root_conduct_fail']['id']))
 				.rejects.toThrow(new Error(errors.ballots_cast))
 		})

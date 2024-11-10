@@ -3,9 +3,9 @@ const { reset_test_data } = require('../helper')
 
 
 describe('List', () => {
-	const test_data = reset_test_data()
 
 	test('List all', async () => {
+		const test_data = await reset_test_data()
 		const props = await api_proposal_client.proposal_list({})
 		expect(props.length).toBe(5)
 	})

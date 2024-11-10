@@ -1,3 +1,4 @@
+const { internal_error } = require('../../errors.json')
 const api_membership_client = require('@AluminumOxide/direct-democracy-membership-api-client')
   
 const democracy_population_update = async function(request, reply, db, log) {
@@ -21,10 +22,13 @@ const democracy_population_update = async function(request, reply, db, log) {
 				}
 			}
 		}
+
+		// continue to fetch updates until we run out
 		let stopped = false
 		while(!stopped) {
 
 			// fetch democracies and populations
+			log.info(`Democracy/Population: Processing: ${time_start} - ${time_end}`)
 			let pops = await api_membership_client.membership_population(args)
 
 			// update democracies
@@ -47,10 +51,15 @@ const democracy_population_update = async function(request, reply, db, log) {
 			}
 		}
 
+		// return succcess
+		log.info(`Democracy/Population: Success`)
 		return reply.code(200).send()
 
 	} catch (e) {
-		return reply.code(500).send(e)
+
+		// handle errors
+		log.error(`Democracy/Population: Failure: ${time_start} - ${time_end} Error: ${e}`)
+		return reply.code(500).send(new Error(internal_error))
 	}
 }
 

@@ -354,11 +354,12 @@ describe('Membership Create', () => {
 
 	describe('Integration Tests', () => {
 
-		const test_data = reset_test_data()
+
 		const profile_id = 'acd16c5f-7abe-4ce9-ac3b-a74804af1f58'
 
 		// success
 		test('Success', async () => {
+			const test_data = await reset_test_data()
 			const mem = await mem_create_i(test_data['democracy']['root_child']['id'], profile_id)
 			expect(mem.democracy_id).toBe(test_data['democracy']['root_child']['id'])
 			expect(mem.profile_id).toBe(profile_id)
@@ -370,12 +371,14 @@ describe('Membership Create', () => {
 
 		// error: invalid democracy_id
 		test('Error: invalid democracy id', async () => {
+			const test_data = await reset_test_data()
 			await expect(mem_create_i('51a9a676-3b1e-47eb-845b-2784ccdd1d50', profile_id)).rejects
 				.toThrow(new Error(errors.democracy_dne))
 		})
 
 		// error: pre-existing membership
 		test('Error: pre-existing membership', async () => {
+			const test_data = await reset_test_data()
 			await expect(mem_create_i(test_data['membership']['verified_root_1']['democracy_id'],
 				test_data['membership']['verified_root_1']['profile_id'])).rejects
 				.toThrow(new Error(errors.membership_exist))

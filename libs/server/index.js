@@ -54,7 +54,7 @@ const start = async function({ env, address, port, spec, version, handlers, db_u
 
 		// run tests if applicable
 		if(env === "dev") {
-				const s = spawn("jest")
+				const s = spawn("jest",["--runInBand"])
 				s.stdout.on("data", data => {
 					console.log(`${data}`)
 				})

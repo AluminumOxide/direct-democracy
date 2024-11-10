@@ -1,4 +1,4 @@
-const Ajv = require('ajv/dist/2019')
+const Ajv = require('ajv')
 const axios = require('axios')
 
 function get_client(schema, errors) {
