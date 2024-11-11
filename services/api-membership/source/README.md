@@ -7,11 +7,30 @@
 
 **Queries**
 
-- [limit](#queries-limit)
-- [last](#queries-last)
-- [order](#queries-order)
-- [sort](#queries-membership_sort)
-- [filter](#queries-membership_filter)
+Type: object
+
+Properties:
+
+- **limit**
+
+	 - [queries-limit](#queries-limit)
+
+- **last**
+
+	 - [queries-last](#queries-last)
+
+- **order**
+
+	 - [queries-order](#queries-order)
+
+- **sort**
+
+	 - [queries-membership_sort](#queries-membership_sort)
+
+- **filter**
+
+	 - [queries-membership_filter](#queries-membership_filter)
+
 
 **Responses**
 
@@ -56,7 +75,14 @@
 
 **Queries**
 
-- [profile_id](#queries-profile_id)
+Type: object
+
+Properties:
+
+- **profile_id**
+
+	 - [queries-profile_id](#queries-profile_id)
+
 
 **Params**
 
@@ -75,11 +101,30 @@
 
 **Queries**
 
-- [limit](#queries-limit)
-- [last](#queries-last)
-- [order](#queries-order)
-- [sort](#queries-population_sort)
-- [filter](#queries-population_filter)
+Type: object
+
+Properties:
+
+- **limit**
+
+	 - [queries-limit](#queries-limit)
+
+- **last**
+
+	 - [queries-last](#queries-last)
+
+- **order**
+
+	 - [queries-order](#queries-order)
+
+- **sort**
+
+	 - [queries-population_sort](#queries-population_sort)
+
+- **filter**
+
+	 - [queries-population_filter](#queries-population_filter)
+
 
 **Responses**
 

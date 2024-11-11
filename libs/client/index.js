@@ -77,11 +77,11 @@ class ApiClient {
 
 					// verify query
 					if('query' in defn) {
-						for(const query in defn.query) {
+						for(const query in defn.query.properties) {
 							if(!!args && query in args) {
 								if(!!args[query]) {
-									if(! this.ajv.validate(defn.query[query], args[query])) {
-										throw new Error(`Invalid query type ${query} expected ${JSON.stringify(defn.query[query])}`)
+									if(! this.ajv.validate(defn.query.properties[query], args[query])) {
+										throw new Error(`Invalid query type ${query} expected ${JSON.stringify(defn.query.properties[query])}`)
 									}
 									if(defn.type === "object") {
 										request.query[query] = JSON.stringify(args[query])
@@ -135,12 +135,17 @@ class ApiClient {
 							headers: { 'content-type': 'application/json' },
 							data: request.body ? request.body : {}
 						})
+
 						if(response.status >= 400) {
 							throw new Error(response.data.message)
 						}
 						return response.data
 					} catch(e) {
-						throw new Error(e.response.data.message)
+						if(!!e.data) {
+							throw new Error(e.data.message)
+						} else {
+							throw new Error(e)
+						}
 					}
 				}
 			}

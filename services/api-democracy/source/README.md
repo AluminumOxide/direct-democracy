@@ -7,11 +7,30 @@
 
 **Queries**
 
-- [limit](#queries-limit)
-- [last](#queries-last)
-- [order](#queries-order)
-- [sort](#queries-democracy_sort)
-- [filter](#queries-democracy_filter)
+Type: object
+
+Properties:
+
+- **limit**
+
+	 - [queries-limit](#queries-limit)
+
+- **last**
+
+	 - [queries-last](#queries-last)
+
+- **order**
+
+	 - [queries-order](#queries-order)
+
+- **sort**
+
+	 - [queries-democracy_sort](#queries-democracy_sort)
+
+- **filter**
+
+	 - [queries-democracy_filter](#queries-democracy_filter)
+
 
 **Responses**
 

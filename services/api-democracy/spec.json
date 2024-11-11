@@ -1,7 +1,7 @@
 {  
 	"servers": {	
 		"local": "http://0.0.0.0:3001/v1",
-		"dev": "http://api-democracy:3001/v1"	
+		"dev": "http://0.0.0.0:3001/v1"	
 	},
 	"schemas": {
 		"op": {
@@ -519,11 +519,14 @@
 				"description": "List democracies",
 				"operationId": "democracy_list",
 				"query": {
-					"limit": { "$ref": "queries-limit"},
-				      	"last": { "$ref": "queries-last"},
-				      	"order": { "$ref": "queries-order"},
-				      	"sort": { "$ref": "queries-democracy_sort"},
-				      	"filter": { "$ref": "queries-democracy_filter"}
+					"type": "object",
+					"properties": {
+						"limit": { "$ref": "queries-limit"},
+				      		"last": { "$ref": "queries-last"},
+				      		"order": { "$ref": "queries-order"},
+				      		"sort": { "$ref": "queries-democracy_sort"},
+				      		"filter": { "$ref": "queries-democracy_filter"}
+					}
 				},
 				"responses": {
 					"200": {

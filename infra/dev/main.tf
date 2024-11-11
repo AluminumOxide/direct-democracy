@@ -26,10 +26,6 @@ resource "time_sleep" "wait_5_seconds" {
 
 provider "docker" {}
 
-resource "docker_network" "db-network" {
-	name = "db-network"
-}
-
 resource "docker_image" "local-database" {
 	depends_on = [ time_sleep.wait_5_seconds ]
 	name = "postgres:latest"
@@ -59,9 +55,8 @@ resource "docker_container" "local-database" {
 		"DB_PROPOSAL_PASSWORD=proposal",
 		"TEST_CONNECTION_STRING=postgres://postgres:postgres@local-database:5432/postgres",
 	]
-	networks_advanced { 
-		name = "db-network"
-	}
+	hostname = "local-database"
+	network_mode = "host"
 	ports {
 		internal = 5432
 		external = 5432
@@ -90,9 +85,7 @@ resource "docker_container" "api-external" {
 		host_path = abspath("../../services/api/source")
 		container_path = "/app"
 	}
-	networks_advanced { 
-		name = "db-network"
-	}
+	network_mode = "host"
 	ports {
 		internal = 3000
 		external = 3000
@@ -113,22 +106,20 @@ resource "docker_container" "api-democracy" {
 		"ENV=dev",
 		"DB_NETWORK=db-network",
 		"DB_PORT=5432",
-		"DB_NAME=local-database",
+		"DB_NAME=0.0.0.0",
 		"API_DEMOCRACY_NAME=api-democracy",
 		"API_DEMOCRACY_URL=0.0.0.0",
 		"API_DEMOCRACY_PORT=3001",
 		"DB_DEMOCRACY_USER=democracy",
 		"DB_DEMOCRACY_DB=democracy",
 		"DB_DEMOCRACY_PASSWORD=democracy",
-		"TEST_CONNECTION_STRING=postgres://postgres:postgres@local-database:5432/postgres",
+		"TEST_CONNECTION_STRING=postgres://postgres:postgres@0.0.0.0:5432/postgres",
 	]
 	volumes {
 		host_path = abspath("../../services/api-democracy/source")
 		container_path = "/app"
 	}
-	networks_advanced { 
-		name = "db-network"
-	}
+	network_mode = "host"
 	ports {
 		internal = 3001
 		external = 3001
@@ -149,22 +140,20 @@ resource "docker_container" "api-proposal" {
 		"ENV=dev",
 		"DB_NETWORK=db-network",
 		"DB_PORT=5432",
-		"DB_NAME=local-database",
+		"DB_NAME=0.0.0.0",
 		"API_PROPOSAL_NAME=api-proposal",
 		"API_PROPOSAL_URL=0.0.0.0",
 		"API_PROPOSAL_PORT=3002",
 		"DB_PROPOSAL_USER=proposal",
 		"DB_PROPOSAL_DB=proposal",
 		"DB_PROPOSAL_PASSWORD=proposal",
-		"TEST_CONNECTION_STRING=postgres://postgres:postgres@local-database:5432/postgres",
+		"TEST_CONNECTION_STRING=postgres://postgres:postgres@0.0.0.0:5432/postgres",
 	]
 	volumes {
 		host_path = abspath("../../services/api-proposal/source")
 		container_path = "/app"
 	}
-	networks_advanced { 
-		name = "db-network"
-	}
+	network_mode = "host"
 	ports {
 		internal = 3002
 		external = 3002
@@ -185,22 +174,20 @@ resource "docker_container" "api-membership" {
 		"ENV=dev",
 		"DB_NETWORK=db-network",
 		"DB_PORT=5432",
-		"DB_NAME=local-database",
+		"DB_NAME=0.0.0.0",
 		"API_MEMBERSHIP_NAME=api-membership",
 		"API_MEMBERSHIP_URL=0.0.0.0",
 		"API_MEMBERSHIP_PORT=3003",
 		"DB_MEMBERSHIP_USER=membership",
 		"DB_MEMBERSHIP_DB=membership",
 		"DB_MEMBERSHIP_PASSWORD=membership",
-		"TEST_CONNECTION_STRING=postgres://postgres:postgres@local-database:5432/postgres",
+		"TEST_CONNECTION_STRING=postgres://postgres:postgres@0.0.0.0:5432/postgres",
 	]
 	volumes {
 		host_path = abspath("../../services/api-membership/source")
 		container_path = "/app"
 	}
-	networks_advanced { 
-		name = "db-network"
-	}
+	network_mode = "host"
 	ports {
 		internal = 3003
 		external = 3003

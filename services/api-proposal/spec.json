@@ -1,7 +1,7 @@
 { 
        "servers": {
 	       "local": "http://0.0.0.0:3002/v1",
-	       "dev": "http://api-proposal:3002/v1"
+	       "dev": "http://0.0.0.0:3002/v1"
 	},   
 	"headers": {
 	},
@@ -748,10 +748,13 @@
 				"description": "List proposals",
 				"operationId": "proposal_list",
 				"query": {
-					"anyOf": [
-						{ "$ref": "queries-proposal_sort_string" },
-						{ "$ref": "queries-proposal_sort_date" }
-					]
+					"type": "object",
+					"properties": {
+						"anyOf": [
+							{ "$ref": "queries-proposal_sort_string" },
+							{ "$ref": "queries-proposal_sort_date" }
+						]
+					}
 				},
 				"responses": {
 					"200": {
@@ -866,8 +869,10 @@
 					"proposal_id": { "$ref": "params-proposal_id" }
 				},
 				"query": {
-					"$ref": "queries-ballot_sort"
-
+					"type": "object",
+					"properties": {
+						"$ref": "queries-ballot_sort"
+					}
 				},
 				"responses": {
 					"200": {

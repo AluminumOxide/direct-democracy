@@ -1,7 +1,7 @@
 { 
 	"servers": { 
 		"local": "http://0.0.0.0:3003/v1",
-		"dev": "http://api-membership:3003/v1"
+		"dev": "http://0.0.0.0:3003/v1"
 	},
 	"headers": {
 	},
@@ -406,11 +406,14 @@
 				"description": "List memberships",
 				"operationId": "membership_list",
 				"query": {
-					"limit":  {"$ref": "queries-limit"},
-				      	"last":   {"$ref": "queries-last"},
-				      	"order":  {"$ref": "queries-order"},
-				      	"sort":   {"$ref": "queries-membership_sort"},
-				      	"filter": {"$ref": "queries-membership_filter"}
+					"type": "object",
+					"properties": {
+						"limit":  {"$ref": "queries-limit"},
+				      		"last":   {"$ref": "queries-last"},
+				      		"order":  {"$ref": "queries-order"},
+				      		"sort":   {"$ref": "queries-membership_sort"},
+				      		"filter": {"$ref": "queries-membership_filter"}
+					}
 				},
 				"responses": {
 					"200": {
@@ -478,7 +481,10 @@
 					"membership_id": { "$ref": "params-membership_id" }
 				},
 				"query": {
-					"profile_id": { "$ref": "queries-profile_id" }
+					"type": "object",
+					"properties": {
+						"profile_id": { "$ref": "queries-profile_id" }
+					}
 				},
 				"responses": {
 					"204": {
@@ -501,11 +507,14 @@
 				"description": "Fetch democracy populations",
 				"operationId": "membership_population",
 				"query": {
-					"limit":  {"$ref": "queries-limit"},
-				      	"last":   {"$ref": "queries-last"},
-				      	"order":  {"$ref": "queries-order"},
-				      	"sort":   {"$ref": "queries-population_sort"},
-					"filter": {"$ref": "queries-population_filter"}
+					"type": "object",
+					"properties": {
+						"limit":  {"$ref": "queries-limit"},
+				      		"last":   {"$ref": "queries-last"},
+				      		"order":  {"$ref": "queries-order"},
+				      		"sort":   {"$ref": "queries-population_sort"},
+						"filter": {"$ref": "queries-population_filter"}
+					}
 				},
 				"responses": {
 					"200": {
