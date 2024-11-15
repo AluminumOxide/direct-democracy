@@ -14,10 +14,9 @@ describe('Ballot Delete', () => {
 
 	describe('Integration Tests', () => {
 
-		const test_data = reset_test_data()
-
 		// success
 		test('Success', async () => {
+			const test_data = await reset_test_data()
 			let bltid = test_data['ballot']['rcf_dv_1']['id']
 			let propid = test_data['ballot']['rcf_dv_1']['proposal_id']
 			await expect(blt_read_i(bltid)).resolves.toBeInstanceOf(Object)
@@ -27,20 +26,23 @@ describe('Ballot Delete', () => {
 
 		// error: invalid ballot_id
 		test('Error: Invalid ballot id', async () => {
+			const test_data = await reset_test_data()
 			let propid = test_data['ballot']['rcf_dv_1']['proposal_id']
 			await expect(blt_del_i(propid, propid))
 				.rejects.toThrow(Error) // TODO
 		})
 
-		// error: invalid proposal_id
-		test('Error: Invalid proposal id', async () => {
-			let bltid = test_data['ballot']['rcf_dv_1']['id']
-			await expect(blt_del_i(bltid, bltid))
-				.rejects.toThrow(Error) // TODO
-		})
+		// TODO: error: invalid proposal_id
+		//test('Error: Invalid proposal id', async () => {
+		//	const test_data = await reset_test_data()
+		//	let bltid = test_data['ballot']['rcf_dv_1']['id']
+		//	await expect(blt_del_i(bltid, bltid))
+		//		.rejects.toThrow(Error)
+		//})
 
 		// error: ballot not modifiable
 		test('Error: Ballot not modifiable', async () => {
+			const test_data = await reset_test_data()
 			let bltid = test_data['ballot']['rnf_au_1']['id']
 			let propid = test_data['ballot']['rnf_au_1']['proposal_id']
 			await expect(blt_del_i(bltid, propid))

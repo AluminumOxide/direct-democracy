@@ -1,4 +1,4 @@
-const Ajv = require('ajv/dist/2019')
+const Ajv = require('ajv')
 const axios = require('axios')
 
 function get_client(schema, errors) {
@@ -141,8 +141,8 @@ class ApiClient {
 						}
 						return response.data
 					} catch(e) {
-						if(!!e.data) {
-							throw new Error(e.data.message)
+						if(!!e.response && !!e.response.data) {
+							throw new Error(e.response.data.message)
 						} else {
 							throw new Error(e)
 						}

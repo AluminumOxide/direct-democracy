@@ -90,8 +90,8 @@ const get_dummy_api = function(lib, mocks) {
 	return api_client
 }
 
-const reset_test_data = function() {
-	beforeAll(async () => {
+const reset_test_data = async function() {
+//	beforeAll(async () => {
 		try {
 			const pg = require('knex')({
 				client: 'pg',
@@ -101,7 +101,7 @@ const reset_test_data = function() {
 		} catch (err) {
 			console.error(err)
 		}
-	})
+//	})
 	return require('../../../test/.testdata.json')
 }
 

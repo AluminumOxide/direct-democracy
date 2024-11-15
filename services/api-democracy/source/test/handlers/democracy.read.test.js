@@ -95,10 +95,10 @@ describe('Democracy Read', () => {
 	})
 
 	describe('Integration Tests', () => {
-		const test_data = reset_test_data()
 
 		// success: read no parent
 		test('Success: No parent', async () => {
+			const test_data = await reset_test_data()
 			const expected = test_data['democracy']['root']
 			const actual = await dem_read_i(expected.id)
 			expect(actual.democracy_id).toBe(expected.id)
@@ -114,6 +114,7 @@ describe('Democracy Read', () => {
 
 		// success: read parent and child
 		test('Success: Parent & children', async () => {
+			const test_data = await reset_test_data()
 			const expected = test_data['democracy']['root_child']
 			const actual = await dem_read_i(expected.id)
 			expect(actual.democracy_id).toBe(expected.id)
@@ -129,6 +130,7 @@ describe('Democracy Read', () => {
 
 		// success: read no children
 		test('Success: No children', async () => {
+			const test_data = await reset_test_data()
 			const expected = test_data['democracy']['not_root_child']
 			const actual = await dem_read_i(expected.id)
 			expect(actual.democracy_id).toBe(expected.id)
@@ -144,18 +146,21 @@ describe('Democracy Read', () => {
 
 		// error: no id
 		test('Error: No id', async () => {
+			const test_data = await reset_test_data()
 			await expect(dem_read_i()).rejects
 				.toThrow(Error) // TODO: real error
 		})
 
 		// error: non-uuid id
 		test('Error: Non-uuid id', async () => {
+			const test_data = await reset_test_data()
 			await expect(dem_read_i('asdfasdf')).rejects
 				.toThrow(Error)
 		})
 
-		// error: invalid id
+		// TODO: error: invalid id
 		test('Error: Invalid id', async () => {
+			const test_data = await reset_test_data()
 			await expect(dem_read_i('fa688244-ebce-40cb-8f39-2a82d1417519')).rejects
 				.toThrow(errors.democracy_dne)
 		})

@@ -12,10 +12,9 @@ describe('Ballot Read', () => {
 	
 	describe('Integration Tests', () => {
 
-		const test_data = reset_test_data()
-
 		// success
 		test('Success', async () => {
+			const test_data = await reset_test_data()
 			let test_blt = test_data['ballot']['rnf_au_1']
 			const blt = await blt_read_i(test_blt.id)
 			expect(blt.proposal_id).toBe(test_blt.proposal_id)
@@ -27,6 +26,7 @@ describe('Ballot Read', () => {
 
 		// error: invalid ballot id
 		test('Error: Invalid ballot id', async () => {
+			const test_data = await reset_test_data()
 			await expect(blt_read_i('3bfe9d51-f065-4774-9d7d-3904d8128098'))
 				.rejects.toThrow(new Error(errors.ballot_dne))
 		})

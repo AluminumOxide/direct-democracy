@@ -95,10 +95,10 @@ describe('Membership Read', () => {
 	})
 
 	describe('Integration Tests', () => {
-		const test_data = reset_test_data()
 
 		// success: unverified
 		test('Success: Unverified', async () => {
+			const test_data = await reset_test_data()
 			const test_mem = test_data['membership']['unverified_root_1']
 			const mem = await mem_read_i(test_mem.id)
 			expect(mem.membership_id).toBe(test_mem.id)
@@ -111,6 +111,7 @@ describe('Membership Read', () => {
 
 		// success: verified
 		test('Success: Verified', async () => {
+			const test_data = await reset_test_data()
 			const test_mem = test_data['membership']['verified_root_1']
 			const mem = await mem_read_i(test_mem.id)
 			expect(mem.membership_id).toBe(test_mem.id)
@@ -126,6 +127,7 @@ describe('Membership Read', () => {
 
 		// error: invalid id
 		test('Error: Invalid membership id', async () => {
+			const test_data = await reset_test_data()
 			await expect(mem_read_i('acd16c5f-7abe-4ce9-ac3b-a74804af1f56')).rejects
 				.toThrow(new Error(errors.membership_dne))
 		})

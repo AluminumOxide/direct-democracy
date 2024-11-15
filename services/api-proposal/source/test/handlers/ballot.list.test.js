@@ -2,10 +2,10 @@ const api_proposal_client = require('@aluminumoxide/direct-democracy-proposal-ap
 const { reset_test_data } = require('../helper') 
 	
 describe('List', () => {
-	const test_data = reset_test_data()
 
 	// list all
 	test('List all', async () => {
+		const test_data = await reset_test_data()
 		const blts = await api_proposal_client.ballot_list({})
 		expect(blts.length).toBe(23)
 	})

@@ -61,6 +61,24 @@ for s in ${SERVICES[@]}; do
 	psql -v ON_ERROR_STOP=1 --username="$db_user" --dbname="$db_name" <<-EOSQL
 		${reset_test_data}
 	EOSQL
+
+	psql -v  ON_ERROR_STOP=1 --username="$db_user" --dbname="$db_name" <<-EOSQL
+		CREATE OR REPLACE PROCEDURE start_test()
+		LANGUAGE plpgsql
+		AS
+		\$$
+		BEGIN
+			CALL reset_test_data();
+		END; \$$;
+	EOSQL
+	psql -v  ON_ERROR_STOP=1 --username="$db_user" --dbname="$db_name" <<-EOSQL
+		CREATE OR REPLACE PROCEDURE end_test()
+		LANGUAGE plpgsql
+		AS
+		\$$
+		BEGIN
+		END; \$$;
+	EOSQL
 done
 
 # global reset_test_data

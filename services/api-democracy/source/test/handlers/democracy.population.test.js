@@ -200,7 +200,6 @@ describe('Population', () => {
 	})
 
 	describe('Integration Tests', () => {
-		const test_data = reset_test_data()
 		
 		/*TODO: fix:
 		// success: population updates
@@ -249,6 +248,7 @@ console.log(dem2.democracy_population_unverified, dem2.democracy_population_veri
 		test('Success: No population updates', async() => {
 
 			// check democracy population
+			const test_data = await reset_test_data()
 			const dem1 = await dem_read_i(test_data['democracy']['root'].id)
 
 			// update population

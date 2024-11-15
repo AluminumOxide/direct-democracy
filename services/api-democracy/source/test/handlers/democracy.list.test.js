@@ -65,16 +65,17 @@ describe('Democracy List', () => {
 	})
 
 	describe('Integration Tests', () => {
-		const test_data = reset_test_data()
 
 		// success: all
 		test('List all', async () => {
+			const test_data = await reset_test_data()
 			const dems = await dem_list_i({})
 			expect(dems.length === 3)
 		})
 
 		// success: sorting
 		test('Sort by name asc', async () => {
+			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				sort: "democracy_name",
 				order: "ASC"
@@ -82,6 +83,7 @@ describe('Democracy List', () => {
 			expect(dems[0].id === test_data['democracy']['root']['id'])
 		})
 		test('Sort by verified population desc', async () => {
+			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				sort: "democracy_population_verified",
 				order: "DESC"
@@ -89,6 +91,7 @@ describe('Democracy List', () => {
 			expect(dems[0].id === test_data['democracy']['root']['id'])
 		})
 		test('Sort by unverified population asc', async () => {
+			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				sort: "democracy_population_unverified",
 				order: "ASC"
@@ -96,6 +99,7 @@ describe('Democracy List', () => {
 			expect(dems[0].id === test_data['democracy']['not_root_child']['id'])
 		})
 		test('Sort by creation date asc', async () => {
+			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				sort: "date_created",
 				order: "ASC"
@@ -103,6 +107,7 @@ describe('Democracy List', () => {
 			expect(dems[0].id === test_data['democracy']['root']['id'])
 		})
 		test('Sort by update date desc', async () => {
+			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				sort: "date_updated",
 				order: "DESC"
@@ -114,6 +119,7 @@ describe('Democracy List', () => {
 
 		// success: filters
 		test('Filter by id equals', async () => {
+			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				filter: {
 					democracy_id: {
@@ -126,6 +132,7 @@ describe('Democracy List', () => {
 			expect(dems[0].id === test_data['democracy']['root_child']['id'])
 		})
 		test('Filter by name in list', async () => {
+			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				filter: {
 					democracy_name: {
@@ -140,6 +147,7 @@ describe('Democracy List', () => {
 			expect(dems.length === 2)
 		})
 		test('Filter by description contains', async () => {
+			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				filter: {
 					democracy_description: {
@@ -151,6 +159,7 @@ describe('Democracy List', () => {
 			expect(dems.length === 1)
 		})
 		test('Filter by verified population not equals', async () => {
+			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				filter: {
 					democracy_population_verified: {
@@ -162,6 +171,7 @@ describe('Democracy List', () => {
 			expect(dems.length === 2)
 		})
 		test('Filter by unverified population not equals', async () => {
+			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				filter: {
 					democracy_population_unverified: {
@@ -173,6 +183,7 @@ describe('Democracy List', () => {
 			expect(dems.length === 2)
 		})
 		test('Filter by date created greater than', async () => {
+			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				filter: {
 					date_created: {
@@ -184,6 +195,7 @@ describe('Democracy List', () => {
 			expect(dems.length === 0)
 		})
 		test('Filter by date updated less than', async () => {
+			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				filter: {
 					date_updated: {
@@ -200,6 +212,7 @@ describe('Democracy List', () => {
 
 		// success: pagination
 		test('Limit and last', async () => {
+			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				sort: "democracy_name",
 				order: "ASC",
