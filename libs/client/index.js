@@ -13,6 +13,10 @@ class ApiClient {
 	constructor(schema = {}, errors = {}) {
 		this.schema = schema
 		this.errors = errors
+		this.errors._invalid_arg = 'Invalid argument value(s)'
+		this.errors._invalid_query = 'Invalid query value(s)'
+		this.errors._invalid_param = 'Invalid parameter value(s)'
+		this.errors._invalid_body = 'Invalid body value(s)'
 		this.ajv = new Ajv({
 			coerceTypes: false,
 			removeAdditional: true,
@@ -66,7 +70,7 @@ class ApiClient {
 							if(!!args && param in args) {
 								if(!!args[param]) {
 									if(! this.ajv.validate(defn.param[param], args[param])) {
-										throw new Error(`Invalid parameter type ${param} expected ${JSON.stringify(defn.param[param])}`)
+										throw new Error(this.errors._invalid_param)
 									}
 									request.params[param] = args[param]
 								}
@@ -81,7 +85,7 @@ class ApiClient {
 							if(!!args && query in args) {
 								if(!!args[query]) {
 									if(! this.ajv.validate(defn.query.properties[query], args[query])) {
-										throw new Error(`Invalid query type ${query} expected ${JSON.stringify(defn.query.properties[query])}`)
+										throw new Error(this.errors._invalid_query)
 									}
 									if(defn.type === "object") {
 										request.query[query] = JSON.stringify(args[query])
@@ -98,12 +102,12 @@ class ApiClient {
 					if('body' in defn) {
 						request.headers = {'Content-Type':'application/json'}
 						if(! this.ajv.validate(defn.body, request.body)) {
-							throw new Error(`Invalid body ${request.body} expected ${JSON.stringify(defn.body)}`)
+							throw new Error(this.errors._invalid_body)
 						}
 						request.body = JSON.stringify(request.body)
 					} else {
 						if(Object.keys(request.body).length > 0) {
-							throw new Error(`Invalid arguments ${JSON.stringify(request.body)} expected nothing`)
+							throw new Error(this.errors._invalid_arg)
 						}
 						delete request.body
 					}
