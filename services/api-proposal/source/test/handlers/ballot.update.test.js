@@ -36,7 +36,7 @@ describe('Ballot Update', () => {
 				ballot_approved: false,
 				ballot_comments: 'qwer'
 			}
-			await expect(blt_update_i(test_blt)).rejects.toThrow(Error) // TODO: real error	
+			await expect(blt_update_i(test_blt)).rejects.toThrow(new Error(errors.ballot_dne))
 		})
 
 		// error: invalid proposal id
@@ -75,7 +75,7 @@ describe('Ballot Update', () => {
 				ballot_approved: 'qwer',
 				ballot_comments: 'qwer'
 			}
-			await expect(blt_update_i(test_blt)).rejects.toThrow(Error) // TODO: real error	
+			await expect(blt_update_i(test_blt)).rejects.toThrow(new Error(errors._invalid_body))
 		})
 	})
 
@@ -241,8 +241,8 @@ describe('Ballot Update', () => {
 			expect(dummy_log.error).toBeCalledTimes(0)
 		})
 
-		// error: invalid ballot id TODO fix
-		/*test('Error: Invalid ballot ID', async() => {
+		// error: invalid ballot id
+		test('Error: Invalid ballot ID', async() => {
 
 			// set up mocks
 			const dummy_req = {
@@ -277,7 +277,7 @@ describe('Ballot Update', () => {
 			expect(dummy_log.info).toBeCalledTimes(0)
 			expect(dummy_log.warn).toBeCalledTimes(1)
 			expect(dummy_log.error).toBeCalledTimes(0)
-		})*/ 
+		})
 
 		// error: ballot lookup failure
 		test('Error: Ballot lookup failure', async() => {
