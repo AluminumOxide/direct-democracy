@@ -1,6 +1,7 @@
 {
 	"internal_error": "Error: Internal error",
 	"proposal_dne": "Proposal does not exist",
+	"ballot_dne": "Ballot does not exist",
 	"democracy_invalid": "Invalid democracy provided",
 	"democracy_dne": "Democracy does not exist",
 	"membership_dne": "Membership does not exist",

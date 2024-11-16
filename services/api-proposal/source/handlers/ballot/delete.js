@@ -19,6 +19,12 @@ const ballot_delete = async function(request, reply, db, log) {
 		}
 	}
 
+	// check the proposal id is correct
+	if(ballot_check.proposal_id !== proposal_id) {
+		log.warn(`Ballot/Delete: Failure: ${ballot_id} Error: Invalid proposal id`)
+		return reply.code(400).send(new Error(ballot_dne))
+	}
+
 	// check the ballot is modifiable
 	if(!ballot_check.ballot_modifiable) {
 		log.warn(`Ballot/Delete: Failure: ${ballot_id} Error: Ballot closed`)
