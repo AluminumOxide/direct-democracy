@@ -27,6 +27,10 @@ const ballot_delete_unit = async(request, reply, db, log) => {
 	return await require('../handlers/ballot/delete')(request, reply, db, log)
 }
 
+const proposal_list_unit = async(request, reply, db, log) => {
+        return await require('../handlers/proposal/list')(request, reply, db, log)
+}
+
 const proposal_read_unit = async(request, reply, db, log) => {
 	return await require('../handlers/proposal/read')(request, reply, db, log)
 }
@@ -71,6 +75,10 @@ const ballot_delete_integration = async (ballot_id, proposal_id) => {
 	return await api_proposal_client.ballot_delete({ ballot_id, proposal_id })
 }
 
+const proposal_list_integration = async(args) => {
+        return await api_proposal_client.proposal_list(args)
+}
+
 const proposal_read_integration = async(proposal_id) => {
 	return await api_proposal_client.proposal_read({ proposal_id })
 }
@@ -105,6 +113,7 @@ module.exports = {
 	ballot_create_unit,
 	ballot_update_unit,
 	ballot_delete_unit,
+	proposal_list_unit,
 	proposal_read_unit,
 	proposal_create_unit,
 	proposal_delete_unit,
@@ -113,10 +122,10 @@ module.exports = {
 	ballot_create_integration,
 	ballot_update_integration,
 	ballot_delete_integration,
+	proposal_list_integration,
 	proposal_read_integration,
 	proposal_create_integration,
 	proposal_delete_integration,
 	proposal_close_integration
 }
-
 

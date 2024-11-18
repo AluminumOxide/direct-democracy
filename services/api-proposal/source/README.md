@@ -18,12 +18,31 @@
 
 **Queries**
 
+Type: object
 
-Any Of:
+Additional Properties: false
 
- - [queries-proposal_sort_string](#queries-proposal_sort_string)
+Properties:
 
- - [queries-proposal_sort_date](#queries-proposal_sort_date)
+- **limit**
+
+	 - [queries-limit](#queries-limit)
+
+- **last**
+
+	 - [queries-last](#queries-last)
+
+- **order**
+
+	 - [queries-order](#queries-order)
+
+- **sort**
+
+	 - [queries-proposal_sort](#queries-proposal_sort)
+
+- **filter**
+
+	 - [queries-proposal_filter](#queries-proposal_filter)
 
 
 **Responses**
@@ -103,7 +122,22 @@ Any Of:
 
 **Queries**
 
- - [queries-ballot_sort](#queries-ballot_sort)
+Type: object
+
+Properties:
+
+- **limit**
+
+	 - [queries-limit](#queries-limit)
+
+- **last**
+
+	 - [queries-last](#queries-last)
+
+- **order**
+
+	 - [queries-order](#queries-order)
+
 
 **Params**
 
@@ -320,7 +354,10 @@ Properties:
 
 - **democracy_id**
 
-	Type: object
+
+	One Of:
+
+	- Type: object
 
 	Additional Properties: false
 
@@ -335,9 +372,32 @@ Properties:
 		Type: [schemas-democracy_id](#schemas-democracy_id)
 
 
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_array](#schemas-op_array)
+
+	- **val**
+
+		Type: array
+
+		Items:
+
+		- Type: [schemas-democracy_id](#schemas-democracy_id)
+
+
+
 - **membership_id**
 
-	Type: object
+
+	One Of:
+
+	- Type: object
 
 	Additional Properties: false
 
@@ -352,9 +412,7 @@ Properties:
 		Type: [schemas-membership_id](#schemas-membership_id)
 
 
-- **proposal_name**
-
-	Type: object
+	- Type: object
 
 	Additional Properties: false
 
@@ -362,16 +420,39 @@ Properties:
 
 	- **op**
 
-		Type: [schemas-op](#schemas-op)
+		Type: [schemas-op_array](#schemas-op_array)
+
+	- **val**
+
+		Type: array
+
+		Items:
+
+		- Type: [schemas-membership_id](#schemas-membership_id)
+
+
+
+- **proposal_name**
+
+
+	One Of:
+
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_string](#schemas-op_string)
 
 	- **val**
 
 		Type: [schemas-proposal_name](#schemas-proposal_name)
 
 
-- **proposal_description**
-
-	Type: object
+	- Type: object
 
 	Additional Properties: false
 
@@ -379,20 +460,64 @@ Properties:
 
 	- **op**
 
-		Type: string
+		Type: [schemas-op_array](#schemas-op_array)
 
-		Enum:
+	- **val**
 
-		- ~
+		Type: array
+
+		Items:
+
+		- Type: [schemas-proposal_name](#schemas-proposal_name)
+
+
+
+- **proposal_description**
+
+
+	One Of:
+
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_string](#schemas-op_string)
 
 	- **val**
 
 		Type: [schemas-proposal_description](#schemas-proposal_description)
 
 
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_array](#schemas-op_array)
+
+	- **val**
+
+		Type: array
+
+		Items:
+
+		- Type: [schemas-proposal_description](#schemas-proposal_description)
+
+
+
 - **proposal_target**
 
-	Type: object
+
+	One Of:
+
+	- Type: object
 
 	Additional Properties: false
 
@@ -407,9 +532,7 @@ Properties:
 		Type: [schemas-proposal_target](#schemas-proposal_target)
 
 
-- **proposal_votes_yes**
-
-	Type: object
+	- Type: object
 
 	Additional Properties: false
 
@@ -417,28 +540,16 @@ Properties:
 
 	- **op**
 
-		Type: [schemas-op](#schemas-op)
+		Type: [schemas-op_array](#schemas-op_array)
 
 	- **val**
 
-		Type: integer
+		Type: array
 
+		Items:
 
-- **proposal_votes_no**
+		- Type: [schemas-proposal_target](#schemas-proposal_target)
 
-	Type: object
-
-	Additional Properties: false
-
-	Properties:
-
-	- **op**
-
-		Type: [schemas-op](#schemas-op)
-
-	- **val**
-
-		Type: integer
 
 
 - **proposal_votable**
@@ -451,11 +562,7 @@ Properties:
 
 	- **op**
 
-		Type: string
-
-		Enum:
-
-		- =
+		Type: [schemas-op_bool](#schemas-op_bool)
 
 	- **val**
 
@@ -472,11 +579,7 @@ Properties:
 
 	- **op**
 
-		Type: string
-
-		Enum:
-
-		- =
+		Type: [schemas-op_bool](#schemas-op_bool)
 
 	- **val**
 
@@ -485,7 +588,10 @@ Properties:
 
 - **date_created**
 
-	Type: object
+
+	One Of:
+
+	- Type: object
 
 	Additional Properties: false
 
@@ -500,9 +606,32 @@ Properties:
 		Type: [schemas-date_created](#schemas-date_created)
 
 
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_array](#schemas-op_array)
+
+	- **val**
+
+		Type: array
+
+		Items:
+
+		- Type: [schemas-date_created](#schemas-date_created)
+
+
+
 - **date_updated**
 
-	Type: object
+
+	One Of:
+
+	- Type: object
 
 	Additional Properties: false
 
@@ -515,6 +644,26 @@ Properties:
 	- **val**
 
 		Type: [schemas-date_updated](#schemas-date_updated)
+
+
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_array](#schemas-op_array)
+
+	- **val**
+
+		Type: array
+
+		Items:
+
+		- Type: [schemas-date_updated](#schemas-date_updated)
+
 
 
 #### queries-ballot_sort
@@ -776,6 +925,33 @@ Enum:
 - \>
 - <=
 - <
+#### schemas-op_bool
+
+Type: string
+
+Enum:
+
+- =
+- !=
+#### schemas-op_string
+
+Type: string
+
+Enum:
+
+- =
+- !=
+- \>=
+- \>
+- <=
+- <
+- ~
+#### schemas-op_array
+
+Type: string
+
+Enum:
+
 - IN
 - NOT IN
 - BETWEEN

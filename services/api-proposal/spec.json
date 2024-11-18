@@ -18,7 +18,8 @@
 	"queries": {
 		"limit": {
 			"$id": "queries-limit",
-			"type": "integer"
+			"type": "integer",
+			"minimum": 1
 		},
 		"last": {
 			"$id": "queries-last",
@@ -41,37 +42,6 @@
 				"date_updated"
 			]
 		},
-		"proposal_order_date": {
-			"$id": "queries-proposal_sort_date",
-			"type":"object",
-			"properties": {
-				"limit": { "$ref": "queries-limit" },
-				"order": { "$ref": "queries-order" },
-				"filter": { "$ref": "queries-proposal_filter" },
-				"sort": { 
-					"type": "string",
-					"enum": [
-						"date_created",
-						"date_updated"
-					]
-				},
-				"last": { "$ref": "schemas-date" }
-			}
-		},
-		"proposal_order_string": {
-			"$id": "queries-proposal_sort_string",
-			"type":"object",
-			"properties": {
-				"limit": { "$ref": "queries-limit" },
-				"order": { "$ref": "queries-order" },
-				"filter": { "$ref": "queries-proposal_filter" },
-				"sort": { 
-					"type": "string",
-					"enum": [ "proposal_name" ]
-				},
-				"last": { "type": "string" }
-			}
-		},
 		"ballot_order": {
 			"$id": "queries-ballot_order",
 			"type": "object",
@@ -89,99 +59,151 @@
 			"additionalProperties": false,
 			"properties": {
 				"democracy_id": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							 "$ref": "schemas-op" 
-						},
-						"val": {
-							"$ref": "schemas-democracy_id"
+					"oneOf": [{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op"
+							},
+							"val": {
+								"$ref": "schemas-democracy_id"
+							}
 						}
-					}
+					},{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_array"
+							},
+							"val": {
+								"type": "array",
+								"items": {
+									"$ref": "schemas-democracy_id"
+								}
+							}
+						}
+					}]
 				},
 				"membership_id": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"$ref": "schemas-op"
-						},
-						"val": {
-							"$ref": "schemas-membership_id"
+					"oneOf": [{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op"
+							},
+							"val": {
+								"$ref": "schemas-membership_id"
+							}
 						}
-					}
+					},{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_array"
+							},
+							"val": {
+								"type": "array",
+								"items": {
+									"$ref": "schemas-membership_id"
+								}
+							}
+						}
+					}]
 				},
 				"proposal_name": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"$ref": "schemas-op"
-						},
-						"val": {
-							"$ref": "schemas-proposal_name"
+					"oneOf": [{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_string"
+							},
+							"val": {
+								"$ref": "schemas-proposal_name"
+							}
 						}
-					}
+					},{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_array"
+							},
+							"val": {
+								"type": "array",
+								"items": {
+									"$ref": "schemas-proposal_name"
+								}
+							}
+						}
+					}]
 				},
 				"proposal_description": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"type": "string",
-							"enum": [
-								"~"
-							]
-						},
-						"val": {
-							"$ref": "schemas-proposal_description"
+					"oneOf": [{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_string"
+							},
+							"val": {
+								"$ref": "schemas-proposal_description"
+							}
 						}
-					}
+					},{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_array"
+							},
+							"val": {
+								"type": "array",
+								"items": {
+									"$ref": "schemas-proposal_description"
+								}
+							}
+						}
+					}]
 				},
 				"proposal_target": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"$ref": "schemas-op"
-						},
-						"val": {
-							"$ref": "schemas-proposal_target"
+					"oneOf": [{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op"
+							},
+							"val": {
+								"$ref": "schemas-proposal_target"
+							}
 						}
-					}
-				},
-				"proposal_votes_yes": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"$ref": "schemas-op"
-						},
-						"val": {
-							"type": "integer"
+					},{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_array"
+							},
+							"val": {
+								"type": "array",
+								"items": {
+									"$ref": "schemas-proposal_target"
+								}
+							}
 						}
-					}
-				},
-				"proposal_votes_no": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"$ref": "schemas-op"
-						},
-						"val": {
-							"type": "integer"
-						}
-					}
+					}]
 				},
 				"proposal_votable": {
 					"type": "object",
 					"additionalProperties": false,
 					"properties": {
 						"op": {
-							"type": "string",
-							"enum": [ "=" ]
+							"$ref": "schemas-op_bool"
 						},
 						"val": {
 							"type": "boolean"
@@ -193,8 +215,7 @@
 					"additionalProperties": false,
 					"properties": {
 						"op": {
-							"type": "string",
-							"enum": [ "=" ]
+							"$ref": "schemas-op_bool"
 						},
 						"val": {
 							"type": "boolean"
@@ -202,28 +223,60 @@
 					}
 				},
 				"date_created": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"$ref": "schemas-op"
-						},
-						"val": {
-							"$ref": "schemas-date_created"
+					"oneOf": [{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op"
+							},
+							"val": {
+								"$ref": "schemas-date_created"
+							}
 						}
-					}
+					},{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_array"
+							},
+							"val": {
+								"type": "array",
+								"items": {
+									"$ref": "schemas-date_created"
+								}
+							}
+						}
+					}]
 				},
 				"date_updated": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"$ref": "schemas-op"
-						},
-						"val": {
-							"$ref": "schemas-date_updated"
+					"oneOf": [{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op"
+							},
+							"val": {
+								"$ref": "schemas-date_updated"
+							}
 						}
-					}
+					},{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_array"
+							},
+							"val": {
+								"type": "array",
+								"items": {
+									"$ref": "schemas-date_updated"
+								}
+							}
+						}
+					}]
 				}
 			}
 		},
@@ -417,7 +470,34 @@
 				">=",
 				">",
 				"<=",
+				"<"
+			]
+		},
+		"op_bool": {
+			"$id": "schemas-op_bool",
+			"type": "string",
+			"enum": [
+				"=",
+				"!="
+			]
+		},
+		"op_string": {
+			"$id": "schemas-op_string",
+			"type": "string",
+			"enum": [
+				"=",
+				"!=",
+				">=",
+				">",
+				"<=",
 				"<",
+				"~"
+			]
+		},
+		"op_array": {
+			"$id": "schemas-op_array",
+			"type": "string",
+			"enum": [
 				"IN",
 				"NOT IN",
 				"BETWEEN",
@@ -749,11 +829,13 @@
 				"operationId": "proposal_list",
 				"query": {
 					"type": "object",
+					"additionalProperties": false,
 					"properties": {
-						"anyOf": [
-							{ "$ref": "queries-proposal_sort_string" },
-							{ "$ref": "queries-proposal_sort_date" }
-						]
+						"limit": { "$ref": "queries-limit" },
+						"last": { "$ref": "queries-last" },
+						"order": { "$ref": "queries-order" },
+						"sort": { "$ref": "queries-proposal_sort" },
+						"filter": { "$ref": "queries-proposal_filter" }
 					}
 				},
 				"responses": {
@@ -871,7 +953,9 @@
 				"query": {
 					"type": "object",
 					"properties": {
-						"$ref": "queries-ballot_sort"
+						"limit": { "$ref": "queries-limit"},
+						"last": { "$ref": "queries-last"},
+						"order": { "$ref": "queries-order"}
 					}
 				},
 				"responses": {
