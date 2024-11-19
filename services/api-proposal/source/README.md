@@ -138,6 +138,14 @@ Properties:
 
 	 - [queries-order](#queries-order)
 
+- **sort**
+
+	 - [queries-ballot_sort](#queries-ballot_sort)
+
+- **filter**
+
+	 - [queries-ballot_filter](#queries-ballot_filter)
+
 
 **Params**
 
@@ -257,93 +265,6 @@ Enum:
 - proposal_name
 - date_created
 - date_updated
-#### queries-proposal_sort_date
-
-Type: object
-
-Properties:
-
-- **limit**
-
-	Type: [queries-limit](#queries-limit)
-
-- **order**
-
-	Type: [queries-order](#queries-order)
-
-- **filter**
-
-	Type: [queries-proposal_filter](#queries-proposal_filter)
-
-- **sort**
-
-	Type: string
-
-	Enum:
-
-	- date_created
-	- date_updated
-
-- **last**
-
-	Type: [schemas-date](#schemas-date)
-
-#### queries-proposal_sort_string
-
-Type: object
-
-Properties:
-
-- **limit**
-
-	Type: [queries-limit](#queries-limit)
-
-- **order**
-
-	Type: [queries-order](#queries-order)
-
-- **filter**
-
-	Type: [queries-proposal_filter](#queries-proposal_filter)
-
-- **sort**
-
-	Type: string
-
-	Enum:
-
-	- proposal_name
-
-- **last**
-
-	Type: string
-
-#### queries-ballot_order
-
-Type: object
-
-Properties:
-
-- **limit**
-
-	Type: [queries-limit](#queries-limit)
-
-- **order**
-
-	Type: [queries-order](#queries-order)
-
-- **filter**
-
-	Type: [queries-ballot_filter](#queries-ballot_filter)
-
-- **sort**
-
-	Type: [queries-proposal_sort](#queries-proposal_sort)
-
-- **last**
-
-	Type: [queries-last](#queries-last)
-
 #### queries-proposal_filter
 
 Type: object
@@ -668,44 +589,26 @@ Properties:
 
 #### queries-ballot_sort
 
-Type: object
+Type: string
 
-Properties:
+Enum:
 
-- **limit**
-
-	Type: [queries-limit](#queries-limit)
-
-- **order**
-
-	Type: [queries-order](#queries-order)
-
-- **filter**
-
-	Type: [queries-ballot_filter](#queries-ballot_filter)
-
-- **sort**
-
-	Type: string
-
-	Enum:
-
-	- date_created
-	- date_updated
-
-- **last**
-
-	Type: [schemas-date](#schemas-date)
-
+- date_created
+- date_updated
 #### queries-ballot_filter
 
 Type: object
+
+Additional Properties: false
 
 Properties:
 
 - **membership_id**
 
-	Type: object
+
+	One Of:
+
+	- Type: object
 
 	Additional Properties: false
 
@@ -720,6 +623,26 @@ Properties:
 		Type: [schemas-membership_id](#schemas-membership_id)
 
 
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_array](#schemas-op_array)
+
+	- **val**
+
+		Type: array
+
+		Items:
+
+		- Type: [schemas-membership_id](#schemas-membership_id)
+
+
+
 - **ballot_approved**
 
 	Type: object
@@ -730,11 +653,7 @@ Properties:
 
 	- **op**
 
-		Type: string
-
-		Enum:
-
-		- =
+		Type: [schemas-op_bool](#schemas-op_bool)
 
 	- **val**
 
@@ -743,7 +662,10 @@ Properties:
 
 - **ballot_comments**
 
-	Type: object
+
+	One Of:
+
+	- Type: object
 
 	Additional Properties: false
 
@@ -751,20 +673,39 @@ Properties:
 
 	- **op**
 
-		Type: string
-
-		Enum:
-
-		- ~
+		Type: [schemas-op_string](#schemas-op_string)
 
 	- **val**
 
 		Type: [schemas-ballot_comments](#schemas-ballot_comments)
 
 
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_array](#schemas-op_array)
+
+	- **val**
+
+		Type: array
+
+		Items:
+
+		- Type: [schemas-ballot_comments](#schemas-ballot_comments)
+
+
+
 - **date_created**
 
-	Type: object
+
+	One Of:
+
+	- Type: object
 
 	Additional Properties: false
 
@@ -779,9 +720,32 @@ Properties:
 		Type: [schemas-date_created](#schemas-date_created)
 
 
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_array](#schemas-op_array)
+
+	- **val**
+
+		Type: array
+
+		Items:
+
+		- Type: [schemas-date_created](#schemas-date_created)
+
+
+
 - **date_updated**
 
-	Type: object
+
+	One Of:
+
+	- Type: object
 
 	Additional Properties: false
 
@@ -794,6 +758,26 @@ Properties:
 	- **val**
 
 		Type: [schemas-date_updated](#schemas-date_updated)
+
+
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_array](#schemas-op_array)
+
+	- **val**
+
+		Type: array
+
+		Items:
+
+		- Type: [schemas-date_updated](#schemas-date_updated)
+
 
 
 ## Bodies

@@ -42,17 +42,6 @@
 				"date_updated"
 			]
 		},
-		"ballot_order": {
-			"$id": "queries-ballot_order",
-			"type": "object",
-			"properties": {
-				"limit": { "$ref": "queries-limit" },
-				"order": { "$ref": "queries-order" },
-				"filter": { "$ref": "queries-ballot_filter" },
-				"sort": { "$ref": "queries-proposal_sort" },
-				"last": { "$ref": "queries-last" }
-			}
-		},
 		"proposal_filter": {
 			"$id": "queries-proposal_filter",
 			"type": "object",
@@ -280,49 +269,53 @@
 				}
 			}
 		},
-
 		"ballot_sort": {
 			"$id": "queries-ballot_sort",
-			"type": "object",
-			"properties": {
-					"limit": { "$ref": "queries-limit" },
-					"order": { "$ref": "queries-order" },
-					"filter": { "$ref": "queries-ballot_filter" },
-					"sort": {
-						"type": "string",
-						"enum": [
-							"date_created",
-							"date_updated"
-						]
-					},
-					"last": { "$ref": "schemas-date" }
-			}
+			"type": "string",
+			"enum": [
+				"date_created",
+				"date_updated"
+			]
 		},
 		"ballot_filter": {
 			"$id": "queries-ballot_filter",
 			"type": "object",
+			"additionalProperties": false,
 			"properties": {
 				"membership_id": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"$ref": "schemas-op"
-						},
-						"val": {
-							"$ref": "schemas-membership_id"
+					"oneOf": [{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op"
+							},
+							"val": {
+								"$ref": "schemas-membership_id"
+							}
 						}
-					}
+					},{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_array"
+							},
+							"val": {
+								"type": "array",
+								"items": {
+									"$ref": "schemas-membership_id"
+								}
+							}
+						}
+					}]
 				},
 				"ballot_approved": {
 					"type": "object",
 					"additionalProperties": false,
 					"properties": {
 						"op": {
-							"type": "string",
-							"enum": [
-								"="
-							]
+							"$ref": "schemas-op_bool"
 						},
 						"val": {
 							"type": "boolean"
@@ -330,43 +323,88 @@
 					}
 				},
 				"ballot_comments": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"type": "string",
-							"enum": [
-								"~"
-							]
-						},
-						"val": {
-							"$ref": "schemas-ballot_comments"
+					"oneOf": [{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_string"
+							},
+							"val": {
+								"$ref": "schemas-ballot_comments"
+							}
 						}
-					}
+					},{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_array"
+							},
+							"val": {
+								"type": "array",
+								"items": {
+									"$ref": "schemas-ballot_comments"
+								}
+							}
+						}
+					}]
 				},
 				"date_created": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"$ref": "schemas-op"
-						},
-						"val": {
-						 "$ref": "schemas-date_created" 
+					"oneOf": [{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op"
+							},
+							"val": {
+								"$ref": "schemas-date_created" 
+							}
 						}
-					}
+					},{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_array"
+							},
+							"val": {
+								"type": "array",
+								"items": {
+							 		"$ref": "schemas-date_created" 
+								}
+							}
+						}
+					}]
 				},
 				"date_updated": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"$ref": "schemas-op" 
-						},
-						"val": {
-							"$ref": "schemas-date_updated" 
+					"oneOf": [{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op"
+							},
+							"val": {
+								"$ref": "schemas-date_updated" 
+							}
 						}
-					}
+					},{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_array"
+							},
+							"val": {
+								"type": "array",
+								"items": {
+							 		"$ref": "schemas-date_updated" 
+								}
+							}
+						}
+					}]
 				}
 			}
 		}
@@ -955,7 +993,9 @@
 					"properties": {
 						"limit": { "$ref": "queries-limit"},
 						"last": { "$ref": "queries-last"},
-						"order": { "$ref": "queries-order"}
+						"order": { "$ref": "queries-order"},
+						"sort": { "$ref": "queries-ballot_sort" },
+						"filter": { "$ref": "queries-ballot_filter" }
 					}
 				},
 				"responses": {
