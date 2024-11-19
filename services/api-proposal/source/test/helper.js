@@ -11,6 +11,10 @@ const {
 const errors = api_proposal_client.errors
 
 // unit tests
+const ballot_list_unit = async(request, reply, db, log) => {
+        return await require('../handlers/ballot/list')(request, reply, db, log)
+}
+
 const ballot_read_unit = async(request, reply, db, log) => {
 	return await require('../handlers/ballot/read')(request, reply, db, log)
 }
@@ -48,6 +52,10 @@ const proposal_delete_unit = async(request, reply, db, log) => {
 }
 
 // integration tests
+const ballot_list_integration = async(args) => {
+        return await api_proposal_client.ballot_list(args)
+}
+
 const ballot_read_integration = async (ballot_id) => {
 	return await api_proposal_client.ballot_read({ ballot_id })
 }
@@ -109,6 +117,7 @@ module.exports = {
 	get_dummy_log,
 	get_dummy_reply,
 	reset_test_data,
+	ballot_list_unit,
 	ballot_read_unit,
 	ballot_create_unit,
 	ballot_update_unit,
@@ -118,6 +127,7 @@ module.exports = {
 	proposal_create_unit,
 	proposal_delete_unit,
 	proposal_close_unit,
+	ballot_list_integration,
 	ballot_read_integration,
 	ballot_create_integration,
 	ballot_update_integration,
