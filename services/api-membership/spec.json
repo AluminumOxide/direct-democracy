@@ -15,7 +15,34 @@
 				">=",
 				">",
 				"<=",
+				"<"
+			]
+		},
+		"op_bool": {
+			"$id": "schemas-op_bool",
+			"type": "string",
+			"enum": [
+				"=",
+				"!="
+			]
+		},
+		"op_string": {
+			"$id": "schemas-op_string",
+			"type": "string",
+			"enum": [
+				"=",
+				"!=",
+				">=",
+				">",
+				"<=",
 				"<",
+				"~"
+			]
+		},
+		"op_array": {
+			"$id": "schemas-op_array",
+			"type": "string",
+			"enum": [
 				"IN",
 				"NOT IN",
 				"BETWEEN",
@@ -169,7 +196,8 @@
 	"queries": {
 		"limit": {
 			"$id": "queries-limit",
-			"type": "integer"
+			"type": "integer",
+			"minimum": 1
 		},
 		"last": {
 			"$id": "queries-last",
@@ -211,47 +239,65 @@
 			"additionalProperties": false,
 			"properties": {
 				"democracy_id": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"$ref": "schemas-op"
-						},
-						"val": {
-							"oneOf": [
-								{ "$ref": "schemas-democracy_id" },
-								{
-									"type": "array",
-									"items": { "$ref": "schemas-democracy_id" }
-								}	
-							]
+					"oneOf": [{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op"
+							},
+							"val": {
+								 "$ref": "schemas-democracy_id"
+							}
 						}
-					}
+					},{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_array"
+							},
+							"val": {
+								"type": "array",
+								"items": { "$ref": "schemas-democracy_id" }
+							}
+						}
+					}]
 				},
 				"profile_id": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"$ref": "schemas-op"
-						},
-						"val": {
-							"oneOf": [
-								{ "$ref": "schemas-profile_id" },
-								{
-									"type": "array",
-									"items": { "$ref": "schemas-profile_id" }
-								}	
-							]
+					"oneOf": [{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op"
+							},
+							"val": {
+								 "$ref": "schemas-profile_id"
+							}
 						}
-					}
+					},{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_array"
+							},
+							"val": {
+								"type": "array",
+								"items": {
+									"$ref": "schemas-profile_id"
+								}
+							}
+						}
+					}]
 				},
 				"is_verified": {
 					"type": "object",
 					"additionalProperties": false,
 					"properties": {
 						"op": {
-							"$ref": "schemas-op"
+							"$ref": "schemas-op_bool"
 						},
 						"val": {
 							"$ref": "schemas-is_verified"
@@ -259,40 +305,60 @@
 					}
 				},
 				"date_created": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"$ref": "schemas-op"
-						},
-						"val": {
-							"oneOf": [
-								{ "$ref": "schemas-date_created" },
-								{
-									"type": "array",
-									"items": { "$ref": "schemas-date_created" }
-								}	
-							]
+					"oneOf": [{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op"
+							},
+							"val": {
+								"$ref": "schemas-date_created"
+							}
 						}
-					}
+					},{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_array"
+							},
+							"val": {
+								"type": "array",
+								"items": {
+									"$ref": "schemas-date_created"
+								}
+							}
+						}
+					}]
 				},
 				"date_updated": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"$ref": "schemas-op"
-						},
-						"val": {
-							"oneOf": [
-								{ "$ref": "schemas-date_updated" },
-								{
-									"type": "array",
-									"items": { "$ref": "schemas-date_updated" }
-								}	
-							]
+					"oneOf": [{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op"
+							},
+							"val": {
+								"$ref": "schemas-date_updated"
+							}
 						}
-					}
+					},{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_array"
+							},
+							"val": {
+								"type": "array",
+								"items": {
+									"$ref": "schemas-date_updated"
+								}
+							}
+						}
+					}]
 				}
 			}
 		},
