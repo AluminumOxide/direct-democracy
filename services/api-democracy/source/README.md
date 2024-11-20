@@ -141,7 +141,10 @@ Properties:
 
 - **democracy_id**
 
-	Type: object
+
+	One Of:
+
+	- Type: object
 
 	Additional Properties: false
 
@@ -156,9 +159,7 @@ Properties:
 		Type: [schemas-democracy_id](#schemas-democracy_id)
 
 
-- **democracy_name**
-
-	Type: object
+	- Type: object
 
 	Additional Properties: false
 
@@ -166,26 +167,64 @@ Properties:
 
 	- **op**
 
-		Type: [schemas-op](#schemas-op)
+		Type: [schemas-op_array](#schemas-op_array)
 
 	- **val**
 
+		Type: array
 
-		One Of:
+		Items:
+
+		- Type: [schemas-democracy_id](#schemas-democracy_id)
+
+
+
+- **democracy_name**
+
+
+	One Of:
+
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_string](#schemas-op_string)
+
+	- **val**
+
+		Type: [schemas-democracy_name](#schemas-democracy_name)
+
+
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_array](#schemas-op_array)
+
+	- **val**
+
+		Type: array
+
+		Items:
 
 		- Type: [schemas-democracy_name](#schemas-democracy_name)
-
-		- Type: array
-
-			Items:
-
-			- Type: [schemas-democracy_name](#schemas-democracy_name)
 
 
 
 - **democracy_description**
 
-	Type: object
+
+	One Of:
+
+	- Type: object
 
 	Additional Properties: false
 
@@ -193,15 +232,31 @@ Properties:
 
 	- **op**
 
-		Type: string
-
-		Enum:
-
-		- ~
+		Type: [schemas-op_string](#schemas-op_string)
 
 	- **val**
 
 		Type: [schemas-democracy_description](#schemas-democracy_description)
+
+
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_array](#schemas-op_array)
+
+	- **val**
+
+		Type: array
+
+		Items:
+
+		- Type: [schemas-democracy_description](#schemas-democracy_description)
+
 
 
 - **democracy_population_verified**
@@ -240,7 +295,10 @@ Properties:
 
 - **date_created**
 
-	Type: object
+
+	One Of:
+
+	- Type: object
 
 	Additional Properties: false
 
@@ -255,9 +313,32 @@ Properties:
 		Type: [schemas-date_created](#schemas-date_created)
 
 
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_array](#schemas-op_array)
+
+	- **val**
+
+		Type: array
+
+		Items:
+
+		- Type: [schemas-date_created](#schemas-date_created)
+
+
+
 - **date_updated**
 
-	Type: object
+
+	One Of:
+
+	- Type: object
 
 	Additional Properties: false
 
@@ -270,6 +351,26 @@ Properties:
 	- **val**
 
 		Type: [schemas-date_updated](#schemas-date_updated)
+
+
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_array](#schemas-op_array)
+
+	- **val**
+
+		Type: array
+
+		Items:
+
+		- Type: [schemas-date_updated](#schemas-date_updated)
+
 
 
 ## Bodies
@@ -351,6 +452,33 @@ Enum:
 - \>
 - <=
 - <
+#### schemas-op_bool
+
+Type: string
+
+Enum:
+
+- =
+- !=
+#### schemas-op_string
+
+Type: string
+
+Enum:
+
+- =
+- !=
+- \>=
+- \>
+- <=
+- <
+- ~
+#### schemas-op_array
+
+Type: string
+
+Enum:
+
 - IN
 - NOT IN
 - BETWEEN
