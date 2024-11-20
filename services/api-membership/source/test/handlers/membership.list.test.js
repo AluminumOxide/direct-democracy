@@ -68,12 +68,15 @@ describe('Membership List', () => {
 	})
 
 	describe('Integration Tests', () => {
-	
+
+		// success: list all
 		test('List all', async () => {
 			const test_data = await reset_test_data()
 			const mems = await mem_list_i({})
 			expect(mems.length).toBe(30)
 		})
+
+		// sort by membership id asc
 		test('Sort by membership_id asc', async() => {
 			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
@@ -82,21 +85,79 @@ describe('Membership List', () => {
 			})
 			expect(mems[0].membership_id).toBe(test_data['membership']['verified_grandchild_3']['id'])	
 		})
-	// TODO: fix created/updated dates in test data
-	//	test('Sort by date_created desc', async() => {
-	//		const mems = await mem_list_i({
-	//			sort: 'date_created',
-	//			order: 'DESC'
-	//		})
-	//		expect(mems[0].membership_id).toBe(test_data['membership']['verified_root_1']['id'])	
-	//	})
-	//	test('Sort by date_updated asc', async() => {
-	//		const mems = await mem_list_i({
-	//			sort: 'date_updated',
-	//			order: 'ASC'
-	//		})
-	//		expect(mems[0].membership_id).toBe(test_data['membership']['verified_root_1']['id'])	
-	//	})
+
+		// sort by date created desc
+		test('Sort by date_created desc', async() => {
+			const test_data = await reset_test_data()
+			const mems = await mem_list_i({
+				sort: 'date_created',
+				order: 'DESC'
+			})
+			expect(mems[0].membership_id).toBe(test_data['membership']['verified_root_1']['id'])	
+		})
+
+		// sort by date updated asc
+		test('Sort by date_updated asc', async() => {
+			const test_data = await reset_test_data()
+			const mems = await mem_list_i({
+				sort: 'date_updated',
+				order: 'ASC'
+			})
+			expect(mems[0].membership_id).toBe(test_data['membership']['verified_root_1']['id'])	
+		})
+
+		// limit & last
+		test('Limit and last', async() => {
+			const test_data = await reset_test_data()
+			const mems = await mem_list_i({
+				sort: 'membership_id',
+				order: 'ASC',
+				limit: 1,
+				last: test_data['membership']['verified_root_1'].id
+			})
+			expect(mems[0].membership_id).toBe(test_data['membership']['unverified_child_1']['id'])
+			expect(mems.length).toBe(1)
+		})
+
+		// error: invalid sort
+		test('Error: Invalid sort', async() => {
+			const test_data = await reset_test_data()
+			await expect(mem_list_i({
+				sort: 'bad_val'
+			})).rejects.toThrow(errors._invalid_query)
+		})
+
+		// error: invalid order
+		test('Error: Invalid order', async() => {
+			const test_data = await reset_test_data()
+			await expect(mem_list_i({
+				order: 'bad_val'
+			})).rejects.toThrow(errors._invalid_query)
+		})
+
+		// error: invalid limit
+		test('Error: Invalid limit', async() => {
+			const test_data = await reset_test_data()
+			await expect(mem_list_i({
+				sort: 'membership_id',
+				order: 'ASC',
+				limit: -1,
+				last: test_data['membership']['verified_root_1'].id
+			})).rejects.toThrow(errors._invalid_query)
+		})
+
+		// error: invalid last
+		test('Error: Invalid last', async() => {
+			const test_data = await reset_test_data()
+			await expect(mem_list_i({
+				sort: 'membership_id',
+				order: 'ASC',
+				limit: 1,
+				last: 1
+			})).rejects.toThrow(errors._invalid_query)
+		})
+
+		// filter by democracy_id equals
 		test('Filter by democracy_id equals', async() => {
 			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
@@ -109,6 +170,8 @@ describe('Membership List', () => {
 			})
 			expect(mems.length).toBe(10)
 		})
+
+		// filter by profile id in list
 		test('Filter by profile_id in list', async() => {
 			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
@@ -124,6 +187,8 @@ describe('Membership List', () => {
 			})
 			expect(mems.length).toBe(2)
 		})
+
+		// filter by is verified not equals
 		test('Filter by is_verified not equals', async() => {
 			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
@@ -136,6 +201,8 @@ describe('Membership List', () => {
 			})
 			expect(mems.length).toBe(14)
 		})
+
+		// filter by date created less than
 		test('Filter by date_created less than', async() => {
 			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
@@ -148,6 +215,8 @@ describe('Membership List', () => {
 			})
 			expect(mems.length).toBe(30)
 		})
+
+		// filter by date updated greater than
 		test('Filter by date_updated greater than', async() => {
 			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
@@ -160,15 +229,44 @@ describe('Membership List', () => {
 			})
 			expect(mems.length).toBe(0)
 		})
-		test('Limit & last', async() => {
+
+		// TODO error: invalid filter field
+		//test('Error: Invalid filter field', async() => {
+		//	const test_data = await reset_test_data()
+		//	await expect(mem_list_i({
+		//		filter: {
+		//			bad_field: {
+		//				op: '<',
+		//				val: 'asdf'
+		//			}
+		//		}
+		//	})).rejects.toThrow(errors._invalid_query)
+		//})
+
+		// error: invalid filter op
+		test('Error: Invalid filter op', async() => {
 			const test_data = await reset_test_data()
-			const mems = await mem_list_i({
-				sort: 'membership_id',
-				order: 'ASC',
-				limit: 1,
-				last: test_data['membership']['verified_root_6']['id']
-			})
-			expect(mems[0].membership_id).toBe(test_data['membership']['unverified_child_3']['id'])
+			await expect(mem_list_i({
+				filter: {
+					date_created: {
+						op: 'bad',
+						val: new Date().toJSON()
+					}
+				}
+			})).rejects.toThrow(errors._invalid_query)
+		})
+
+		// error: invalid filter value
+		test('Error: Invalid filter value', async() => {
+			const test_data = await reset_test_data()
+			await expect(mem_list_i({
+				filter: {
+					date_created: {
+						op: '=',
+						val: 'bad'
+					}
+				}
+			})).rejects.toThrow(errors._invalid_query)
 		})
 	})
 })
