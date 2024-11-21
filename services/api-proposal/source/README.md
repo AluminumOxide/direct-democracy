@@ -5,6 +5,23 @@
 
 *Update ballot verified statuses*
 
+**Queries**
+
+Type: object
+
+Additional Properties: false
+
+Properties:
+
+- **time_start**
+
+	 - [queries-time_start](#queries-time_start)
+
+- **time_end**
+
+	 - [queries-time_end](#queries-time_end)
+
+
 **Responses**
 
 - [200](#responses-ballot_verified)
@@ -256,6 +273,12 @@ Enum:
 
 - ASC
 - DESC
+#### queries-time_start
+
+Type: [schemas-date](#schemas-date)
+#### queries-time_end
+
+Type: [schemas-date](#schemas-date)
 #### queries-proposal_sort
 
 Type: string

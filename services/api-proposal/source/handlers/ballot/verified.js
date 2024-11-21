@@ -2,13 +2,9 @@ const api_membership_client = require('@aluminumoxide/direct-democracy-membershi
   
 const ballot_verified_update = async function(request, reply, db, log) {
 
-	// calculate time window
-	const time_window = 5 // min
-	let time_end = new Date()
-	let time_start = (new Date(time_end.getTime() - time_window*60000)).toISOString()
-	time_end = time_end.toISOString()
-	try {
+	const { time_start, time_end } = request
 
+	try {
 		// use time window in request
 		let args = {
 			limit: 100,
