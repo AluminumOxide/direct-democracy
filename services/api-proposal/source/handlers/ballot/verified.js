@@ -17,6 +17,8 @@ const ballot_verified_update = async function(request, reply, db, log) {
 				}
 			}
 		}
+		log.info(`Ballot/Verify: Starting: ${time_start} - ${time_end}`)
+
 		let stopped = false
 		while(!stopped) {
 
@@ -37,14 +39,18 @@ const ballot_verified_update = async function(request, reply, db, log) {
 			// see if there's more to fetch
 			if(mems.length < args.limit) {
 				stopped = true
+				log.info(`Ballot/Verify: Finished fetching memberships`)
 			} else {
 				args.last = (mems[(mems.length-1)])[args.sort]
+				log.info(`Ballot/Verify: Fetching more memberships`)
 			}
 		}
 
+		log.info(`Ballot/Verify: Success: ${time_start} - ${time_end}`)
 		return reply.code(200).send()
 
 	} catch (e) {
+		log.error(`Ballot/Verify: Failure: ${time_start} - ${time_end} Error: ${e}`)
 		return reply.code(500).send(e)
 	}
 }
