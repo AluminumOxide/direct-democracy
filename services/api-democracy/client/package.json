@@ -1,6 +1,6 @@
 {
 	"name": "@aluminumoxide/direct-democracy-democracy-api-client",
-	"version": "1.0.42",
+	"version": "1.0.43",
 	"description": "Client library for democracy API",
 	"main": "index.js",
 	"dependencies": {
