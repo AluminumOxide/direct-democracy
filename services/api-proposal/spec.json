@@ -33,6 +33,14 @@
 				"DESC"
 			]
 		},
+		"time_start": {
+			"$id": "queries-time_start",
+			"$ref": "schemas-date"
+		},
+		"time_end": {
+			"$id": "queries-time_end",
+			"$ref": "schemas-date"
+		},
 		"proposal_sort": {
 			"$id": "queries-proposal_sort",
 			"type": "string",
@@ -857,6 +865,14 @@
 			"POST": {
                                 "description": "Update ballot verified statuses",
                                 "operationId": "ballot_verified",
+				"query": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"time_start": { "$ref": "queries-time_start" },
+						"time_end": { "$ref": "queries-time_end" }
+					}
+				},
                                 "responses": {
                                         "200": {
                                                 "$ref": "responses-ballot_verified"
