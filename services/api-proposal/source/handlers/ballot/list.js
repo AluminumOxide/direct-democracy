@@ -16,6 +16,7 @@ const ballot_list = async function(request, reply, db, log) {
 					'ballot_approved': 'is_approved',
 					'ballot_comments': 'comments',
 					'ballot_modifiable': 'modifiable',
+					'ballot_verified': 'is_verified',
 					'date_created': 'date_created',
 					'date_updated': 'date_updated'
 				}))	

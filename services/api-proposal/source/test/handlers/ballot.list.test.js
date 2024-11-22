@@ -173,6 +173,20 @@ describe('List', () => {
 			})
 			expect(blts.length).toBe(16)
 		})
+		
+		// filter by ballot_verified not equals
+		test('Filter by ballot verified not equals', async () => {
+			const test_data = await reset_test_data()
+			const blts = await blt_list_i({
+				filter: {
+					ballot_verified: {
+						op: '!=',
+						val: true
+					}
+				}
+			})
+			expect(blts.length).toBe(9)
+		})
 
 		// filter by ballot_comments contains
 		test('Filter by ballot comments contains', async () => {
