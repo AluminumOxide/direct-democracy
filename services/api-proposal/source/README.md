@@ -660,6 +660,23 @@ Properties:
 		Type: boolean
 
 
+- **ballot_verified**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_bool](#schemas-op_bool)
+
+	- **val**
+
+		Type: boolean
+
+
 - **ballot_comments**
 
 

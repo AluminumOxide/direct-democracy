@@ -322,6 +322,18 @@
 						}
 					}
 				},
+				"ballot_verified": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op_bool"
+						},
+						"val": {
+							"type": "boolean"
+						}
+					}
+				},
 				"ballot_comments": {
 					"oneOf": [{
 						"type": "object",
