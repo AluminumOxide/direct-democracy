@@ -568,6 +568,50 @@
 				}
 			}
 		},
+		"/membership/:membership_id/verify": {
+			"GET": {
+				"description": "Verify a membership",
+				"operationId": "membership_verify",
+				"param": {
+					"membership_id": { "$ref": "params-membership_id" }
+				},
+				"responses": {
+					"200": {
+						"$ref": "schemas-membership_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			},
+			"DELETE": {
+				"description": "Unverify a membership",
+				"operationId": "membership_unverify",
+				"param": {
+					"membership_id": { "$ref": "params-membership_id" }
+				},
+				"responses": {
+					"200": {
+						"$ref": "schemas-membership_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
 		"/population": {
 			"GET": {
 				"description": "Fetch democracy populations",
