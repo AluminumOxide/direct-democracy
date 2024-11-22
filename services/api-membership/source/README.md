@@ -95,6 +95,36 @@ Properties:
 - [401](#responses-401)
 - [500](#responses-500)
 
+### GET /v1/membership/:membership_id/verify
+
+*Verify a membership*
+
+**Params**
+
+- [membership_id](#params-membership_id)
+
+**Responses**
+
+- [200](#schemas-membership_read)
+- [400](#responses-400)
+- [401](#responses-401)
+- [500](#responses-500)
+
+### DELETE /v1/membership/:membership_id/verify
+
+*Unverify a membership*
+
+**Params**
+
+- [membership_id](#params-membership_id)
+
+**Responses**
+
+- [200](#schemas-membership_read)
+- [400](#responses-400)
+- [401](#responses-401)
+- [500](#responses-500)
+
 ### GET /v1/population
 
 *Fetch democracy populations*
