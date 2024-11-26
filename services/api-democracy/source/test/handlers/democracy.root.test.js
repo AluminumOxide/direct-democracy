@@ -1,5 +1,5 @@
 const { errors,
-	reset_test_data,
+	integration_test_setup,
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
@@ -93,9 +93,10 @@ describe('Democracy Root', () => {
 
 	describe('Integration Tests', () => {
 
+		const test_data = integration_test_setup()
+
 		// success
 		test('Success', async () => {
-			const test_data = await reset_test_data()
 			const expected = test_data['democracy']['root']
 			const actual = await dem_root_i()
 			expect(actual.democracy_id).toBe(expected.id)

@@ -3,7 +3,7 @@ const {
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
-	reset_test_data,
+	integration_test_setup,
 	membership_list_unit: mem_list_u,
 	membership_list_integration: mem_list_i
 } = require('../helper')
@@ -69,16 +69,16 @@ describe('Membership List', () => {
 
 	describe('Integration Tests', () => {
 
+		const test_data = integration_test_setup()
+
 		// success: list all
 		test('List all', async () => {
-			const test_data = await reset_test_data()
 			const mems = await mem_list_i({})
 			expect(mems.length).toBe(30)
 		})
 
 		// sort by membership id asc
 		test('Sort by membership_id asc', async() => {
-			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
 				sort: 'membership_id',
 				order: 'ASC'
@@ -88,7 +88,6 @@ describe('Membership List', () => {
 
 		// sort by date created desc
 		test('Sort by date_created desc', async() => {
-			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
 				sort: 'date_created',
 				order: 'DESC'
@@ -98,7 +97,6 @@ describe('Membership List', () => {
 
 		// sort by date updated asc
 		test('Sort by date_updated asc', async() => {
-			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
 				sort: 'date_updated',
 				order: 'ASC'
@@ -108,7 +106,6 @@ describe('Membership List', () => {
 
 		// limit & last
 		test('Limit and last', async() => {
-			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
 				sort: 'membership_id',
 				order: 'ASC',
@@ -121,7 +118,6 @@ describe('Membership List', () => {
 
 		// error: invalid sort
 		test('Error: Invalid sort', async() => {
-			const test_data = await reset_test_data()
 			await expect(mem_list_i({
 				sort: 'bad_val'
 			})).rejects.toThrow(errors._invalid_query)
@@ -129,7 +125,6 @@ describe('Membership List', () => {
 
 		// error: invalid order
 		test('Error: Invalid order', async() => {
-			const test_data = await reset_test_data()
 			await expect(mem_list_i({
 				order: 'bad_val'
 			})).rejects.toThrow(errors._invalid_query)
@@ -137,7 +132,6 @@ describe('Membership List', () => {
 
 		// error: invalid limit
 		test('Error: Invalid limit', async() => {
-			const test_data = await reset_test_data()
 			await expect(mem_list_i({
 				sort: 'membership_id',
 				order: 'ASC',
@@ -148,7 +142,6 @@ describe('Membership List', () => {
 
 		// error: invalid last
 		test('Error: Invalid last', async() => {
-			const test_data = await reset_test_data()
 			await expect(mem_list_i({
 				sort: 'membership_id',
 				order: 'ASC',
@@ -159,7 +152,6 @@ describe('Membership List', () => {
 
 		// filter by democracy_id equals
 		test('Filter by democracy_id equals', async() => {
-			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
 				filter: {
 					democracy_id: {
@@ -173,7 +165,6 @@ describe('Membership List', () => {
 
 		// filter by profile id in list
 		test('Filter by profile_id in list', async() => {
-			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
 				filter: {
 					profile_id: {
@@ -190,7 +181,6 @@ describe('Membership List', () => {
 
 		// filter by is verified not equals
 		test('Filter by is_verified not equals', async() => {
-			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
 				filter: {
 					is_verified: {
@@ -204,7 +194,6 @@ describe('Membership List', () => {
 
 		// filter by date created less than
 		test('Filter by date_created less than', async() => {
-			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
 				filter: {
 					date_created: {
@@ -218,7 +207,6 @@ describe('Membership List', () => {
 
 		// filter by date updated greater than
 		test('Filter by date_updated greater than', async() => {
-			const test_data = await reset_test_data()
 			const mems = await mem_list_i({
 				filter: {
 					date_updated: {
@@ -232,7 +220,6 @@ describe('Membership List', () => {
 
 		// TODO error: invalid filter field
 		//test('Error: Invalid filter field', async() => {
-		//	const test_data = await reset_test_data()
 		//	await expect(mem_list_i({
 		//		filter: {
 		//			bad_field: {
@@ -245,7 +232,6 @@ describe('Membership List', () => {
 
 		// error: invalid filter op
 		test('Error: Invalid filter op', async() => {
-			const test_data = await reset_test_data()
 			await expect(mem_list_i({
 				filter: {
 					date_created: {
@@ -258,7 +244,6 @@ describe('Membership List', () => {
 
 		// error: invalid filter value
 		test('Error: Invalid filter value', async() => {
-			const test_data = await reset_test_data()
 			await expect(mem_list_i({
 				filter: {
 					date_created: {

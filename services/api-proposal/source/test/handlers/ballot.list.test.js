@@ -4,7 +4,7 @@ const {
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
-	reset_test_data,
+	integration_test_setup,
 	ballot_list_unit: blt_list_u,
 	ballot_list_integration: blt_list_i
 } = require('../helper') 
@@ -69,16 +69,16 @@ describe('List', () => {
 
 	describe('Integration Tests', () => {
 
+		const test_data = integration_test_setup()
+
 		// success: list all
 		test('Success: List all', async () => {
-			const test_data = await reset_test_data()
 			const blts = await blt_list_i({})
 			expect(blts.length === test_data['ballot'].length)
 		})
 
 		// sort by date_created asc
 		test('Sort by date created asc', async () => {
-			const test_data = await reset_test_data()
 			const blts = await blt_list_i({
 				sort: 'date_created',
 				order: 'ASC'
@@ -88,7 +88,6 @@ describe('List', () => {
 		
 		// sort by date_updated desc
 		test('Sort by date updated desc', async () => {
-			const test_data = await reset_test_data()
 			const blts = await blt_list_i({
 				sort: 'date_updated',
 				order: 'DESC'
@@ -98,7 +97,6 @@ describe('List', () => {
 	
 		// limit & last
 		test('Limit and last', async () => {
-			const test_data = await reset_test_data()
 			const blts = await blt_list_i({
 				sort: 'date_created',
 				order: 'DESC',
@@ -110,7 +108,6 @@ describe('List', () => {
 
 		// error: invalid sort
 		test('Error: Invalid sort', async () => {
-			const test_data = await reset_test_data()
 			await expect(blt_list_i({
 				sort: 'bad_val'
 			})).rejects.toThrow(errors._invalid_query)
@@ -118,7 +115,6 @@ describe('List', () => {
 
 		// error: invalid order
 		test('Error: Invalid sort', async () => {
-			const test_data = await reset_test_data()
 			await expect(blt_list_i({
 				order: 'bad_val'
 			})).rejects.toThrow(errors._invalid_query)
@@ -126,7 +122,6 @@ describe('List', () => {
 		
 		// error: invalid limit
 		test('Error: Invalid limit', async () => {
-			const test_data = await reset_test_data()
 			await expect(blt_list_i({
 				limit: 'bad_val'
 			})).rejects.toThrow(errors._invalid_query)
@@ -134,7 +129,6 @@ describe('List', () => {
 
 		// error: invalid last value
 		test('Error: Invalid last value', async () => {
-			const test_data = await reset_test_data()
 			await expect(blt_list_i({
 				sort: 'date_created',
 				order: 'ASC',
@@ -145,7 +139,6 @@ describe('List', () => {
 
 		// filter by membership_id in list
 		test('Filter by membership id in list', async () => {
-			const test_data = await reset_test_data()
 			const blts = await blt_list_i({
 				filter: {
 					membership_id: {
@@ -162,7 +155,6 @@ describe('List', () => {
 
 		// filter by ballot_approved equals
 		test('Filter by ballot approved equals', async () => {
-			const test_data = await reset_test_data()
 			const blts = await blt_list_i({
 				filter: {
 					ballot_approved: {
@@ -176,7 +168,6 @@ describe('List', () => {
 		
 		// filter by ballot_verified not equals
 		test('Filter by ballot verified not equals', async () => {
-			const test_data = await reset_test_data()
 			const blts = await blt_list_i({
 				filter: {
 					ballot_verified: {
@@ -190,7 +181,6 @@ describe('List', () => {
 
 		// filter by ballot_comments contains
 		test('Filter by ballot comments contains', async () => {
-			const test_data = await reset_test_data()
 			const blts = await blt_list_i({
 				filter: {
 					ballot_comments: {
@@ -204,7 +194,6 @@ describe('List', () => {
 
 		// filter by date_created less than
 		test('Filter by date created less than', async () => {
-			const test_data = await reset_test_data()
 			const blts = await blt_list_i({
 				filter: {
 					date_created: {
@@ -218,7 +207,6 @@ describe('List', () => {
 
 		// filter by date_updated greater than
 		test('Filter by date updated greater than', async () => {
-			const test_data = await reset_test_data()
 			const blts = await blt_list_i({
 				filter: {
 					date_updated: {
@@ -232,7 +220,6 @@ describe('List', () => {
 
 		// TODO: error: invalid filter field
 		//test('Error: Invalid filter field', async () => {
-		//	const test_data = await reset_test_data()
 		//	await expect(blt_list_i({
 		//		filter: {
 		//			bad_field: {
@@ -245,7 +232,6 @@ describe('List', () => {
 
 		// error: invalid filter op
 		test('Error: Invalid filter op', async () => {
-			const test_data = await reset_test_data()
 			await expect(blt_list_i({
 				filter: {
 					date_created: {
@@ -258,7 +244,6 @@ describe('List', () => {
 
 		// error: invalid filter value
 		test('Error: Invalid filter value', async () => {
-			const test_data = await reset_test_data()
 			await expect(blt_list_i({
 				filter: {
 					date_created: {

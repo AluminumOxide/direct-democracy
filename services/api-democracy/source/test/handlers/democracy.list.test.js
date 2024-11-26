@@ -2,7 +2,7 @@ const { errors,
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
-	reset_test_data,
+	integration_test_setup,
 	democracy_list_unit: dem_list_u,
 	democracy_list_integration: dem_list_i } = require('../helper')
 
@@ -66,16 +66,16 @@ describe('Democracy List', () => {
 
 	describe('Integration Tests', () => {
 
+		const test_data = integration_test_setup()
+
 		// success: all
 		test('List all', async () => {
-			const test_data = await reset_test_data()
 			const dems = await dem_list_i({})
 			expect(dems.length === 3)
 		})
 
 		// sort by name asc
 		test('Sort by name asc', async () => {
-			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				sort: "democracy_name",
 				order: "ASC"
@@ -85,7 +85,6 @@ describe('Democracy List', () => {
 
 		// sort by verified population desc
 		test('Sort by verified population desc', async () => {
-			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				sort: "democracy_population_verified",
 				order: "DESC"
@@ -95,7 +94,6 @@ describe('Democracy List', () => {
 
 		// sort by unverified population asc
 		test('Sort by unverified population asc', async () => {
-			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				sort: "democracy_population_unverified",
 				order: "ASC"
@@ -105,7 +103,6 @@ describe('Democracy List', () => {
 
 		// sort by date created asc
 		test('Sort by creation date asc', async () => {
-			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				sort: "date_created",
 				order: "ASC"
@@ -115,7 +112,6 @@ describe('Democracy List', () => {
 
 		// sort by date updated desc
 		test('Sort by update date desc', async () => {
-			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				sort: "date_updated",
 				order: "DESC"
@@ -125,7 +121,6 @@ describe('Democracy List', () => {
 
 		// success: pagination
 		test('Limit and last', async () => {
-			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				sort: "democracy_name",
 				order: "ASC",
@@ -137,7 +132,6 @@ describe('Democracy List', () => {
 
 		// error: invalid sort
 		test('Error: Invalid sort', async() => {
-			const test_data = await reset_test_data()
 			await expect(dem_list_i({
 				sort: 'bad_val'
 			})).rejects.toThrow(errors._invalid_query)
@@ -145,7 +139,6 @@ describe('Democracy List', () => {
 
 		// error: invalid order
 		test('Error: Invalid order', async() => {
-			const test_data = await reset_test_data()
 			await expect(dem_list_i({
 				order: 'bad_val'
 			})).rejects.toThrow(errors._invalid_query)
@@ -153,7 +146,6 @@ describe('Democracy List', () => {
 
 		// error: invalid limit
 		test('Error: Invalid limit', async() => {
-			const test_data = await reset_test_data()
 			await expect(dem_list_i({
 				sort: 'democracy_name',
 				order: 'ASC',
@@ -163,7 +155,6 @@ describe('Democracy List', () => {
 
 		// error: invalid last value
 		test('Error: Invalid last value', async() => {
-			const test_data = await reset_test_data()
 			await expect(dem_list_i({
 				sort: 'democracy_name',
 				order: 'ASC',
@@ -174,7 +165,6 @@ describe('Democracy List', () => {
 
 		// filter by democracy id equals
 		test('Filter by id equals', async () => {
-			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				filter: {
 					democracy_id: {
@@ -189,7 +179,6 @@ describe('Democracy List', () => {
 
 		// filter by democracy name in list
 		test('Filter by name in list', async () => {
-			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				filter: {
 					democracy_name: {
@@ -206,7 +195,6 @@ describe('Democracy List', () => {
 
 		// filter by democracy description contains
 		test('Filter by description contains', async () => {
-			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				filter: {
 					democracy_description: {
@@ -220,7 +208,6 @@ describe('Democracy List', () => {
 
 		// filter by verified population not equals
 		test('Filter by verified population not equals', async () => {
-			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				filter: {
 					democracy_population_verified: {
@@ -234,7 +221,6 @@ describe('Democracy List', () => {
 
 		// filter by unverified population not equals
 		test('Filter by unverified population not equals', async () => {
-			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				filter: {
 					democracy_population_unverified: {
@@ -248,7 +234,6 @@ describe('Democracy List', () => {
 
 		// filter by date created greater than
 		test('Filter by date created greater than', async () => {
-			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				filter: {
 					date_created: {
@@ -262,7 +247,6 @@ describe('Democracy List', () => {
 
 		// filter by date updated less than
 		test('Filter by date updated less than', async () => {
-			const test_data = await reset_test_data()
 			const dems = await dem_list_i({
 				filter: {
 					date_updated: {
@@ -276,7 +260,6 @@ describe('Democracy List', () => {
 
 		// TODO error: invalid filter field
 		//test('Error: Invalid filter value', async() => {
-		//	const test_data = await reset_test_data()
 		//	await expect(dem_list_i({
 		//		filter: {
 		//			bad_val: {
@@ -289,7 +272,6 @@ describe('Democracy List', () => {
 
 		// error: invalid filter op
 		test('Error: Invalid filter value', async() => {
-			const test_data = await reset_test_data()
 			await expect(dem_list_i({
 				filter: {
 					democracy_name: {
@@ -302,7 +284,6 @@ describe('Democracy List', () => {
 
 		// error: invalid filter value
 		test('Error: Invalid filter value', async() => {
-			const test_data = await reset_test_data()
 			await expect(dem_list_i({
 				filter: {
 					democracy_name: {

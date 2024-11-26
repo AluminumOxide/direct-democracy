@@ -90,19 +90,25 @@ const get_dummy_api = function(lib, mocks) {
 	return api_client
 }
 
-const reset_test_data = async function() {
-//	beforeAll(async () => {
+const integration_test_setup = function() {
+	let pg
+	const knex = require("knex")
+	beforeEach(done => {
 		try {
-			const pg = require('knex')({
+			pg = knex({
 				client: 'pg',
 				connection:  process.env.TEST_CONNECTION_STRING
 			})
-			await pg.raw('call reset_test_data();')
+			pg.raw('call reset_test_data();').then(() => done())
 		} catch (err) {
 			console.error(err)
+			done(err)
 		}
-//	})
+	})
+	afterEach(done => {
+		pg.destroy().then(() => done())
+	})
 	return require('../../../test/.testdata.json')
 }
 
-module.exports = { get_dummy_reply, get_dummy_log, get_dummy_api, get_dummy_db, reset_test_data }
+module.exports = { get_dummy_reply, get_dummy_log, get_dummy_api, get_dummy_db, integration_test_setup }
