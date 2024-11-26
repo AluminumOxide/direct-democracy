@@ -5,7 +5,7 @@ const {
 	get_dummy_log,
 	get_dummy_reply,
 	proposal_create_unit: prop_create_u,
-	reset_test_data,
+	integration_test_setup,
 	proposal_create_integration: prop_create_i
 } = require('../helper') 
 const json_changes = require('@aluminumoxide/direct-democracy-lib-json-changes')
@@ -397,9 +397,10 @@ describe('Proposal Create', () => {
 
 	describe('Integration Tests', () => {
 
+		const test_data = integration_test_setup()
+
 		// success: name update
 		test('Success: Name update', async () => {
-			const test_data = await reset_test_data()
 			const test_prop = {
 				democracy_id: test_data['democracy']['root_child']['id'],
 				membership_id: test_data['membership']['verified_child_1']['id'],
@@ -413,7 +414,6 @@ describe('Proposal Create', () => {
 		
 		// success: description update
 		test('Success: Description update', async () => {
-			const test_data = await reset_test_data()
 			const test_prop = {
 				democracy_id: test_data['democracy']['root_child']['id'],
 				membership_id: test_data['membership']['verified_child_1']['id'],
@@ -427,7 +427,6 @@ describe('Proposal Create', () => {
 	
 		// success: conduct add
 		test('Success: Conduct add', async () => {
-			const test_data = await reset_test_data()
 			const test_prop = {
 				democracy_id: test_data['democracy']['root_child']['id'],
 				membership_id: test_data['membership']['verified_child_1']['id'],
@@ -441,7 +440,6 @@ describe('Proposal Create', () => {
 		
 		// success: content delete
 		test('Success: Content delete', async () => {
-			const test_data = await reset_test_data()
 			const test_prop = {
 				democracy_id: test_data['democracy']['root_child']['id'],
 				membership_id: test_data['membership']['verified_child_1']['id'],
@@ -455,7 +453,6 @@ describe('Proposal Create', () => {
 	
 		// success: metas multi
 		test('Success: Metas multi', async () => {
-			const test_data = await reset_test_data()
 			const test_prop = {
 				democracy_id: test_data['democracy']['root_child']['id'],
 				membership_id: test_data['membership']['verified_child_1']['id'],
@@ -475,7 +472,6 @@ describe('Proposal Create', () => {
 	
 		// error: invalid membership id
 		test('Error: Invalid membership_id', async () => {
-			const test_data = await reset_test_data()
 			const test_prop = {
 				democracy_id: test_data['democracy']['root_child']['id'],
 				membership_id: test_data['democracy']['root_child']['id'],
@@ -489,7 +485,6 @@ describe('Proposal Create', () => {
 	
 		// error: invalid democracy id
 		test('Error: Invalid democracy_id', async () => {
-			const test_data = await reset_test_data()
 			const test_prop = {
 				democracy_id: test_data['membership']['verified_child_1']['id'],
 				membership_id: test_data['membership']['verified_child_1']['id'],
@@ -503,7 +498,6 @@ describe('Proposal Create', () => {
 	
 		// error: invalid target	
 		test('Error: Invalid target', async () => {
-			const test_data = await reset_test_data()
 			const test_prop = {
 				democracy_id: test_data['democracy']['root_child']['id'],
 				membership_id: test_data['membership']['verified_child_1']['id'],
@@ -517,7 +511,6 @@ describe('Proposal Create', () => {
 	
 		// error: invalid changes 
 		test('Error: Invalid changes', async () => {
-			const test_data = await reset_test_data()
 			const test_prop = {
 				democracy_id: test_data['democracy']['root_child']['id'],
 				membership_id: test_data['membership']['verified_child_1']['id'],

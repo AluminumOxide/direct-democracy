@@ -4,7 +4,7 @@ const {
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
-	reset_test_data,
+	integration_test_setup,
 	proposal_list_unit: prop_list_u,
 	proposal_list_integration: prop_list_i
 } = require('../helper')
@@ -69,16 +69,16 @@ describe('Proposal List', () => {
 
 	describe('Integration Tests', () => {
 
+		const test_data = integration_test_setup()
+
 		// success: list all
 		test('Success: List all', async () => {
-			const test_data = await reset_test_data()
 			const props = await prop_list_i({})
 			expect(props.length === test_data['proposal'].length)
 		})
 
 		// sort by name asc
 		test('Sort by name asc', async () => {
-			const test_data = await reset_test_data()
 			const props = await prop_list_i({
 				sort: 'proposal_name',
 				order: 'ASC'
@@ -88,7 +88,6 @@ describe('Proposal List', () => {
 
 		// sort by date_created desc
 		test('Sort by date_created desc', async () => {
-			const test_data = await reset_test_data()
 			const props = await prop_list_i({
 				sort: 'date_created',
 				order: 'DESC'
@@ -98,7 +97,6 @@ describe('Proposal List', () => {
 
 		// sort by date_updated asc
 		test('Sort by date_updated asc', async () => {
-			const test_data = await reset_test_data()
 			const props = await prop_list_i({
 				sort: 'date_updated',
 				order: 'ASC'
@@ -108,7 +106,6 @@ describe('Proposal List', () => {
 
 		// limit & last
 		test('Limit and last', async() => {
-			const test_data = await reset_test_data()
 			const props = await prop_list_i({
 				sort: 'proposal_name',
 				order: 'ASC',
@@ -121,7 +118,6 @@ describe('Proposal List', () => {
 
 		// error: invalid sort
 		test('Error: Invalid sort', async() => {
-			const test_data = await reset_test_data()
 			await expect(prop_list_i({
 				sort: 'bad_field'
 			})).rejects.toThrow(errors._invalid_query)
@@ -129,7 +125,6 @@ describe('Proposal List', () => {
 
 		// error: invalid order
 		test('Error: Invalid sort', async() => {
-			const test_data = await reset_test_data()
 			await expect(prop_list_i({
 				order: 'bad_val'
 			})).rejects.toThrow(errors._invalid_query)
@@ -137,7 +132,6 @@ describe('Proposal List', () => {
 
 		// error: invalid limit - negative
 		test('Error: Invalid negative limit', async() => {
-			const test_data = await reset_test_data()
 			await expect(prop_list_i({
 				sort: 'proposal_name',
 				order: 'ASC',
@@ -147,7 +141,6 @@ describe('Proposal List', () => {
 		
 		// error: invalid limit - string
 		test('Error: Invalid string limit', async() => {
-			const test_data = await reset_test_data()
 			await expect(prop_list_i({
 				sort: 'proposal_name',
 				order: 'ASC',
@@ -157,7 +150,6 @@ describe('Proposal List', () => {
 
 		// error: invalid last value
 		test('Error: Invalid last value', async() => {
-			const test_data = await reset_test_data()
 			await expect(prop_list_i({
 				sort: 'proposal_name',
 				order: 'ASC',
@@ -168,7 +160,6 @@ describe('Proposal List', () => {
 
 		// filter by democracy_id equals
 		test('Filter by democracy id equals', async() => {
-			const test_data = await reset_test_data()
 			const props = await prop_list_i({
 				filter: {
 					democracy_id: {
@@ -182,7 +173,6 @@ describe('Proposal List', () => {
 
 		// filter by membership_id in list
 		test('Filter by membership id in list', async() => {
-			const test_data = await reset_test_data()
 			const props = await prop_list_i({
 				filter: {
 					membership_id: {
@@ -196,7 +186,6 @@ describe('Proposal List', () => {
 
 		// filter by proposal_name not in list
 		test('Filter by proposal name not in list', async() => {
-			const test_data = await reset_test_data()
 			const props = await prop_list_i({
 				filter: {
 					proposal_name: {
@@ -213,7 +202,6 @@ describe('Proposal List', () => {
 
 		// filter by proposal_description contains
 		test('Filter by proposal description contains', async() => {
-			const test_data = await reset_test_data()
 			const props = await prop_list_i({
 				filter: {
 					proposal_description: {
@@ -227,7 +215,6 @@ describe('Proposal List', () => {
 
 		// filter by proposal_target not equal
 		test('Filter by proposal target not equal', async() => {
-			const test_data = await reset_test_data()
 			const props = await prop_list_i({
 				filter: {
 					proposal_target: {
@@ -241,7 +228,6 @@ describe('Proposal List', () => {
 
 		// filter by proposal_votable equals
 		test('Filter by proposal votable equals', async() => {
-			const test_data = await reset_test_data()
 			const props = await prop_list_i({
 				filter: {
 					proposal_votable: {
@@ -255,7 +241,6 @@ describe('Proposal List', () => {
 
 		// filter by proposal_passed not equal
 		test('Filter by proposal votable equals', async() => {
-			const test_data = await reset_test_data()
 			const props = await prop_list_i({
 				filter: {
 					proposal_votable: {
@@ -269,7 +254,6 @@ describe('Proposal List', () => {
 
 		// filter by date_created greater than
 		test('Filter by date created greater than', async() => {
-			const test_data = await reset_test_data()
 			const props = await prop_list_i({
 				filter: {
 					date_created: {
@@ -283,7 +267,6 @@ describe('Proposal List', () => {
 
 		// filter by date_updated less than
 		test('Filter by date updated less than', async() => {
-			const test_data = await reset_test_data()
 			const props = await prop_list_i({
 				filter: {
 					date_created: {
@@ -297,7 +280,6 @@ describe('Proposal List', () => {
 
 		// TODO error: invalid filter field
 		//test('Error: Invalid filter field', async() => {
-		//	const test_data = await reset_test_data()
 		//	await expect(prop_list_i({
 		//		filter: {
 		//			bad_field: {
@@ -310,7 +292,6 @@ describe('Proposal List', () => {
 
 		// error: invalid filter op
 		test('Error: Invalid filter op', async() => {
-			const test_data = await reset_test_data()
 			await expect(prop_list_i({
 				filter: {
 					proposal_name: {
@@ -323,7 +304,6 @@ describe('Proposal List', () => {
 
 		// error: invalid filter value
 		test('Error: Invalid filter value', async() => {
-			const test_data = await reset_test_data()
 			await expect(prop_list_i({
 				filter: {
 					proposal_name: {

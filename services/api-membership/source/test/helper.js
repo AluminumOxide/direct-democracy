@@ -4,7 +4,7 @@ const {
 	get_dummy_reply,
 	get_dummy_db,
 	get_dummy_api,
-	reset_test_data
+	integration_test_setup
 } = require('@aluminumoxide/direct-democracy-lib-server').testing
 
 // errors
@@ -81,7 +81,7 @@ module.exports = {
 	get_dummy_reply,
 	get_dummy_db,
 	get_dummy_api,
-	reset_test_data,
+	integration_test_setup,
 	membership_list_unit,
 	membership_list_integration,
 	membership_create_unit,

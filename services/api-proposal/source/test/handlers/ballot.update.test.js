@@ -4,7 +4,7 @@ const {
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
-	reset_test_data,
+	integration_test_setup,
 	ballot_update_unit: blt_update_u,
 	ballot_update_integration: blt_update_i
 } = require('../helper') 
@@ -13,9 +13,10 @@ describe('Ballot Update', () => {
 
 	describe('Integration Tests', () => {
 
+		const test_data = integration_test_setup()
+
 		// success
 		test('Success', async () => {
-			const test_data = await reset_test_data()
 			const test_blt = {
 				ballot_id: test_data['ballot'][ 'cmp_av_2']['id'],
 				proposal_id: test_data['ballot']['cmp_av_2']['proposal_id'],
@@ -28,7 +29,6 @@ describe('Ballot Update', () => {
 
 		// error: invalid ballot id
 		test('Error: Invalid ballot id', async () => {
-			const test_data = await reset_test_data()
 			const test_blt = {
 				ballot_id: test_data['ballot'][ 'cmp_au_2']['membership_id'],
 				proposal_id: test_data['ballot']['cmp_au_2']['proposal_id'],
@@ -41,7 +41,6 @@ describe('Ballot Update', () => {
 
 		// error: invalid proposal id
 		test('Error: Invalid proposal id', async () => {
-			const test_data = await reset_test_data()
 			const test_blt = {
 				ballot_id: test_data['ballot'][ 'cmp_au_2']['id'],
 				proposal_id: test_data['ballot'][ 'cmp_au_2']['id'],
@@ -54,7 +53,6 @@ describe('Ballot Update', () => {
 
 		// error: invalid membership id
 		test('Error: Invalid membership id', async () => {
-			const test_data = await reset_test_data()
 			const test_blt = {
 				ballot_id: test_data['ballot'][ 'cmp_au_2']['id'],
 				proposal_id: test_data['ballot']['cmp_au_2']['proposal_id'],
@@ -67,7 +65,6 @@ describe('Ballot Update', () => {
 
 		// error: invalid ballot approved
 		test('Error: Invalid ballot approved', async () => {
-			const test_data = await reset_test_data()
 			const test_blt = {
 				ballot_id: test_data['ballot'][ 'cmp_au_2']['id'],
 				proposal_id: test_data['ballot']['cmp_au_2']['proposal_id'],

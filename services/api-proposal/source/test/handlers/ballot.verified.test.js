@@ -4,7 +4,7 @@ const {
 	get_dummy_reply,
 	get_dummy_db,
 	get_dummy_api,
-	reset_test_data,
+	integration_test_setup,
 	ballot_read_integration: blt_read_i,
 	ballot_list_integration: blt_list_i,
 	ballot_verified_unit: blt_verify_u,
@@ -16,9 +16,10 @@ describe('Verified', () => {
 
 	describe('Integration Tests', () => {
 
+		const test_data = integration_test_setup()
+
 		// success: no updates
 		test('Success: No updates', async () => {
-			const test_data = await reset_test_data()
 			const date = new Date().toJSON()
 
 			// count verified ballots
@@ -49,7 +50,6 @@ describe('Verified', () => {
 
 		// success: some updates
 		test('Success: Some updates', async () => {
-			const test_data = await reset_test_data()
 
 			// count verified ballots
 			const filter = { ballot_verified: {
@@ -81,28 +81,24 @@ describe('Verified', () => {
 
 		// error: no start time
 		test('Error: No start time', async () => {
-			const test_data = await reset_test_data()
 			const date = new Date().toJSON()
 			await expect(blt_verify_i(undefined, date)).rejects.toThrow()
 		})
 
 		// error: no end time
 		test('Error: No end time', async () => {
-			const test_data = await reset_test_data()
 			const date = new Date().toJSON()
 			await expect(blt_verify_i(date, undefined)).rejects.toThrow()
 		})
 
 		// error: invalid start time
 		test('Error: Invalid start time', async () => {
-			const test_data = await reset_test_data()
 			const date = new Date().toJSON()
 			await expect(blt_verify_i('bad', date)).rejects.toThrow()
 		})
 
 		// error: invalid end time
 		test('Error: Invalid end time', async () => {
-			const test_data = await reset_test_data()
 			const date = new Date().toJSON()
 			await expect(blt_verify_i(date, 'bad')).rejects.toThrow()
 		})

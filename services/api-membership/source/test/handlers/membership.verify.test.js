@@ -3,7 +3,7 @@ const {
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
-	reset_test_data,
+	integration_test_setup,
 	membership_verify_unit: mem_verify_u,
 	membership_verify_integration: mem_verify_i
 } = require('../helper')
@@ -102,9 +102,10 @@ describe('Membership Verify', () => {
 
 	describe('Integration Tests', () => {
 
+		const test_data = integration_test_setup()
+
 		// success: unverified
 		test('Success: Unverified', async () => {
-			const test_data = await reset_test_data()
 			const test_mem = test_data['membership']['unverified_root_1']
 			const mem = await mem_verify_i(test_mem.id)
 			expect(mem.membership_id).toBe(test_mem.id)
@@ -117,7 +118,6 @@ describe('Membership Verify', () => {
 
 		// success: verified
 		test('Success: Verified', async () => {
-			const test_data = await reset_test_data()
 			const test_mem = test_data['membership']['verified_root_1']
 			const mem = await mem_verify_i(test_mem.id)
 			expect(mem.membership_id).toBe(test_mem.id)
@@ -130,21 +130,18 @@ describe('Membership Verify', () => {
 
 		// error: no id
 		test('Error: No membership id', async () => {
-			const test_data = await reset_test_data()
 			await expect(mem_verify_i({}))
 				.rejects.toThrow(new Error(errors._invalid_param))
 		})
 
 		// error: non-uuid id
 		test('Error: Non-uuid membership id', async () => {
-			const test_data = await reset_test_data()
 			await expect(mem_verify_i('bad-val'))
 				.rejects.toThrow(new Error(errors._invalid_param))
 		})
 
 		// error: invalid id
 		test('Error: Invalid membership id', async () => {
-			const test_data = await reset_test_data()
 			await expect(mem_verify_i('00000000-0000-0000-0000-000000000000'))
 				.rejects.toThrow(new Error(errors.membership_dne))
 		})

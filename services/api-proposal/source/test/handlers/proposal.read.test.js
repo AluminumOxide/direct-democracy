@@ -4,7 +4,7 @@ const {
 	get_dummy_log,
 	get_dummy_reply,
 	proposal_read_unit: prop_read_u,
-	reset_test_data,
+	integration_test_setup,
 	proposal_read_integration: prop_read_i
 } = require('../helper')
 
@@ -178,10 +178,11 @@ describe('Proposal Read', () => {
 	})
 
 	describe('Integration Tests', () => {
-		
+
+		const test_data = integration_test_setup()
+
 		// success
 		test('Success', async () => {
-			const test_data = await reset_test_data()
 			let test_prop = test_data['proposal']['root_name_failed']
 			const prop = await prop_read_i(test_prop.id)
 			expect(prop.proposal_id).toBe(test_prop.id)
@@ -203,7 +204,6 @@ describe('Proposal Read', () => {
 	
 		// error: invalid proposal id
 		test('Error: Invalid proposal id', async () => {
-			const test_data = await reset_test_data()
 			await expect(prop_read_i('d3a48d83-eace-4097-bdd9-c0116b7f1475'))
 				.rejects.toThrow(new Error(errors.proposal_dne))
 		})

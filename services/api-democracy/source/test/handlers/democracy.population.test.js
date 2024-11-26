@@ -4,7 +4,7 @@ const {
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
-	reset_test_data,
+	integration_test_setup,
 	democracy_population_unit: dem_pop_u,
 	democracy_read_integration: dem_read_i,
 	democracy_population_integration: dem_pop_i
@@ -200,7 +200,9 @@ describe('Population', () => {
 	})
 
 	describe('Integration Tests', () => {
-		
+
+		const test_data = integration_test_setup()
+
 		/*TODO: fix:
 		// success: population updates
 		test('Success: Population updates', async() => {
@@ -248,7 +250,6 @@ console.log(dem2.democracy_population_unverified, dem2.democracy_population_veri
 		test('Success: No population updates', async() => {
 
 			// check democracy population
-			const test_data = await reset_test_data()
 			const dem1 = await dem_read_i(test_data['democracy']['root'].id)
 
 			// update population
