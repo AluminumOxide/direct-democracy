@@ -203,6 +203,10 @@
 			"$id": "queries-last",
 			"type": "string"
 		},
+		"population_last": {
+			"$id": "queries-population_last",
+			"$ref": "schemas-uuid"
+		},
 		"order": {
 			"$id": "queries-order",
 			"type": "string",
@@ -385,7 +389,25 @@
 						}
 					}
 				},
-				"population": {
+				"population_verified": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"oneOf": [
+								{ "type": "integer" },
+								{
+									"type": "array",
+									"items": { "type": "integer" }
+								}	
+							]
+						}
+					}
+				},
+				"population_unverified": {
 					"type": "object",
 					"additionalProperties": false,
 					"properties": {
@@ -620,7 +642,7 @@
 					"type": "object",
 					"properties": {
 						"limit":  {"$ref": "queries-limit"},
-				      		"last":   {"$ref": "queries-last"},
+				      		"last":   {"$ref": "queries-population_last"},
 				      		"order":  {"$ref": "queries-order"},
 				      		"sort":   {"$ref": "queries-population_sort"},
 						"filter": {"$ref": "queries-population_filter"}

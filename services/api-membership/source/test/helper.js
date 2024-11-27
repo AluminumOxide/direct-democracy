@@ -71,8 +71,8 @@ const membership_unverify_integration = async(membership_id) => {
 	return await api_membership_client.membership_unverify({ membership_id })
 }
 
-const membership_population_integration = async() => {
-	return await api_membership_client.membership_population({})
+const membership_population_integration = async(args) => {
+	return await api_membership_client.membership_population(args)
 }
 
 module.exports = {

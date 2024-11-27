@@ -141,7 +141,7 @@ Properties:
 
 - **last**
 
-	 - [queries-last](#queries-last)
+	 - [queries-population_last](#queries-population_last)
 
 - **order**
 
@@ -179,6 +179,9 @@ Type: integer
 #### queries-last
 
 Type: string
+#### queries-population_last
+
+Type: [schemas-uuid](#schemas-uuid)
 #### queries-order
 
 Type: string
@@ -428,7 +431,34 @@ Properties:
 
 
 
-- **population**
+- **population_verified**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op](#schemas-op)
+
+	- **val**
+
+
+		One Of:
+
+		- Type: integer
+
+		- Type: array
+
+			Items:
+
+			- Type: integer
+
+
+
+- **population_unverified**
 
 	Type: object
 
