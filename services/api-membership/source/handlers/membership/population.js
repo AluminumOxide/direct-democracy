@@ -7,8 +7,8 @@ const membership_population = async function(request, reply, db, log) {
 			db.select([
 				'democracy_id'
 			])
-			.sum({ verified: db.raw('case when is_verified then population else 0 end')})
-			.sum({ unverified: db.raw('case when not is_verified then population else 0 end')})
+			.sum({ population_verified: db.raw('case when is_verified then population else 0 end')})
+			.sum({ population_unverified: db.raw('case when not is_verified then population else 0 end')})
 			.select(db.raw('max(date_updated) as date_updated'))
 			.from(
 				db.select([
