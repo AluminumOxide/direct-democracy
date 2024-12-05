@@ -1299,11 +1299,14 @@
 				"description": "List democracies",
 				"operationId": "democracy_list",
 				"query": {
-					"limit": { "$ref": "queries-limit"},
-				      	"last": { "$ref": "queries-last"},
-				      	"order": { "$ref": "queries-order"},
-				      	"sort": { "$ref": "queries-democracy_sort"},
-				      	"filter": { "$ref": "queries-democracy_filter"}
+					"type": "object",
+					"properties": {
+						"limit": { "$ref": "queries-limit"},
+				      		"last": { "$ref": "queries-last"},
+				      		"order": { "$ref": "queries-order"},
+				      		"sort": { "$ref": "queries-democracy_sort"},
+				      		"filter": { "$ref": "queries-democracy_filter"}
+					}
 				},
 				"responses": {
 					"200": {
@@ -1349,12 +1352,15 @@
 				"description": "List memberships",
 				"operationId": "membership_list",
 				"query": {
-					"limit":  {"$ref": "queries-limit"},
-				      	"last":   {"$ref": "queries-last"},
-				      	"order":  {"$ref": "queries-order"},
-				      	"sort":   {"$ref": "queries-membership_sort"},
-				      	"filter": {"$ref": "queries-membership_filter"},
-					"profile_id": {"$ref": "queries-profile_id"}
+					"type": "object",
+					"properties": {
+						"limit":  {"$ref": "queries-limit"},
+				      		"last":   {"$ref": "queries-last"},
+				      		"order":  {"$ref": "queries-order"},
+				      		"sort":   {"$ref": "queries-membership_sort"},
+				      		"filter": {"$ref": "queries-membership_filter"},
+						"profile_id": {"$ref": "queries-profile_id"}
+					}
 				},
 				"responses": {
 					"200": {
@@ -1445,11 +1451,14 @@
 					"democracy_id": { "$ref": "params-democracy_id" }
 				},
 				"query": {
-					"limit": { "$ref": "queries-limit" },
-					"last": { "$ref": "queries-last" },
-					"order": { "$ref": "queries-order" },
-					"sort": { "$ref": "queries-proposal_sort" },
-					"filter": { "$ref": "queries-proposal_filter" }
+					"type": "object",
+					"properties": {
+						"limit": { "$ref": "queries-limit" },
+						"last": { "$ref": "queries-last" },
+						"order": { "$ref": "queries-order" },
+						"sort": { "$ref": "queries-proposal_sort" },
+						"filter": { "$ref": "queries-proposal_filter" }
+					}
 				},
 				"response": {
 					"200": {

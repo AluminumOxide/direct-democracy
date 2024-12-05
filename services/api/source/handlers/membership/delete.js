@@ -1,4 +1,4 @@
-const mem_client = require('@AluminumOxide/direct-democracy-membership-api-client')
+const mem_client = require('@aluminumoxide/direct-democracy-membership-api-client')
 const auth = require('../../helpers/auth')
 
 const membership_delete = async function(request, reply, db, log) {

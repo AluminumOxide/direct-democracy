@@ -1,4 +1,4 @@
-const prop_client = require('@AluminumOxide/direct-democracy-proposal-api-client')
+const prop_client = require('@aluminumoxide/direct-democracy-proposal-api-client')
 const auth = require('../../helpers/auth')
 
 const ballot_read = async function(request, reply, db, log) {
