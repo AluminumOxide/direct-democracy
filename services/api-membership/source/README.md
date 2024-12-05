@@ -487,7 +487,10 @@ Properties:
 
 - **date_updated**
 
-	Type: object
+
+	One Of:
+
+	- Type: object
 
 	Additional Properties: false
 
@@ -499,16 +502,26 @@ Properties:
 
 	- **val**
 
+		Type: [schemas-date_updated](#schemas-date_updated)
 
-		One Of:
+
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_array](#schemas-op_array)
+
+	- **val**
+
+		Type: array
+
+		Items:
 
 		- Type: [schemas-date_updated](#schemas-date_updated)
-
-		- Type: array
-
-			Items:
-
-			- Type: [schemas-date_updated](#schemas-date_updated)
 
 
 

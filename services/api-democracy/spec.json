@@ -384,6 +384,14 @@
 				"DESC"
 			]
 		},
+		"time_start": {
+			"$id": "queries-time_start",
+			"$ref": "schemas-date"
+		},
+		"time_end": {
+			"$id": "queries-time_end",
+			"$ref": "schemas-date"
+		},
 		"democracy_sort": {
 			"$id": "queries-democracy_sort",
 			"type": "string",
@@ -690,6 +698,14 @@
 			"POST": {
 				"description": "Trigger democracy population updates",
 				"operationId": "democracy_population_update",
+				"query": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"time_start": { "$ref": "queries-time_start" },
+						"time_end": { "$ref": "queries-time_end" }
+					}
+				},
 				"responses": {
 					"200": {
 						"$ref": "responses-200"

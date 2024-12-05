@@ -426,22 +426,32 @@
 					}
 				},
 				"date_updated": {
-					"type": "object",
-					"additionalProperties": false,
-					"properties": {
-						"op": {
-							"$ref": "schemas-op"
-						},
-						"val": {
-							"oneOf": [
-								{ "$ref": "schemas-date_updated" },
-								{
-									"type": "array",
-									"items": { "$ref": "schemas-date_updated" }
-								}	
-							]
+					"oneOf": [{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op"
+							},
+							"val": {
+								"$ref": "schemas-date_updated"
+							}
 						}
-					}
+					},{
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"op": {
+								"$ref": "schemas-op_array"
+							},
+							"val": {
+								"type": "array",
+								"items": {
+									"$ref": "schemas-date_updated"
+								}
+							}
+						}
+					}]
 				}
 			}
 		}

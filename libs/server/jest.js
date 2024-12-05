@@ -1,4 +1,5 @@
 const sinon = require('sinon')
+const uuid = require('uuid')
 
 const get_dummy_reply = function() {
 	return {
@@ -111,4 +112,21 @@ const integration_test_setup = function() {
 	return require('../../../test/.testdata.json')
 }
 
-module.exports = { get_dummy_reply, get_dummy_log, get_dummy_api, get_dummy_db, integration_test_setup }
+// utils
+const get_uuid = function() {
+	return uuid.v4()
+}
+
+const get_first_uuid = function() {
+	return '00000000-0000-0000-0000-000000000000'
+}
+
+const get_timestamp = function() {
+	return new Date().toJSON()
+}
+
+const get_first_timestamp = function() {
+	return '1970-01-01T00:00:00.000Z'
+}
+
+module.exports = { get_uuid, get_first_uuid, get_timestamp, get_first_timestamp, get_dummy_reply, get_dummy_log, get_dummy_api, get_dummy_db, integration_test_setup }

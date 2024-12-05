@@ -69,6 +69,23 @@ Properties:
 
 *Trigger democracy population updates*
 
+**Queries**
+
+Type: object
+
+Additional Properties: false
+
+Properties:
+
+- **time_start**
+
+	 - [queries-time_start](#queries-time_start)
+
+- **time_end**
+
+	 - [queries-time_end](#queries-time_end)
+
+
 **Responses**
 
 - [200](#responses-200)
@@ -120,6 +137,12 @@ Enum:
 
 - ASC
 - DESC
+#### queries-time_start
+
+Type: [schemas-date](#schemas-date)
+#### queries-time_end
+
+Type: [schemas-date](#schemas-date)
 #### queries-democracy_sort
 
 Type: string
