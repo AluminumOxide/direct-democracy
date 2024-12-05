@@ -3,13 +3,9 @@ const api_membership_client = require('@aluminumoxide/direct-democracy-membershi
 
 const democracy_population_update = async function(request, reply, db, log) {
 
-	// calculate time window
-	const time_window = 5 // min
-	let time_end = new Date()
-	let time_start = (new Date(time_end.getTime() - time_window*60000)).toISOString()
-	time_end = time_end.toISOString()
-	try {
+	const { time_start, time_end } = request
 
+	try {
 		// use time window in request
 		let args = {
 			limit: 100,
@@ -22,21 +18,21 @@ const democracy_population_update = async function(request, reply, db, log) {
 				}
 			}
 		}
+		log.info(`Democracy/Population: Starting: ${time_start} - ${time_end}`)
 
 		// continue to fetch updates until we run out
 		let stopped = false
 		while(!stopped) {
 
 			// fetch democracies and populations
-			log.info(`Democracy/Population: Processing: ${time_start} - ${time_end}`)
 			let pops = await api_membership_client.membership_population(args)
 
 			// update democracies
 			for(let pop of pops) {
 				await db('democracy')
 					.update({
-						population_verified: pop.verified,
-						population_unverified: pop.unverified
+						population_verified: pop.population_verified,
+						population_unverified: pop.population_unverified
 					})
 					.where({
 						id: pop.democracy_id
@@ -46,13 +42,15 @@ const democracy_population_update = async function(request, reply, db, log) {
 			// see if there's more to fetch
 			if(pops.length < args.limit) {
 				stopped = true
+				log.info(`Democracy/Population: Finished fetching populations`)
 			} else {
 				args.last = (pops[(pops.length-1)])[args.sort]
+				log.info(`Democracy/Population: Fetching more populations`)
 			}
 		}
 
 		// return succcess
-		log.info(`Democracy/Population: Success`)
+		log.info(`Democracy/Population: Success: ${time_start} - ${time_end}`)
 		return reply.code(200).send()
 
 	} catch (e) {
