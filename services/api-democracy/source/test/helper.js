@@ -1,5 +1,7 @@
+const sinon = require('sinon')
 const api_democracy_client = require('@aluminumoxide/direct-democracy-democracy-api-client')
 const api_membership_client = require('@aluminumoxide/direct-democracy-membership-api-client')
+const api_proposal_client = require('@aluminumoxide/direct-democracy-proposal-api-client')
 const {
 	get_uuid,
 	get_first_uuid,
@@ -14,7 +16,7 @@ const {
 } = require('@aluminumoxide/direct-democracy-lib-server').testing
 
 // errors
-const errors = api_democracy_client.errors
+const errors = { ...api_democracy_client.errors, ...api_membership_client.errors, ...api_proposal_client.errors }
 
 // unit tests
 const democracy_list_unit = async(request, reply, db, log) => {
@@ -54,15 +56,20 @@ const democracy_population_integration = async (time_start, time_end) => {
 	return await api_democracy_client.democracy_population_update({ time_start, time_end })
 }
 
+const democracy_apply_integration = async (proposal_id) => {
+	return await api_democracy_client.apply_proposal({ proposal_id })
+}
+
 const membership_create_integration = async(democracy_id, profile_id) => {
 	return await api_membership_client.membership_create({ democracy_id, profile_id })
 }
 
-const democracy_apply_integration = async () => {
-	return await api_democracy_client.democracy_apply({})
+const proposal_read_integration = async (proposal_id) => {
+	return await api_proposal_client.proposal_read({ proposal_id })
 }
 
 module.exports = {
+	sinon,
 	errors,
 	get_uuid,
 	get_first_uuid,
@@ -82,7 +89,8 @@ module.exports = {
 	democracy_root_integration,
 	democracy_population_unit,
 	democracy_population_integration,
-	membership_create_integration,
 	democracy_apply_unit,
-	democracy_apply_integration
+	democracy_apply_integration,
+	membership_create_integration,
+	proposal_read_integration
 }

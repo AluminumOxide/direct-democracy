@@ -71,7 +71,7 @@ const apply_proposal = async function(request, reply, db, log) {
 		if(!changes || typeof(changes) !== "object" || Object.keys(changes).length === 0) {
 			log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal has no changes`) 
 			// close proposal and return applicable error
-			return await close_proposal(reply, log, proposal_id, 400, false, api_proposal_client.errors.no_changes)
+			return await close_proposal(reply, log, proposal_id, 400, false, api_proposal_client.errors.changes_dne)
 		}
 
 		// targeted contents
