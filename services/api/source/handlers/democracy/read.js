@@ -12,7 +12,7 @@ const democracy_read = async function(request, reply, db, log) {
 		return reply.code(200).send(dem)
 
 	} catch(e) {
-console.log(e)
+
 		// error if democracy_id invalid
 		if(e.message === dem_client.errors.democracy_dne) {
 			log.warn(`Democracy/Read: Failure: ${democracy_id} Error: Democracy does not exist`)

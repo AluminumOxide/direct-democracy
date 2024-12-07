@@ -34,7 +34,7 @@ const proposal_delete = async function(request, reply, db, log) {
 	} catch(e) {
 
 		// handle invalid proposal_id
-		if(e.messge === prop_client.errors.proposal_dne) {
+		if(e.message === prop_client.errors.proposal_dne) {
 			log.warn(`Proposal/Delete: Failure: Error: Proposal does not exist`)
 			return reply.code(400).send(new Error(prop_client.errors.proposal_dne))
 		}

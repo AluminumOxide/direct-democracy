@@ -17,7 +17,7 @@ const ballot_create = async function(request, reply, db, log) {
 
 		// return results
 		log.info(`Ballot/Create: Success: ${proposal_id}`)
-		return reply.code(200).send(ballot)
+		return reply.code(201).send(ballot)
 
 	} catch(e) {
 

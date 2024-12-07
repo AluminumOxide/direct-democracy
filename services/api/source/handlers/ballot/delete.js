@@ -21,7 +21,7 @@ const ballot_delete = async function(request, reply, db, log) {
 
 	 	// check membership_id and ballot_id match
 		if(ballots[0].membership_id !== membership_id) {
-			log.warn(`Ballot/Delete: Failure: ${membership_id} Error: Membership does not exist`)
+			log.warn(`Ballot/Delete: Failure: Error: Membership does not exist`)
 			return reply.code(400).send(new Error(prop_client.errors.membership_dne))
 	  	}
 

@@ -29,18 +29,18 @@ const ballot_read = async function(request, reply, db, log) {
 
 		// handle invalid ballot_id
 		if(e.message === prop_client.errors.ballot_dne) {
-			log.warn(`Ballot/Read: Failure: ${ballot_id} Error: Invalid ballot_id`)
+			log.warn(`Ballot/Read: Failure: Error: Invalid ballot_id`)
 			return reply.code(400).send(new Error(prop_client.errors.ballot_dne))
 		}
 
 		// handle invalid proposal
 		if(e.message === prop_client.errors.proposal_dne) {
-			log.warn(`Ballot/Read: Failure: ${ballot_id} Error: Invalid proposal`)
+			log.warn(`Ballot/Read: Failure: Error: Invalid proposal`)
 			return reply.code(400).send(new Error(prop_client.errors.proposal_dne))
 		}
 
 		// handle all other errors
-		log.error(`Ballot/Read: Failure: ${ballot_id} Error: ${e}`)
+		log.error(`Ballot/Read: Failure: Error: ${e}`)
 		return reply.code(500).send(new Error(prop_client.errors.internal_error))
 	}
 }

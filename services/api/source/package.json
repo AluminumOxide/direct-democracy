@@ -5,9 +5,11 @@
   "main": "index.js",
   "dependencies": {
     "@aluminumoxide/direct-democracy-democracy-api-client": "^1.0.44",
+    "@aluminumoxide/direct-democracy-external-api-client": "^1.0.4",
     "@aluminumoxide/direct-democracy-lib-server": "^1.0.15",
     "@aluminumoxide/direct-democracy-membership-api-client": "^1.0.21",
     "@aluminumoxide/direct-democracy-proposal-api-client": "^1.0.28",
+    "jest": "^29.7.0",
     "sinon": "^19.0.2"
   },
   "scripts": {
