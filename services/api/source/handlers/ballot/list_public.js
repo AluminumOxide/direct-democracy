@@ -1,8 +1,8 @@
-const prop_client = require('@AluminumOxide/direct-democracy-proposal-api-client')
+const prop_client = require('@aluminumoxide/direct-democracy-proposal-api-client')
 const { invalid_auth } = require('../../errors.json')
 
 const ballot_list = async function(request, reply, db, log) {
-	let  { limit, last, sort, order, filter, democracy_id, proposal_id } = request
+	let  { limit, last, sort, order, filter={}, democracy_id, proposal_id } = request
 
 	try {
 		// handle attempts to glean ballots' profile_ids
@@ -27,8 +27,7 @@ const ballot_list = async function(request, reply, db, log) {
 		}
 
 		// fetch ballots
-		filter['proposal_id'] = { 'op':'=', 'val':proposal_id }
-		const ballots = await prop_client.ballot_list({ limit, last, sort, order, filter })
+		const ballots = await prop_client.ballot_list({ limit, last, sort, order, filter, proposal_id })
 
 		// return results
 		log.info(`Ballot/List: Success: ${proposal_id}`)

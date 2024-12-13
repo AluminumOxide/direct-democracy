@@ -1,34 +1,37 @@
-const prop_client = require('@AluminumOxide/direct-democracy-proposal-api-client')
+const prop_client = require('@aluminumoxide/direct-democracy-proposal-api-client')
 const auth = require('../../helpers/auth')
 const { invalid_auth } = require('../../errors.json')
 
 const ballot_update = async function(request, reply, db, log) {
-	const { democracy_id, proposal_id, membership_id, ballot_approved, ballot_comments } = request
+	const { ballot_id, ballot_approved, ballot_comments } = request
 
 	try {
-		// get profile_id
+		// get ballot
+		const ballot = await prop_client.ballot_read({ ballot_id })
+
+		// get membership ids
 		const profile_id = await auth.get_profile_id(request, log)
+		const memberships = await auth.get_membership_ids(profile_id)
+		const membership_ids = memberships.map((x) => x.membership_id)
 		
-		// check membership_id
-		const auth_membership_id = await auth.get_membership_id(profile_id, democracy_id)
-		if(auth_membership_id !== membership_id) {
-			log.warn(`Ballot/Update: Failure: Error: `)
+		// check membership id
+		if(membership_ids.indexOf(ballot.membership_id) < 0) {
+			log.warn(`Ballot/Update: Failure: Error: Invalid Auth`)
 			return reply.code(401).send(new Error(invalid_auth))
 		}
 
-		// search ballots
-		const ballots = await prop_client.ballot_list({ filter:{ membership_id: { op: '=', val: membership_id }, proposal_id:{ op: '=', val: proposal_id } } })
-		if(ballots.length < 1) {
-		        log.warn(`Ballot/Update: Failure: Error: `)
-		        return reply.code(400).send(new Error(prop_client.errors.ballot_dne))
-		}
-  
 		// update ballot
-		const ballot = await prop_client.ballot_update({ ballot_id: ballots[0].ballot_id, membership_id, ballot_approved, ballot_comments, proposal_id })
+		const new_ballot = await prop_client.ballot_update({ 
+			ballot_id,
+			membership_id: ballot.membership_id,
+			proposal_id: ballot.proposal_id,
+			ballot_approved,
+			ballot_comments
+		})
 
 		// return results
 		log.info(`Ballot/Update: Success: `)
-		return reply.code(200).send(ballot)
+		return reply.code(200).send(new_ballot)
 
 	} catch(e) {
 

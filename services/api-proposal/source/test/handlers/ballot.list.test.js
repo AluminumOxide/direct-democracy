@@ -1,5 +1,6 @@
 const {
 	errors,
+	get_uuid,
 	get_dummy_api,
 	get_dummy_db,
 	get_dummy_log,
@@ -17,7 +18,7 @@ describe('List', () => {
 		test('Success', async() => {
 
 			// set up mocks
-			const dummy_req = {}
+			const dummy_req = { proposal_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{

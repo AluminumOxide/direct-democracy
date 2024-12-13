@@ -1,4 +1,5 @@
-const dem_client = require('@AluminumOxide/direct-democracy-democracy-api-client')
+const { internal_error } = require('../../errors.json')
+const dem_client = require('@aluminumoxide/direct-democracy-democracy-api-client')
 
 const democracy_list = async function(request, reply, db, log) {
 	const { limit, last, sort, order, filter } = request
@@ -15,7 +16,7 @@ const democracy_list = async function(request, reply, db, log) {
 
 		// handle errors
 		log.error(`Democracy/List: Failure: Error: ${e}`)
-		return reply.code(500).send(new Error(dem_client.errors.internal_error))
+		return reply.code(500).send(new Error(internal_error))
 	}
 }
 

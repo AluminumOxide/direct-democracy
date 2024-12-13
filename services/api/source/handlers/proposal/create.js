@@ -1,4 +1,4 @@
-const prop_client = require('@AluminumOxide/direct-democracy-proposal-api-client')
+const prop_client = require('@aluminumoxide/direct-democracy-proposal-api-client')
 const auth = require('../../helpers/auth')
 const { invalid_auth } = require('../../errors.json')
 
@@ -28,7 +28,7 @@ const proposal_create = async function(request, reply, db, log) {
 
 		// handle invalid membership
 		if(e.message === prop_client.errors.membership_dne) {
-			log.warn(`Proposal/Create: Failure: ${membership_id} Error: Membership does not exist`)
+			log.warn(`Proposal/Create: Failure: Error: Membership does not exist`)
 			return reply.code(401).send(new Error(invalid_auth))
 		}
 

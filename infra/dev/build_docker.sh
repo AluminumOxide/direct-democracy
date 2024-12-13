@@ -8,6 +8,7 @@ cp .npmrc ../../services/api/source/
 cp ../../services/api-democracy/spec.json ../../services/api-democracy/source/
 cp ../../services/api-membership/spec.json ../../services/api-membership/source/
 cp ../../services/api-proposal/spec.json ../../services/api-proposal/source/
+cp ../../services/api/spec.json ../../services/api/source/
 
 # build test data
 SERVICES=(democracy membership proposal)
@@ -35,6 +36,7 @@ echo "}" >> .testdata.json
 cp .testdata.json ../../services/api-democracy/source/test/
 cp .testdata.json ../../services/api-membership/source/test/
 cp .testdata.json ../../services/api-proposal/source/test/
+cp .testdata.json ../../services/api/source/test/
 
 # build docker containers
 docker build -t local-database -f ./local_database/Dockerfile ../../

@@ -75,11 +75,13 @@ resource "docker_container" "api-external" {
 	name = "api-external"
 	env = [
 		"ENV=dev",
+		"DB_PORT=5432",
+		"DB_NAME=0.0.0.0",
 		"DB_NETWORK=db-network",
 		"API_EXTERNAL_NAME=api-external",
 		"API_EXTERNAL_URL=0.0.0.0",
 		"API_EXTERNAL_PORT=3000",
-		"TEST_CONNECTION_STRING=postgres://postgres:postgres@local-database:5432/postgres",
+		"TEST_CONNECTION_STRING=postgres://postgres:postgres@0.0.0.0:5432/postgres",
 	]
 	volumes {
 		host_path = abspath("../../services/api/source")

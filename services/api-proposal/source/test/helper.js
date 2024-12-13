@@ -1,5 +1,6 @@
 const api_proposal_client = require('@aluminumoxide/direct-democracy-proposal-api-client')
 const {
+	get_uuid,
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
@@ -120,6 +121,7 @@ const proposal_close_integration = async(proposal_id, passed) => {
 
 module.exports = {
 	errors,
+	get_uuid,
 	get_dummy_db,
 	get_dummy_api,
 	get_dummy_log,

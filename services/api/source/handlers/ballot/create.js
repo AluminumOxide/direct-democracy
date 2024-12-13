@@ -1,23 +1,24 @@
-const prop_client = require('@AluminumOxide/direct-democracy-proposal-api-client')
+const prop_client = require('@aluminumoxide/direct-democracy-proposal-api-client')
 const auth = require('../../helpers/auth')
 const { invalid_auth } = require('../../errors.json')
 
 const ballot_create = async function(request, reply, db, log) {
-	const { democracy_id, proposal_id, ballot_approved, ballot_comments } = request
+	const { proposal_id, ballot_approved, ballot_comments } = request
 
 	try {
-		// get profile_id
-		const profile_id = await auth.get_profile_id(request, log)
+		// get proposal
+		const proposal = await prop_client.proposal_read({ proposal_id })
 
 		// get membership_id
-		const membership_id = await auth.get_membership_id(profile_id, democracy_id)
+		const profile_id = await auth.get_profile_id(request, log)
+		const membership_id = await auth.get_membership_id(profile_id, proposal.democracy_id)
 
 		// create ballot
 		const ballot = await prop_client.ballot_create({ proposal_id, membership_id, ballot_approved, ballot_comments })
 
 		// return results
 		log.info(`Ballot/Create: Success: ${proposal_id}`)
-		return reply.code(200).send(ballot)
+		return reply.code(201).send(ballot)
 
 	} catch(e) {
 
