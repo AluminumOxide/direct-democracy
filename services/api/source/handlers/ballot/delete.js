@@ -3,30 +3,24 @@ const auth = require('../../helpers/auth')
 const { invalid_auth } = require('../../errors.json')
 
 const ballot_delete = async function(request, reply, db, log) {
-	const { democracy_id, proposal_id } = request
+	const { ballot_id } = request
 
 	try {
-		// get profile_id
-		const profile_id = await auth.get_profile_id(request, log)
-		
-		// get membership_id
-		const membership_id = await auth.get_membership_id(profile_id, democracy_id)
+		// get ballot
+		const ballot = await prop_client.ballot_read({ ballot_id })
 
-		// search ballots
-		const ballots = await prop_client.ballot_list({ filter:{ membership_id: { op: '=', val: membership_id }, proposal_id:{ op: '=', val: proposal_id } } })
-		if(ballots.length < 1) {
-		        log.warn(`Ballot/Delete: Failure: Error: `)
-		        return reply.code(400).send(new Error(prop_client.errors.ballot_dne))
-		}
+		// get membership id
+		const profile_id = await auth.get_profile_id(request, log)
+		const membership_id = await auth.get_membership_id(profile_id, ballot.democracy_id)
 
 	 	// check membership_id and ballot_id match
-		if(ballots[0].membership_id !== membership_id) {
-			log.warn(`Ballot/Delete: Failure: Error: Membership does not exist`)
-			return reply.code(400).send(new Error(prop_client.errors.membership_dne))
+		if(ballot.membership_id !== membership_id) {
+			log.warn(`Ballot/Delete: Failure: Error: Invalid auth`)
+			return reply.code(401).send(new Error(invalid_auth))
 	  	}
 
 		// delete ballot 
-		await prop_client.ballot_delete({ ballot_id: ballots[0].ballot_id, proposal_id })
+		await prop_client.ballot_delete({ ballot_id, proposal_id: ballot.proposal_id })
 
 		// return results
 		log.info(`Ballot/Delete: Success: `)
@@ -48,7 +42,7 @@ const ballot_delete = async function(request, reply, db, log) {
 
 		// handle invalid membership_id
 		if(e.message === prop_client.errors.membership_dne) {
-			log.warn(`Ballot/Delete: Failure:  Error: Invalid membership_id`)
+			log.warn(`Ballot/Delete: Failure:  Error: Invalid auth`)
 			return reply.code(401).send(new Error(invalid_auth))
 		}
 

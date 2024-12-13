@@ -5,10 +5,21 @@ const {
 	get_dummy_reply,
 	get_dummy_api,
 	integration_test_setup,
-	ballot_list_unit: blt_list_u
+	ballot_list_unit: blt_list_u,
+	ballot_list_integration: blt_list_i
 } = require('../helper')
 
 describe('Ballot List', () => {
+
+	describe('Integration Tests', () => {
+
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			const blts = await blt_list_i(test_data.membership.unverified_root_1.id)
+			expect(blts.length).toBe(2)
+		})
+	})
 
 	describe('Unit Tests', () => {
 

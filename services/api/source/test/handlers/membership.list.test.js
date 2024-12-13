@@ -5,10 +5,23 @@ const {
 	get_dummy_reply,
 	get_dummy_api,
 	integration_test_setup,
-	membership_list_unit: mem_list_u
+	membership_list_unit: mem_list_u,
+	membership_list_integration: mem_list_i
 } = require('../helper')
 
 describe('Membership List', () => {
+
+	describe('Integration Tests', () => {
+	
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			const mems = await mem_list_i({
+				profile_id: test_data['membership']['verified_root_1'].profile_id
+			})
+			expect(mems.length).toBe(1)
+		})
+	})
 
 	describe('Unit Tests', () => {
 

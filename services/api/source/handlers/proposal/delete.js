@@ -2,7 +2,7 @@ const prop_client = require('@aluminumoxide/direct-democracy-proposal-api-client
 const auth = require('../../helpers/auth')
 
 const proposal_delete = async function(request, reply, db, log) {
- 	const { democracy_id, proposal_id } = request
+ 	const { proposal_id } = request
 
 	try {
 		// get proposal	
@@ -18,12 +18,6 @@ const proposal_delete = async function(request, reply, db, log) {
 		        return reply.code(400).send(new Error(prop_client.errors.membership_invalid))
 		}
   
-		// check democracy_id (optional)
-		if(prop.democracy_id !== democracy_id) {
-			  log.warn(`Proposal/Delete: Failure: ${proposal_id},${democracy_id} Error: Invalid democracy`)
-			  return reply.code(400).send(new Error(prop_client.errors.democracy_invalid))
-		}
-
 		// delete from proposal service
 		await prop_client.proposal_delete({ proposal_id })
 

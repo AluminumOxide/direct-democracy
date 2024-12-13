@@ -5,10 +5,21 @@ const {
 	get_dummy_reply,
 	get_dummy_api,
 	integration_test_setup,
-	membership_create_unit: mem_create_u
+	membership_create_unit: mem_create_u,
+	membership_create_integration: mem_create_i
 } = require('../helper')
 
 describe('Membership Create', () => {
+	
+	describe('Integration Tests', () => {
+
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			const mem = await mem_create_i(test_data['democracy']['root'].id, get_uuid())
+			expect(mem.democracy_id).toBe(test_data['democracy']['root'].id)
+		})
+	})
 
 	describe('Unit Tests', () => {
 

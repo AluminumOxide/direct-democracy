@@ -5,10 +5,29 @@ const {
 	get_dummy_reply,
 	get_dummy_api,
 	integration_test_setup,
-	proposal_create_unit: prop_create_u
+	proposal_create_unit: prop_create_u,
+	proposal_create_integration: prop_create_i
 } = require('../helper')
 
 describe('Proposal Create', () => {
+
+	describe('Integration Tests', () => {
+
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			const test_prop = {
+				democracy_id: test_data.democracy.root_child.id,
+				profile_id: test_data.membership.verified_child_1.id,
+				proposal_name: 'asdf',
+				proposal_description: 'asdf',
+				proposal_target: 'name',
+				proposal_changes: {'_update':{'name':'qwer'}}
+			}
+			const { profile_id, ...expected } = test_prop
+			await expect(prop_create_i(test_prop)).resolves.toMatchObject(expected)
+		})
+	})
 
 	describe('Unit Tests', () => {
 

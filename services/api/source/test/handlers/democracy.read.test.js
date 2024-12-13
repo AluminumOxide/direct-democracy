@@ -5,10 +5,22 @@ const {
 	get_dummy_reply,
 	get_dummy_api,
 	integration_test_setup,
-	democracy_read_unit: dem_read_u
+	democracy_read_unit: dem_read_u,
+	democracy_read_integration: dem_read_i
 } = require('../helper')
 
 describe('Democracy Read', () => {
+
+	describe('Integration Tests', () => {
+
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			const expected = test_data['democracy']['root']
+			const actual = await dem_read_i(expected.id)
+			expect(actual.democracy_id).toBe(expected.id)
+		})
+	})
 
 	describe('Unit Tests', () => {
 

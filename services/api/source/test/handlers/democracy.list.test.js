@@ -5,10 +5,21 @@ const {
 	get_dummy_reply,
 	get_dummy_api,
 	integration_test_setup,
-	democracy_list_unit: dem_list_u
+	democracy_list_unit: dem_list_u,
+	democracy_list_integration: dem_list_i
 } = require('../helper')
 
 describe('Democracy List', () => {
+
+	describe('Integration Tests', () => {
+
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			const dems = await dem_list_i({})
+			expect(dems.length).toBe(Object.keys(test_data['democracy']).length)
+		})
+	})
 
 	describe('Unit Tests', () => {
 

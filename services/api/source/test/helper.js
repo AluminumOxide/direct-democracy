@@ -91,75 +91,75 @@ const ballot_delete_unit = async(request, reply, db, log) => {
 
 // integration tests
 const democracy_list_integration = async() => {
-	return await api_external_client.democracy_list()
+	return await api_external_client.democracy_list({})
 }
 
-const democracy_read_integration = async() => {
-	return await api_external_client.democracy_read()
+const democracy_read_integration = async(democracy_id) => {
+	return await api_external_client.democracy_read({ democracy_id })
 }
 
-const membership_list_integration = async() => {
-	return await api_external_client.membership_list()
+const membership_list_integration = async(args) => {
+	return await api_external_client.membership_list(args)
 }
 
-const membership_create_integration = async() => {
-	return await api_external_client.membership_create()
+const membership_create_integration = async(democracy_id, profile_id) => {
+	return await api_external_client.membership_create({ democracy_id, profile_id })
 }
 
-const membership_read_integration = async() => {
-	return await api_external_client.membership_read()
+const membership_read_integration = async(membership_id, profile_id) => {
+	return await api_external_client.membership_read({ membership_id, profile_id })
 }
 
-const membership_delete_integration = async() => {
-	return await api_external_client.membership_delete()
+const membership_delete_integration = async(membership_id, profile_id) => {
+	return await api_external_client.membership_delete({ membership_id, profile_id })
 }
 
 const proposal_list_integration = async() => {
 	return await api_external_client.proposal_list()
 }
 
-const proposal_list_public_integration = async() => {
-	return await api_external_client.proposal_public_list()
+const proposal_list_public_integration = async(democracy_id) => {
+	return await api_external_client.proposal_list_public({ democracy_id })
 }
 
-const proposal_create_integration = async() => {
-	return await api_external_client.proposal_create()
+const proposal_create_integration = async(args) => {
+	return await api_external_client.proposal_create(args)
 }
 
-const proposal_read_integration = async() => {
-	return await api_external_client.proposal_read()
+const proposal_read_integration = async(proposal_id, profile_id) => {
+	return await api_external_client.proposal_read({ proposal_id, profile_id })
 }
 
-const proposal_read_public_integration = async() => {
-	return await api_external_client.proposal_public_read()
+const proposal_read_public_integration = async(proposal_id, democracy_id) => {
+	return await api_external_client.proposal_read_public({ proposal_id, democracy_id })
 }
 
-const proposal_delete_integration = async() => {
-	return await api_external_client.proposal_delete()
+const proposal_delete_integration = async(proposal_id, profile_id) => {
+	return await api_external_client.proposal_delete({ proposal_id, profile_id })
 }
 
-const ballot_list_integration = async() => {
-	return await api_external_client.ballot_list()
+const ballot_list_integration = async(profile_id) => {
+	return await api_external_client.ballot_list({ profile_id })
 }
 
-const ballot_list_public_integration = async() => {
-	return await api_external_client.ballot_public_list()
+const ballot_list_public_integration = async(args) => {
+	return await api_external_client.ballot_list_public(args)
 }
 
-const ballot_create_integration = async() => {
-	return await api_external_client.ballot_create()
+const ballot_create_integration = async(args) => {
+	return await api_external_client.ballot_create(args)
 }
 
-const ballot_read_integration = async() => {
-	return await api_external_client.ballot_read()
+const ballot_read_integration = async(ballot_id, profile_id) => {
+	return await api_external_client.ballot_read({ ballot_id, profile_id })
 }
 
-const ballot_update_integration = async() => {
-	return await api_external_client.ballot_update()
+const ballot_update_integration = async(args) => {
+	return await api_external_client.ballot_update(args)
 }
 
-const ballot_delete_integration = async() => {
-	return await api_external_client.ballot_delete()
+const ballot_delete_integration = async(ballot_id, profile_id) => {
+	return await api_external_client.ballot_delete({ ballot_id, profile_id })
 }
 
 module.exports = {

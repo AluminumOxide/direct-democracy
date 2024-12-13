@@ -5,10 +5,25 @@ const {
 	get_dummy_reply,
 	get_dummy_api,
 	integration_test_setup,
-	membership_delete_unit: mem_delete_u
+	membership_delete_unit: mem_delete_u,
+	membership_read_integration: mem_read_i,
+	membership_delete_integration: mem_delete_i
 } = require('../helper')
 
 describe('Membership Delete', () => {
+
+	describe('Integration Tests', () => {
+
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			const mem_id = test_data['membership']['verified_root_1']['id']
+			const pro_id = test_data['membership']['verified_root_1']['profile_id']
+			await expect(mem_read_i(mem_id, pro_id)).resolves.toBeInstanceOf(Object)
+			await mem_delete_i(mem_id, pro_id)
+			await expect(mem_read_i(mem_id, pro_id)).rejects.toThrow(new Error(errors.membership_dne))
+		})
+	})
 
 	describe('Unit Tests', () => {
 

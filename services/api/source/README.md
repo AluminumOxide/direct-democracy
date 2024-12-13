@@ -54,51 +54,13 @@ Properties:
 - [401](#responses-401)
 - [500](#responses-500)
 
-### GET /v1/membership
-
-*List memberships*
-
-**Queries**
-
-Type: object
-
-Properties:
-
-- **limit**
-
-	 - [queries-limit](#queries-limit)
-
-- **last**
-
-	 - [queries-last](#queries-last)
-
-- **order**
-
-	 - [queries-order](#queries-order)
-
-- **sort**
-
-	 - [queries-membership_sort](#queries-membership_sort)
-
-- **filter**
-
-	 - [queries-membership_filter](#queries-membership_filter)
-
-- **profile_id**
-
-	 - [queries-profile_id](#queries-profile_id)
-
-
-**Responses**
-
-- [200](#responses-membership_list)
-- [400](#responses-400)
-- [401](#responses-401)
-- [500](#responses-500)
-
-### POST /v1/membership
+### POST /v1/democracy/:democracy_id/membership
 
 *Create a membership*
+
+**Params**
+
+- [democracy_id](#params-democracy_id)
 
 **Bodies**
 
@@ -107,40 +69,6 @@ Properties:
 **Responses**
 
 - [200](#responses-membership_read)
-- [400](#responses-400)
-- [401](#responses-401)
-- [500](#responses-500)
-
-### GET /v1/membership/:membership_id
-
-*Get a membership*
-
-**Params**
-
-- [membership_id](#params-membership_id)
-
-**Responses**
-
-- [200](#responses-membership_read)
-- [400](#responses-400)
-- [401](#responses-401)
-- [500](#responses-500)
-
-### DELETE /v1/membership/:membership_id
-
-*Delete a membership*
-
-**Params**
-
-- [membership_id](#params-membership_id)
-
-**Responses**
-
-- [204]
-
-*successfully deleted*
-
-
 - [400](#responses-400)
 - [401](#responses-401)
 - [500](#responses-500)
@@ -193,7 +121,38 @@ undefined
 
 **Bodies**
 
- - [bodies-proposal_create](#bodies-proposal_create)
+Type: object
+
+Required:
+
+- profile_id
+- proposal_name
+- proposal_description
+- proposal_target
+- proposal_changes
+
+Properties:
+
+- **profile_id**
+
+	 - [schemas-profile_id](#schemas-profile_id)
+
+- **proposal_name**
+
+	 - [schemas-proposal_name](#schemas-proposal_name)
+
+- **proposal_description**
+
+	 - [schemas-proposal_description](#schemas-proposal_description)
+
+- **proposal_target**
+
+	 - [schemas-proposal_target](#schemas-proposal_target)
+
+- **proposal_changes**
+
+	 - [schemas-proposal_changes](#schemas-proposal_changes)
+
 
 **Responses**
 undefined
@@ -210,9 +169,9 @@ undefined
 **Responses**
 undefined
 
-### DELETE /v1/democracy/:democracy_id/proposal/:proposal_id
+### GET /v1/democracy/:democracy_id/proposal/:proposal_id/ballot
 
-*Delete a proposal*
+*List proposal ballots*
 
 **Params**
 
@@ -222,13 +181,105 @@ undefined
 **Responses**
 undefined
 
-### POST /v1/democracy/:democracy_id/proposal/:proposal_id/ballot
+### GET /v1/my/proposal
 
-*Cast my ballot*
+*List proposals*
+
+**Queries**
+
+Type: object
+
+Properties:
+
+- **limit**
+
+	 - [queries-limit](#queries-limit)
+
+- **last**
+
+	 - [queries-last](#queries-last)
+
+- **order**
+
+	 - [queries-order](#queries-order)
+
+- **sort**
+
+	 - [queries-proposal_sort](#queries-proposal_sort)
+
+- **filter**
+
+	 - [queries-proposal_filter](#queries-proposal_filter)
+
+- **profile_id**
+
+	 - [schemas-profile_id](#schemas-profile_id)
+
+
+**Responses**
+undefined
+
+### GET /v1/my/proposal/:proposal_id
+
+*Read a proposal*
+
+**Queries**
+
+Type: object
+
+Properties:
+
+- **profile_id**
+
+	 - [schemas-profile_id](#schemas-profile_id)
+
 
 **Params**
 
-- [democracy_id](#params-democracy_id)
+- [proposal_id](#params-proposal_id)
+
+**Responses**
+undefined
+
+### DELETE /v1/my/proposal/:proposal_id
+
+*Delete a proposal*
+
+**Queries**
+
+Type: object
+
+Properties:
+
+- **profile_id**
+
+	 - [schemas-profile_id](#schemas-profile_id)
+
+
+**Params**
+
+- [proposal_id](#params-proposal_id)
+
+**Responses**
+undefined
+
+### POST /v1/my/proposal/:proposal_id
+
+*Cast my ballot*
+
+**Queries**
+
+Type: object
+
+Properties:
+
+- **profile_id**
+
+	 - [schemas-profile_id](#schemas-profile_id)
+
+
+**Params**
+
 - [proposal_id](#params-proposal_id)
 
 **Bodies**
@@ -238,26 +289,64 @@ undefined
 **Responses**
 undefined
 
-### GET /v1/democracy/:democracy_id/proposal/:proposal_id/ballot
+### GET /v1/my/ballot
 
-*Get my ballot*
+*List my ballots*
 
-**Params**
+**Queries**
 
-- [democracy_id](#params-democracy_id)
-- [proposal_id](#params-proposal_id)
+Type: object
+
+Properties:
+
+- **profile_id**
+
+	 - [schemas-profile_id](#schemas-profile_id)
+
 
 **Responses**
 undefined
 
-### PATCH /v1/democracy/:democracy_id/proposal/:proposal_id/ballot
+### GET /v1/my/ballot/:ballot_id
 
-*Edit my ballot*
+*Get my ballot*
+
+**Queries**
+
+Type: object
+
+Properties:
+
+- **profile_id**
+
+	 - [schemas-profile_id](#schemas-profile_id)
+
 
 **Params**
 
-- [democracy_id](#params-democracy_id)
-- [proposal_id](#params-proposal_id)
+- [ballot_id](#params-ballot_id)
+
+**Responses**
+undefined
+
+### PATCH /v1/my/ballot/:ballot_id
+
+*Edit my ballot*
+
+**Queries**
+
+Type: object
+
+Properties:
+
+- **profile_id**
+
+	 - [schemas-profile_id](#schemas-profile_id)
+
+
+**Params**
+
+- [ballot_id](#params-ballot_id)
 
 **Bodies**
 
@@ -266,17 +355,125 @@ undefined
 **Responses**
 undefined
 
-### DELETE /v1/democracy/:democracy_id/proposal/:proposal_id/ballot
+### DELETE /v1/my/ballot/:ballot_id
 
 *Delete my ballot*
 
+**Queries**
+
+Type: object
+
+Properties:
+
+- **profile_id**
+
+	 - [schemas-profile_id](#schemas-profile_id)
+
+
 **Params**
 
-- [democracy_id](#params-democracy_id)
-- [proposal_id](#params-proposal_id)
+- [ballot_id](#params-ballot_id)
 
 **Responses**
 undefined
+
+### GET /v1/my/membership
+
+*List memberships*
+
+**Queries**
+
+Type: object
+
+Properties:
+
+- **limit**
+
+	 - [queries-limit](#queries-limit)
+
+- **last**
+
+	 - [queries-last](#queries-last)
+
+- **order**
+
+	 - [queries-order](#queries-order)
+
+- **sort**
+
+	 - [queries-membership_sort](#queries-membership_sort)
+
+- **filter**
+
+	 - [queries-membership_filter](#queries-membership_filter)
+
+- **profile_id**
+
+	 - [schemas-profile_id](#schemas-profile_id)
+
+
+**Responses**
+
+- [200](#responses-membership_list)
+- [400](#responses-400)
+- [401](#responses-401)
+- [500](#responses-500)
+
+### GET /v1/my/membership/:membership_id
+
+*Get a membership*
+
+**Queries**
+
+Type: object
+
+Properties:
+
+- **profile_id**
+
+	 - [schemas-profile_id](#schemas-profile_id)
+
+
+**Params**
+
+- [membership_id](#params-membership_id)
+
+**Responses**
+
+- [200](#responses-membership_read)
+- [400](#responses-400)
+- [401](#responses-401)
+- [500](#responses-500)
+
+### DELETE /v1/my/membership/:membership_id
+
+*Delete a membership*
+
+**Queries**
+
+Type: object
+
+Properties:
+
+- **profile_id**
+
+	 - [schemas-profile_id](#schemas-profile_id)
+
+
+**Params**
+
+- [membership_id](#params-membership_id)
+
+**Responses**
+
+- [204]
+
+*successfully deleted*
+
+
+- [400](#responses-400)
+- [401](#responses-401)
+- [500](#responses-500)
 
 
 ## Headers
@@ -1235,51 +1432,19 @@ Properties:
 
 Type: object
 
-Additional Properties: false
-
-Pattern Properties:
-
-- **.***
-
-
-	One Of:
-
-	- Type: [schemas-proposal_changes_leaf](#schemas-proposal_changes_leaf)
-
-	- Type: [schemas-proposal_changes](#schemas-proposal_changes)
-
-
-#### schemas-proposal_changes_leaf
-
-Type: object
-
-Required:
-
-- add
-- update
-- delete
-
-Additional Properties: false
-
 Properties:
 
-- **add**
+- **_add**
 
 	Type: object
 
-	Additional Properties:
-		Type: string
 
-
-- **update**
+- **_update**
 
 	Type: object
 
-	Additional Properties:
-		Type: string
 
-
-- **delete**
+- **_delete**
 
 	Type: array
 
@@ -1364,24 +1529,17 @@ Type: object
 
 Required:
 
-- democracy_id
-- membership_id
+- profile_id
 - proposal_name
 - proposal_description
 - proposal_target
 - proposal_changes
 
-Additional Properties: false
-
 Properties:
 
-- **democracy_id**
+- **profile_id**
 
-	Type: [schemas-democracy_id](#schemas-democracy_id)
-
-- **membership_id**
-
-	Type: [schemas-membership_id](#schemas-membership_id)
+	Type: [schemas-profile_id](#schemas-profile_id)
 
 - **proposal_name**
 
@@ -1490,16 +1648,11 @@ Type: object
 
 Required:
 
-- membership_id
 - ballot_approved
 
 Additional Properties: false
 
 Properties:
-
-- **membership_id**
-
-	Type: [schemas-membership_id](#schemas-membership_id)
 
 - **ballot_approved**
 
@@ -1519,14 +1672,9 @@ Type: object
 
 Required:
 
-- membership_id
 - ballot_approved
 
 Properties:
-
-- **membership_id**
-
-	Type: [schemas-membership_id](#schemas-membership_id)
 
 - **ballot_approved**
 
@@ -1646,14 +1794,9 @@ Type: object
 
 Required:
 
-- democracy_id
 - profile_id
 
 Properties:
-
-- **democracy_id**
-
-	Type: [schemas-democracy_id](#schemas-democracy_id)
 
 - **profile_id**
 

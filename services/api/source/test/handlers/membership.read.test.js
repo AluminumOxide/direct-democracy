@@ -5,10 +5,23 @@ const {
 	get_dummy_reply,
 	get_dummy_api,
 	integration_test_setup,
-	membership_read_unit: mem_read_u
+	membership_read_unit: mem_read_u,
+	membership_read_integration: mem_read_i
 } = require('../helper')
 
 describe('Membership Read', () => {
+
+	describe('Integration Tests', () => {
+
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			const expected = test_data['membership']['verified_root_1']
+			const actual = await mem_read_i(expected.id, expected.profile_id)
+			expect(actual.membership_id).toBe(expected.id)
+			expect(actual.profile_id).toBe(expected.profile_id)
+		})
+	})
 
 	describe('Unit Tests', () => {
 

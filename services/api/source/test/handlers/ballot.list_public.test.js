@@ -5,10 +5,24 @@ const {
 	get_dummy_reply,
 	get_dummy_api,
 	integration_test_setup,
-	ballot_list_public_unit: blt_list_u
+	ballot_list_public_unit: blt_list_u,
+	ballot_list_public_integration: blt_list_i
 } = require('../helper')
 
 describe('Ballot List Public', () => {
+
+	describe('Integration Tests', () => {
+
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			const blts = await blt_list_i({
+				democracy_id: test_data.democracy.root.id,
+				proposal_id: test_data.proposal.root_conduct_fail.id
+			})
+			expect(blts.length).toBe(3)
+		})
+	})
 
 	describe('Unit Tests', () => {
 
@@ -85,7 +99,7 @@ describe('Ballot List Public', () => {
 		test('Error: Invalid democracy', async() => {
 
 			// set up mocks
-			const dummy_req = { filter:{}, democracy_id: get_uuid() }
+			const dummy_req = { democracy_id: get_uuid() }
 			const dummy_val = []
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()

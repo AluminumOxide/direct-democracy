@@ -5,10 +5,21 @@ const {
 	get_dummy_reply,
 	get_dummy_api,
 	integration_test_setup,
-	proposal_list_public_unit: prop_list_u
+	proposal_list_public_unit: prop_list_u,
+	proposal_list_public_integration: prop_list_i
 } = require('../helper')
 
 describe('Proposal List Public', () => {
+
+	describe('Integration Tests', () => {
+
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			const props = await prop_list_i(test_data.democracy.root.id)
+			expect(props.length).toBe(2)
+		})
+	})
 
 	describe('Unit Tests', () => {
 

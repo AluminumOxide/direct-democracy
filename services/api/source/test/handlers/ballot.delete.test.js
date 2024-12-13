@@ -5,10 +5,25 @@ const {
 	get_dummy_reply,
 	get_dummy_api,
 	integration_test_setup,
-	ballot_delete_unit: blt_delete_u
+	ballot_delete_unit: blt_delete_u,
+	ballot_read_integration: blt_read_i,
+	ballot_delete_integration: blt_delete_i
 } = require('../helper')
 
 describe('Ballot Delete', () => {
+	
+	describe('Integration Tests', () => {
+
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			const ballot_id = test_data.ballot.rcf_dv_1.id
+			const profile_id = test_data.ballot.rcf_dv_1.membership_id
+			await expect(blt_read_i(ballot_id, profile_id)).resolves.toBeInstanceOf(Object)
+			await blt_delete_i(ballot_id, profile_id)
+			await expect(blt_read_i(ballot_id, profile_id)).rejects.toThrow(new Error(errors.ballot_dne))
+		})
+	})
 
 	describe('Unit Tests', () => {
 
@@ -23,8 +38,8 @@ describe('Ballot Delete', () => {
 				val: false,
 				err: false
 			},{
-				fxn: 'ballot_list',
-				val: [dummy_req],
+				fxn: 'ballot_read',
+				val: dummy_req,
 				err: false
 			}])
 			
@@ -48,9 +63,9 @@ describe('Ballot Delete', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			get_dummy_api('proposal', [{
-				fxn: 'ballot_list',
-				val: [],
-				err: false
+				fxn: 'ballot_read',
+				val: new Error(errors.ballot_dne),
+				err: true
 			}])
 			
 			// call handler
@@ -69,12 +84,12 @@ describe('Ballot Delete', () => {
 		test('Error: Invalid membership', async() => {
 
 			// set up mocks
-			const dummy_req = { proposal_id: get_uuid(), democracy_id: get_uuid() }
+			const dummy_req = { profile_id: get_uuid(), proposal_id: get_uuid(), democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			get_dummy_api('proposal', [{
-				fxn: 'ballot_list',
-				val: [{ membership_id: get_uuid() }],
+				fxn: 'ballot_read',
+				val: { membership_id: get_uuid() },
 				err: false
 			}])
 			
@@ -82,8 +97,8 @@ describe('Ballot Delete', () => {
 			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.membership_dne))
+			expect(dummy_reply.code).toBeCalledWith(401)
+			expect(dummy_reply.send).toBeCalledWith(new Error(errors.invalid_auth))
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(0)
@@ -102,8 +117,8 @@ describe('Ballot Delete', () => {
 				val: new Error(errors.ballot_dne),
 				err: true
 			},{
-				fxn: 'ballot_list',
-				val: [dummy_req],
+				fxn: 'ballot_read',
+				val: dummy_req,
 				err: false
 			}])
 			
@@ -131,8 +146,8 @@ describe('Ballot Delete', () => {
 				val: new Error(errors.proposal_dne),
 				err: true
 			},{
-				fxn: 'ballot_list',
-				val: [dummy_req],
+				fxn: 'ballot_read',
+				val: dummy_req,
 				err: false
 			}])
 			
@@ -160,8 +175,8 @@ describe('Ballot Delete', () => {
 				val: new Error(errors.membership_dne),
 				err: true
 			},{
-				fxn: 'ballot_list',
-				val: [dummy_req],
+				fxn: 'ballot_read',
+				val: dummy_req,
 				err: false
 			}])
 			
@@ -189,8 +204,8 @@ describe('Ballot Delete', () => {
 				val: new Error(errors.ballot_closed),
 				err: true
 			},{
-				fxn: 'ballot_list',
-				val: [dummy_req],
+				fxn: 'ballot_read',
+				val: dummy_req,
 				err: false
 			}])
 			
@@ -218,8 +233,8 @@ describe('Ballot Delete', () => {
 				val: new Error(errors.internal_error),
 				err: true
 			},{
-				fxn: 'ballot_list',
-				val: [dummy_req],
+				fxn: 'ballot_read',
+				val: dummy_req,
 				err: false
 			}])
 			

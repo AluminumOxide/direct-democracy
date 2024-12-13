@@ -5,26 +5,36 @@ const {
 	get_dummy_reply,
 	get_dummy_api,
 	integration_test_setup,
-	ballot_read_unit: blt_read_u
+	ballot_read_unit: blt_read_u,
+	ballot_read_integration: blt_read_i
 } = require('../helper')
 
 describe('Ballot Read', () => {
+
+	describe('Integration Tests', () => {
+
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			const ballot_id = test_data.ballot.rnf_au_1.id
+			const member_id = test_data.ballot.rnf_au_1.membership_id
+			const ballot = await blt_read_i(ballot_id, member_id)
+			expect(ballot.ballot_id).toBe(ballot_id)
+		})
+	})
 
 	describe('Unit Tests', () => {
 
 		test('Success', async() => {
 
 			// set up mocks
-			const dummy_req = { profile_id: get_uuid(), democracy_id: get_uuid() }
+			let dummy_req = { profile_id: get_uuid(), democracy_id: get_uuid() }
+			dummy_req = { membership_id: dummy_req.profile_id, ...dummy_req }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			get_dummy_api('proposal', [{
 				fxn: 'ballot_read',
 				val: dummy_req,
-				err: false
-			},{
-				fxn: 'ballot_list',
-				val: [{ ballot_id: get_uuid() }],
 				err: false
 			}])
 			
@@ -41,6 +51,31 @@ describe('Ballot Read', () => {
 			expect(dummy_log.error).toBeCalledTimes(0)
 		})
 		
+		test('Error: Invalid auth', async() => {
+
+			// set up mocks
+			const dummy_req = { profile_id: get_uuid(), democracy_id: get_uuid() }
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			get_dummy_api('proposal', [{
+				fxn: 'ballot_read',
+				val: { membership_id: get_uuid() },
+				err: false
+			}])
+			
+			// call handler
+			await blt_read_u(dummy_req, dummy_reply, {}, dummy_log)
+
+			// check reply
+			expect(dummy_reply.code).toBeCalledWith(401)
+			expect(dummy_reply.send).toBeCalledWith(new Error(errors.invalid_auth))
+
+			// check log
+			expect(dummy_log.info).toBeCalledTimes(0)
+			expect(dummy_log.warn).toBeCalledTimes(1)
+			expect(dummy_log.error).toBeCalledTimes(0)
+		})
+
 		test('Error: No Ballot', async() => {
 
 			// set up mocks
@@ -48,9 +83,9 @@ describe('Ballot Read', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			get_dummy_api('proposal', [{
-				fxn: 'ballot_list',
-				val: [],
-				err: false
+				fxn: 'ballot_read',
+				val: new Error(errors.ballot_dne),
+				err: true
 			}])
 			
 			// call handler
@@ -76,10 +111,6 @@ describe('Ballot Read', () => {
 				fxn: 'ballot_read',
 				val: new Error(errors.proposal_dne),
 				err: true
-			},{
-				fxn: 'ballot_list',
-				val: [{ ballot_id: get_uuid() }],
-				err: false
 			}])
 			
 			// call handler
@@ -105,10 +136,6 @@ describe('Ballot Read', () => {
 				fxn: 'ballot_read',
 				val: new Error(errors.ballot_dne),
 				err: true
-			},{
-				fxn: 'ballot_list',
-				val: [{ ballot_id: get_uuid() }],
-				err: false
 			}])
 			
 			// call handler

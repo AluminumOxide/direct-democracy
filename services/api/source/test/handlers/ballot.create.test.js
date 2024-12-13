@@ -5,10 +5,27 @@ const {
 	get_dummy_reply,
 	get_dummy_api,
 	integration_test_setup,
-	ballot_create_unit: blt_create_u
+	ballot_create_unit: blt_create_u,
+	ballot_create_integration: blt_create_i
 } = require('../helper')
 
 describe('Ballot Create', () => {
+
+	describe('Integration Tests', () => {
+
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			const test_blt = {
+				profile_id: test_data.membership.unverified_child_4.id,
+				proposal_id: test_data.proposal.child_metas_pass.id,
+				ballot_approved: true,
+				ballot_comments: 'asdfasdfasf'
+			}
+			const { profile_id, ...expected } = test_blt
+			await expect(blt_create_i(test_blt)).resolves.toMatchObject(expected)
+		})
+	})
 
 	describe('Unit Tests', () => {
 
@@ -19,6 +36,10 @@ describe('Ballot Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			get_dummy_api('proposal', [{
+				fxn: 'proposal_read',
+				val: {},
+				err: false
+			},{
 				fxn: 'ballot_create',
 				val: dummy_req,
 				err: false
@@ -44,6 +65,10 @@ describe('Ballot Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			get_dummy_api('proposal', [{
+				fxn: 'proposal_read',
+				val: {},
+				err: false
+			},{
 				fxn: 'ballot_create',
 				val: new Error(errors.membership_dne),
 				err: true
@@ -69,6 +94,10 @@ describe('Ballot Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			get_dummy_api('proposal', [{
+				fxn: 'proposal_read',
+				val: {},
+				err: false
+			},{
 				fxn: 'ballot_create',
 				val: new Error(errors.proposal_dne),
 				err: true
@@ -94,6 +123,10 @@ describe('Ballot Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			get_dummy_api('proposal', [{
+				fxn: 'proposal_read',
+				val: {},
+				err: false
+			},{
 				fxn: 'ballot_create',
 				val: new Error(errors.voting_closed),
 				err: true
@@ -119,6 +152,10 @@ describe('Ballot Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			get_dummy_api('proposal', [{
+				fxn: 'proposal_read',
+				val: {},
+				err: false
+			},{
 				fxn: 'ballot_create',
 				val: new Error(errors.internal_error),
 				err: true

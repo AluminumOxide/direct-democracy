@@ -5,10 +5,23 @@ const {
 	get_dummy_reply,
 	get_dummy_api,
 	integration_test_setup,
-	proposal_read_public_unit: prop_read_u
+	proposal_read_public_unit: prop_read_u,
+	proposal_read_public_integration: prop_read_i
 } = require('../helper')
 
 describe('Proposal Read Public', () => {
+
+	describe('Integration Tests', () => {
+
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			const expected = test_data.proposal.root_name_failed
+			const actual = await prop_read_i(expected.id, expected.democracy_id)
+			expect(actual.proposal_id).toBe(expected.id)
+			expect(actual.democracy_id).toBe(expected.democracy_id)
+		})
+	})
 
 	describe('Unit Tests', () => {
 

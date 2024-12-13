@@ -1,7 +1,7 @@
 {    
 	"servers": {	
-		"local": "http://0.0.0.0:3001/v1",
-		"dev": "http://api-democracy:3001/v1"	
+		"local": "http://0.0.0.0:3000/v1",
+		"dev": "http://0.0.0.0:3000/v1"	
 	},
 	"schemas": {
 		"op": {
@@ -90,42 +90,20 @@
 			"$id": "schemas-proposal_changes",
 			"description": "Proposal changes",
 			"type": "object",
-			"patternProperties": {
-				".*": {
-					"oneOf": [
-						{ "$ref": "schemas-proposal_changes_leaf" },
-						{ "$ref": "schemas-proposal_changes" }
-
-					]
-				}
-			},
-			"additionalProperties": false
-		},
-		"proposal_changes_leaf": {
-			"$id": "schemas-proposal_changes_leaf",
-			"type": "object",
-			"required": ["add", "update", "delete"],
 			"properties": {
-				"add": {
-					"type": "object",
-					"additionalProperties": {
-						"type": "string"
-					}
+				"_add": {
+					"type": "object"
 				},
-				"update": {
-					"type": "object",
-					"additionalProperties": {
-						"type": "string"
-					}
+				"_update": {
+					"type": "object"
 				},
-				"delete": {
+				"_delete": {
 					"type": "array",
 					"items": {
 						"type": "string"
 					}
 				}
-			},
-			"additionalProperties": false
+			}
 		},
 		"proposal_read": {
 			"$id": "schemas-proposal_read",
@@ -184,19 +162,15 @@
 			"description": "Proposal - Create",
 			"type": "object",
 			"required": [
-				"democracy_id",
-				"membership_id",
+				"profile_id",
 				"proposal_name",
 				"proposal_description",
 				"proposal_target",
 				"proposal_changes"
 			],
 			"properties": {
-				"democracy_id": {
-					"$ref": "schemas-democracy_id"
-				},
-				"membership_id": {
-					"$ref": "schemas-membership_id"
+				"profile_id": {
+					"$ref": "schemas-profile_id"
 				},
 				"proposal_name": {
 					"$ref": "schemas-proposal_name"
@@ -210,8 +184,7 @@
 				"proposal_changes": {
 					"$ref": "schemas-proposal_changes"
 				}
-			},
-			"additionalProperties": false
+			}
 		},
 		"ballot_id": {
 			"$id": "schemas-ballot_id",
@@ -279,14 +252,10 @@
 			"description": "Ballot - Create",
 			"type": "object",
 			"required": [
-				"membership_id",
 				"ballot_approved"
 			],
 			"additionalProperties": false,
 			"properties": {
-				"membership_id": {
-					"$ref":"schemas-membership_id"
-				},
 				"ballot_approved": {
 					"$ref": "schemas-ballot_approved"
 				},
@@ -300,13 +269,9 @@
 			"description": "Ballot - Update",
 			"type": "object",
 			"required": [
-				"membership_id",
 				"ballot_approved"
 			],
 			"properties": {
-				"membership_id": {
-					"$ref": "schemas-membership_id"
-				},
 				"ballot_approved": {
 					"$ref": "schemas-ballot_approved"
 				},
@@ -396,13 +361,9 @@
 			"description": "Membership - Create",
 			"type": "object",
 			"required": [
-				"democracy_id",
 				"profile_id"
 			],
 			"properties": {
-				"democracy_id": {
-					"$ref": "schemas-democracy_id"
-				},
 				"profile_id": {
 					"$ref": "schemas-profile_id"
 				}
@@ -1347,39 +1308,13 @@
 				}
 			}
 		},
-		"/membership": {
-			"GET": {
-				"description": "List memberships",
-				"operationId": "membership_list",
-				"query": {
-					"type": "object",
-					"properties": {
-						"limit":  {"$ref": "queries-limit"},
-				      		"last":   {"$ref": "queries-last"},
-				      		"order":  {"$ref": "queries-order"},
-				      		"sort":   {"$ref": "queries-membership_sort"},
-				      		"filter": {"$ref": "queries-membership_filter"},
-						"profile_id": {"$ref": "queries-profile_id"}
-					}
-				},
-				"responses": {
-					"200": {
-						"$ref": "responses-membership_list"
-					},
-					"400": {
-						"$ref": "responses-400"
-					},
-					"401": {
-						"$ref": "responses-401"
-					},
-					"500": {
-						"$ref": "responses-500"
-					}
-				}
-			},
+		"/democracy/:democracy_id/membership": {
 			"POST": {
 				"description": "Create a membership",
 				"operationId": "membership_create",
+				"param": {
+					"democracy_id": { "$ref": "params-democracy_id" }
+				},
 				"body": {
 					"$ref": "bodies-membership_create"
 				},
@@ -1399,54 +1334,10 @@
 				}
 			}
 		},
-		"/membership/:membership_id": {
-			"GET": {
-				"description": "Get a membership",
-				"operationId": "membership_read",
-				"param": {
-					"membership_id": { "$ref": "params-membership_id" }
-				},
-				"responses": {
-					"200": {
-						"$ref": "responses-membership_read"
-					},
-					"400": {
-						"$ref": "responses-400"
-					},
-					"401": {
-						"$ref": "responses-401"
-					},
-					"500": {
-						"$ref": "responses-500"
-					}
-				}
-			},
-			"DELETE": {
-				"description": "Delete a membership",
-				"operationId": "membership_delete",
-				"param": {
-					"membership_id": { "$ref": "params-membership_id" }
-				},
-				"responses": {
-					"204": {
-						"description": "successfully deleted"
-					},
-					"400": {
-						"$ref": "responses-400"
-					},
-					"401": {
-						"$ref": "responses-401"
-					},
-					"500": {
-						"$ref": "responses-500"
-					}
-				}
-			}
-		},
 		"/democracy/:democracy_id/proposal": {
 			"GET": {
 				"description": "List proposals",
-				"operationId": "proposal_list",
+				"operationId": "proposal_list_public",
 				"param": {
 					"democracy_id": { "$ref": "params-democracy_id" }
 				},
@@ -1482,7 +1373,31 @@
 					"democracy_id": { "$ref": "params-democracy_id" }
 				},
 				"body": {
-					"$ref": "bodies-proposal_create"
+					"type": "object",
+					"required": [
+						"profile_id",
+						"proposal_name",
+						"proposal_description",
+						"proposal_target",
+						"proposal_changes"
+					],
+					"properties": {
+						"profile_id": {
+							"$ref": "schemas-profile_id"
+						},
+						"proposal_name": {
+							"$ref": "schemas-proposal_name"
+						},
+						"proposal_description": {
+							"$ref": "schemas-proposal_description"
+						},
+						"proposal_target": {
+							"$ref": "schemas-proposal_target"
+						},
+						"proposal_changes": {
+							"$ref": "schemas-proposal_changes"
+						}
+					}
 				},
 				"response": {
 					"201": {
@@ -1503,10 +1418,94 @@
 		"/democracy/:democracy_id/proposal/:proposal_id": {
 			"GET": {
 				"description": "Read a proposal",
-				"operationId": "proposal_read",
+				"operationId": "proposal_read_public",
 				"param": {
 					"democracy_id": { "$ref": "params-democracy_id" },
 					"proposal_id": { "$ref": "params-proposal_id" }
+				},
+				"response": {
+					"200": {
+						"$ref": "responses-proposal_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/democracy/:democracy_id/proposal/:proposal_id/ballot": {
+			"GET": {
+				"description": "List proposal ballots",
+				"operationId": "ballot_list_public",
+				"param": {
+					"democracy_id": { "$ref": "params-democracy_id" },
+					"proposal_id": { "$ref": "params-proposal_id" }
+				},
+				"response": {
+					"200": {
+						"$ref": "responses-ballot_list"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/my/proposal": {
+			"GET": {
+				"description": "List proposals",
+				"operationId": "proposal_list",
+				"query": {
+					"type": "object",
+					"properties": {
+						"limit": { "$ref": "queries-limit" },
+						"last": { "$ref": "queries-last" },
+						"order": { "$ref": "queries-order" },
+						"sort": { "$ref": "queries-proposal_sort" },
+						"filter": { "$ref": "queries-proposal_filter" },
+						"profile_id": { "$ref": "schemas-profile_id" }
+					}
+				},
+				"response": {
+					"200": {
+						"$ref": "responses-proposal_list"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/my/proposal/:proposal_id": {
+			"GET": {
+				"description": "Read a proposal",
+				"operationId": "proposal_read",
+				"param": {
+					"proposal_id": { "$ref": "params-proposal_id" }
+				},
+				"query": {
+					"type": "object",
+					"properties": {
+						"profile_id": { "$ref": "schemas-profile_id" }
+					}
 				},
 				"response": {
 					"200": {
@@ -1527,8 +1526,13 @@
 				"description": "Delete a proposal",
 				"operationId": "proposal_delete",
 				"param": {
-					"democracy_id": { "$ref": "params-democracy_id" },
 					"proposal_id": { "$ref": "params-proposal_id" }
+				},
+				"query": {
+					"type": "object",
+					"properties": {
+						"profile_id": { "$ref": "schemas-profile_id" }
+					}
 				},
 				"response": {
 					"204": {
@@ -1544,15 +1548,18 @@
 						"$ref": "responses-500"
 					}
 				}
-			}
-		},
-		"/democracy/:democracy_id/proposal/:proposal_id/ballot": {
+			},
 			"POST": {
 				"description": "Cast my ballot",
 				"operationId": "ballot_create",
 				"param": {
-					"democracy_id": { "$ref": "params-democracy_id" },
 					"proposal_id": { "$ref": "params-proposal_id" }
+				},
+				"query": {
+					"type": "object",
+					"properties": {
+						"profile_id": { "$ref": "schemas-profile_id" }
+					}
 				},
 				"body": {
 					"$ref": "bodies-ballot_create"
@@ -1571,13 +1578,46 @@
 						"$ref": "responses-500"
 					}
 				}
-			},
+			}
+		},
+		"/my/ballot": {
+			"GET": {
+				"description": "List my ballots",
+				"operationId": "ballot_list",
+				"query": {
+					"type": "object",
+					"properties": {
+						"profile_id": { "$ref": "schemas-profile_id" }
+					}
+				},
+				"response": {
+					"200": {
+						"$ref": "responses-ballot_list"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/my/ballot/:ballot_id": {
 			"GET": {
 				"description": "Get my ballot",
 				"operationId": "ballot_read",
 				"param": {
-					"democracy_id": { "$ref": "params-democracy_id" },
-					"proposal_id": { "$ref": "params-proposal_id" }
+					"ballot_id": { "$ref": "params-ballot_id" }
+				},
+				"query": {
+					"type": "object",
+					"properties": {
+						"profile_id": { "$ref": "schemas-profile_id" }
+					}
 				},
 				"response": {
 					"200": {
@@ -1599,8 +1639,13 @@
 				"description": "Edit my ballot",
 				"operationId": "ballot_update",
 				"param": {
-					"democracy_id": { "$ref": "params-democracy_id" },
-					"proposal_id": { "$ref": "params-proposal_id" }
+					"ballot_id": { "$ref": "params-ballot_id" }
+				},
+				"query": {
+					"type": "object",
+					"properties": {
+						"profile_id": { "$ref": "schemas-profile_id" }
+					}
 				},
 				"body": {
 					"$ref": "bodies-ballot_update"
@@ -1624,8 +1669,13 @@
 				"description": "Delete my ballot",
 				"operationId": "ballot_delete",
 				"param": {
-					"democracy_id": { "$ref": "params-democracy_id" },
-					"proposal_id": { "$ref": "params-proposal_id" }
+					"ballot_id": { "$ref": "params-ballot_id" }
+				},
+				"query": {
+					"type": "object",
+					"properties": {
+						"profile_id": { "$ref": "schemas-profile_id" }
+					}
 				},
 				"response": {
 					"204": {
@@ -1642,8 +1692,93 @@
 					}
 				}
 			}
-
+		},
+		"/my/membership": {
+			"GET": {
+				"description": "List memberships",
+				"operationId": "membership_list",
+				"query": {
+					"type": "object",
+					"properties": {
+						"limit":  {"$ref": "queries-limit"},
+				      		"last":   {"$ref": "queries-last"},
+				      		"order":  {"$ref": "queries-order"},
+				      		"sort":   {"$ref": "queries-membership_sort"},
+				      		"filter": {"$ref": "queries-membership_filter"},
+						"profile_id": { "$ref": "schemas-profile_id" }
+					}
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-membership_list"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/my/membership/:membership_id": {
+			"GET": {
+				"description": "Get a membership",
+				"operationId": "membership_read",
+				"param": {
+					"membership_id": { "$ref": "params-membership_id" }
+				},
+				"query": {
+					"type": "object",
+					"properties": {
+						"profile_id": { "$ref": "schemas-profile_id" }
+					}
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-membership_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			},
+			"DELETE": {
+				"description": "Delete a membership",
+				"operationId": "membership_delete",
+				"param": {
+					"membership_id": { "$ref": "params-membership_id" }
+				},
+				"query": {
+					"type": "object",
+					"properties": {
+						"profile_id": { "$ref": "schemas-profile_id" }
+					}
+				},
+				"responses": {
+					"204": {
+						"description": "successfully deleted"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
 		}
-			
 	}
 }
