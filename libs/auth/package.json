@@ -1,0 +1,24 @@
+{
+	"name": "@aluminumoxide/direct-democracy-lib-auth",
+	"version": "1.0.1",
+	"description": "Auth",
+	"main": "index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/aluminumoxide/direct-democracy.git"
+	},
+	"publishConfig": {
+		"registry": "https://npm.pkg.github.com"
+	},
+	"author": "Sapphyre Gervais",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/aluminumoxide/direct-democracy/issues"
+	},
+	"homepage": "https://github.com/aluminumoxide/direct-democracy#readme",
+	"dependencies": {
+		"crypto-js": "^4.2.0",
+		"secure-remote-password": "^0.3.1",
+		"uuid": "^11.0.3"
+	}
+}
