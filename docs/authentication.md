@@ -341,16 +341,16 @@ sequenceDiagram
     participant Profile as Profile Server
 
     User->>Client: User enters email and password
-    Client->>Client: client_public = PAKE(email, password)
+    Client->>Client: client_public, client_private = PAKE()
     Client->>Account: email, client_public
 
     Account->>Account: Lookup account ZKPP and salt for email
-    Account->>Account: server_private, server_public = PAKE(ZKPP, salt)
+    Account->>Account: server_private, server_public = PAKE(ZKPP)
     Account->>Account: SAVE(server_private, client_public)
     Note over Account: DATABASE<br>account_id<br>status - verified<br>email<br>ZKPP<br>salt<br>encrypted_question<br>encrypted_profile<br>server_private<br>client_public
     Account->>Client: server_public, salt
 
-    Client->>Client: client_proof, client_sesh = PAKE(salt, email, password, server_public)
+    Client->>Client: client_proof, client_sesh = PAKE(salt, email, password, client_private, server_public)
     Client->>Account: email, client_proof
 
     Account->>Account: Lookup account ZKPP, salt, server_private, client_public by email
@@ -360,7 +360,7 @@ sequenceDiagram
     Note over Account: DATABASE<br>account_id<br>status - verified<br>email<br>ZKPP<br>salt<br>encrypted_question<br>encrypted_profile
     Account->>Client: server_proof, JWT(account_id)
 
-    Client->>Client: VERIFY(server_proof, client_sesh)
+    Client->>Client: VERIFY(server_proof, client_sesh, client_public)
     Client->>Client: VERIFY(JWT(account_id))
 
     Client->>Account: JWT(account_id)
@@ -370,14 +370,14 @@ sequenceDiagram
     Client->>Client: DECRYPT(encrypted_question, password)
     User->>Client: User enters answer to decrypted question
     Client->>Client: profile_id = DECRYPT(encrypted_profile, answer)
-    Client->>Client: client_public = PAKE(profile_id, answer)
+    Client->>Client: client_public, client_private = PAKE()
     Client->>Profile: profile_id, client_public
-    Profile->>Profile: server_private, server_public = PAKE(ZKPP, salt)
+    Profile->>Profile: server_private, server_public = PAKE(ZKPP)
     Profile->>Profile: SAVE(server_private, client_public)
     Note over Profile: DATABASE<br>profile_id<br>ZKPP<br>salt<br>server_private<br>client_public
     Profile->>Client: server_public, salt
 
-    Client->>Client: client_proof, client_sesh = PAKE(salt, profile_id, answer, server_public)
+    Client->>Client: client_proof, client_sesh = PAKE(salt, profile_id, answer, client_private, server_public)
 
     Client->>Profile: profile_id, client_proof
     Profile->>Profile: server_proof = PAKE(server_private, client_public, salt, profile_id, ZKPP, client_proof)<br>(successful generation proves client_proof and therefor indirectly proves answer)
@@ -386,7 +386,7 @@ sequenceDiagram
     Note over Profile: DATABASE<br>profile_id<br>ZKPP<br>salt
     Profile->>Client: server_proof, JWT(profile_id)
 
-    Client->>Client: VERIFY(server_proof, client_sesh)
+    Client->>Client: VERIFY(server_proof, client_sesh, client_public)
     Client->>Client: VERIFY(JWT(profile_id))
     Client->>Client: JWT(profile_id) can now be used to authenticate against all other APIs!
     Client->>User: Login success!
