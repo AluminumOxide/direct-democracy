@@ -1,35 +1,46 @@
 # Authentication Library
 
+## Status
+Warning: This library is in active development by a non-expert, and should not be used in production.
+
 ## Overview
-Provides a convenient wrapper for tools needed for our [authentication schema](../../docs/authentication.md):
-- Basic encryption from crypto-js
-- SRP encryption from secure-remote-password
+Provides a convenient wrapper for tools needed for our [authentication schema](../../docs/authentication.md).
 
 ## Usage
 
-### Basic Encryption
+### Symmetric Encryption
 ```
-// user provides secret and password
-const encrypted = auth.encrypt_string(secret, password)
-const decrypted = auth.decrypt_string(encrypted, password)
-```
-
-### Secure Remote Password Encryption
-```
-// user provides id and password
-const salt = auth.srp_client_generate_salt(id, password)
-const verifier = auth.srp_client_generate_verifier(salt, id, password)
-const client_ephem = auth.srp_client_generate_ephemeral()
-const client_public = auth.srp_get_public(client_ephem)
-const client_private = auth.srp_get_private(client_ephem)
-const server_ephem = auth.srp_server_generate_ephemeral(verifier)
-const server_public = auth.srp_get_public(server_ephem)
-const server_private = auth.srp_get_private(server_ephem)
-const client_sesh = auth.srp_client_derive_session(salt, id, password, client_private, server_public)
-const client_proof = auth.srp_get_proof(client_sesh)
-const server_sesh = auth.srp_server_derive_session(server_private, client_public, salt, id, verifier, client_proof)
-const server_proof = auth.srp_get_proof(server_sesh)
-auth.srp_client_verify_session(client_public, client_sesh, server_proof)
+const encrypted = await auth.encrypt(secret, password)
+const secret = await auth.decrypt(encrypted, password)
 ```
 
+### Hash Chain
+```
+const hashed = await auth.hash_chain(secret, 1000)
+const more_hashed = await auth.hash_chain(hashed, 1000)
+```
 
+### JSON Web Tokens
+```
+const keys = await auth.jwt_keys()
+const signed = await auth.jwt_sign(keys.private, payload)
+const payload = await auth.jwt_verify(keys.public, signed)
+```
+
+### Public Key Exchange
+```
+const alice_keys = await auth.pke_generate_keys()
+const bob_keys = await auth.pke_generate_keys()
+const shared_secret = await auth.pke_derive_secret(bob_keys.public, alice_keys.private)
+const shared_secret = await auth.pke_derive_secret(alice_keys.public, bob_keys.private)
+```
+
+### Password Authenticated Key Exchange
+```
+const { salt, zkpp } = await auth.pake_client_generate_zkpp(id, password)
+const client_keys = await auth.pake_client_generate_keys()
+const server_keys = await auth.pake_server_generate_keys(zkpp)
+const { sesh, proof } = await auth.pake_client_derive_proof(salt, id, password, client_keys.private, server_keys.public)
+const server_proof = await auth.pake_server_derive_proof(server_keys.private, client_keys.public, salt, zkpp, id, proof)
+await auth.pake_client_verify_proof(client_keys.public, sesh, proof)
+```
