@@ -29,13 +29,16 @@ const get_dummy_db = function(mocks) {
 	mock_db_fxns.as = sinon.stub().returns(mock_db_fxns)
 	mock_db_fxns.sum = sinon.stub().returns(mock_db_fxns)
 	mock_db_fxns.count = sinon.stub().returns(mock_db_fxns)
+	mock_db_fxns.limit = sinon.stub().returns(mock_db_fxns)
 	mock_db_fxns.orderBy = sinon.stub().returns(mock_db_fxns)
+	mock_db_fxns.orderByRaw = sinon.stub().returns(mock_db_fxns)
 	mock_db_fxns.groupBy = sinon.stub().returns(mock_db_fxns)
 	mock_db_fxns.returning = sinon.stub().returns(mock_db_fxns)
   
 	let mock_db = sinon.fake(() => mock_db_fxns)
 	mock_db.raw = sinon.stub().returns(mock_db_fxns)
 	mock_db.select = sinon.stub().returns(mock_db_fxns)
+	mock_db.insert = sinon.stub().returns(mock_db_fxns)
 	mock_db.pageQuery = sinon.stub().returns(mock_db_fxns)
 
 	mocks.forEach(({last_fxn, last_args, last_val, throws_error, call_no}) => {
@@ -91,6 +94,30 @@ const get_dummy_api = function(lib, mocks) {
 	return api_client
 }
 
+const get_dummy_lib = function(lib, mocks) {
+	const lib_client = require('@aluminumoxide/direct-democracy-lib-'+lib)
+	Object.keys(lib_client).forEach(key => {
+		lib_client[key] = sinon.stub()
+	})
+	mocks.forEach(({fxn, val, err, call}) => {
+		let mock = lib_client[fxn]
+		if(!!err) {
+			if(!!call) {
+				mock.onCall(call-1).throws(val)
+			} else {
+				mock.throws(val)
+			}
+		} else {
+			if(!!call) {
+				mock.onCall(call-1).returns(val)
+			} else {
+				mock.returns(val)
+			}
+		}
+	})
+	return lib_client
+}
+
 const integration_test_setup = function() {
 	let pg
 	const knex = require("knex")
@@ -112,6 +139,20 @@ const integration_test_setup = function() {
 	return require('../../../test/.testdata.json')
 }
 
+const integration_test_query = async function(srv, sql) {
+	let pg
+	const knex = require("knex")
+	try {
+		pg = knex({
+			client: 'pg',
+			connection: `postgres://${srv}:${srv}@0.0.0.0:5432/${srv}`
+		})
+		return await pg.raw(sql)
+	} catch (err) {
+		console.error(err)
+	}
+}
+
 // utils
 const get_uuid = function() {
 	return uuid.v4()
@@ -129,4 +170,4 @@ const get_first_timestamp = function() {
 	return '1970-01-01T00:00:00.000Z'
 }
 
-module.exports = { get_uuid, get_first_uuid, get_timestamp, get_first_timestamp, get_dummy_reply, get_dummy_log, get_dummy_api, get_dummy_db, integration_test_setup }
+module.exports = { get_uuid, get_first_uuid, get_timestamp, get_first_timestamp, get_dummy_reply, get_dummy_log, get_dummy_api, get_dummy_lib, get_dummy_db, integration_test_setup, integration_test_query }

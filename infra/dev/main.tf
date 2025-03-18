@@ -18,7 +18,7 @@ resource "null_resource" "build-docker" {
 
 resource "time_sleep" "wait_5_seconds" {
 	depends_on = [ null_resource.build-docker ]
-	create_duration = "5s"
+	create_duration = "2s"
 	triggers = {
 		always_run = "${timestamp()}"
 	}
@@ -53,6 +53,15 @@ resource "docker_container" "local-database" {
 		"DB_PROPOSAL_USER=proposal",
 		"DB_PROPOSAL_DB=proposal",
 		"DB_PROPOSAL_PASSWORD=proposal",
+		"DB_ACCOUNT_USER=account",
+		"DB_ACCOUNT_DB=account",
+		"DB_ACCOUNT_PASSWORD=account",
+		"DB_PROFILE_USER=profile",
+		"DB_PROFILE_DB=profile",
+		"DB_PROFILE_PASSWORD=profile",
+		"DB_TOKEN_USER=token",
+		"DB_TOKEN_DB=token",
+		"DB_TOKEN_PASSWORD=token",
 		"TEST_CONNECTION_STRING=postgres://postgres:postgres@local-database:5432/postgres",
 	]
 	hostname = "local-database"
@@ -193,5 +202,107 @@ resource "docker_container" "api-membership" {
 	ports {
 		internal = 3003
 		external = 3003
+	}
+}
+
+resource "docker_image" "api-account" {
+	depends_on = [ time_sleep.wait_5_seconds ]
+	name = "api-account:latest"
+	keep_locally = false
+}
+
+resource "docker_container" "api-account" {
+	depends_on = [ time_sleep.wait_5_seconds ]
+	image = "api-account:latest"
+	name = "api-account"
+	env = [
+		"ENV=dev",
+		"DB_PORT=5432",
+		"DB_NAME=0.0.0.0",
+		"DB_NETWORK=db-network",
+		"API_ACCOUNT_NAME=api-account",
+		"API_ACCOUNT_URL=0.0.0.0",
+		"API_ACCOUNT_PORT=3004",
+		"DB_ACCOUNT_USER=account",
+		"DB_ACCOUNT_DB=account",
+		"DB_ACCOUNT_PASSWORD=account",
+		"TEST_CONNECTION_STRING=postgres://postgres:postgres@0.0.0.0:5432/postgres",
+	]
+	volumes {
+		host_path = abspath("../../services/api-account/source")
+		container_path = "/app"
+	}
+	network_mode = "host"
+	ports {
+		internal = 3004
+		external = 3004
+	}
+}
+
+resource "docker_image" "api-profile" {
+	depends_on = [ time_sleep.wait_5_seconds ]
+	name = "api-profile:latest"
+	keep_locally = false
+}
+
+resource "docker_container" "api-profile" {
+	depends_on = [ time_sleep.wait_5_seconds ]
+	image = "api-profile:latest"
+	name = "api-profile"
+	env = [
+		"ENV=dev",
+		"DB_PORT=5432",
+		"DB_NAME=0.0.0.0",
+		"DB_NETWORK=db-network",
+		"API_PROFILE_NAME=api-profile",
+		"API_PROFILE_URL=0.0.0.0",
+		"API_PROFILE_PORT=3005",
+		"DB_PROFILE_USER=profile",
+		"DB_PROFILE_DB=profile",
+		"DB_PROFILE_PASSWORD=profile",
+		"TEST_CONNECTION_STRING=postgres://postgres:postgres@0.0.0.0:5432/postgres",
+	]
+	volumes {
+		host_path = abspath("../../services/api-profile/source")
+		container_path = "/app"
+	}
+	network_mode = "host"
+	ports {
+		internal = 3005
+		external = 3005
+	}
+}
+
+resource "docker_image" "api-token" {
+	depends_on = [ time_sleep.wait_5_seconds ]
+	name = "api-token:latest"
+	keep_locally = false
+}
+
+resource "docker_container" "api-token" {
+	depends_on = [ time_sleep.wait_5_seconds ]
+	image = "api-token:latest"
+	name = "api-token"
+	env = [
+		"ENV=dev",
+		"DB_PORT=5432",
+		"DB_NAME=0.0.0.0",
+		"DB_NETWORK=db-network",
+		"DB_TOKEN_USER=token",
+		"DB_TOKEN_DB=token",
+		"DB_TOKEN_PASSWORD=token",
+		"API_TOKEN_NAME=api-token",
+		"API_TOKEN_URL=0.0.0.0",
+		"API_TOKEN_PORT=3006",
+		"TEST_CONNECTION_STRING=postgres://postgres:postgres@0.0.0.0:5432/postgres",
+	]
+	volumes {
+		host_path = abspath("../../services/api-token/source")
+		container_path = "/app"
+	}
+	network_mode = "host"
+	ports {
+		internal = 3006
+		external = 3006
 	}
 }

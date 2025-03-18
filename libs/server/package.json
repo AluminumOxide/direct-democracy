@@ -1,5 +1,5 @@
 {
-  "version": "1.0.15",
+  "version": "1.0.16",
   "name": "@aluminumoxide/direct-democracy-lib-server",
   "description": "Basic fastify server from spec with knex postgres and jest setup",
   "homepage": "https://github.com/aluminumoxide/direct-democracy#readme",

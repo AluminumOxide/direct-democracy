@@ -1,54 +1,59 @@
 const { Buffer } = require('node:buffer')
 const { subtle, createCipheriv, createDecipheriv, createECDH, createHash, getRandomValues, randomBytes, randomFillSync, scryptSync } = require('node:crypto')
 
+/* key conversions */
+
+const key_salt_len = 24
+
+const key_stringify = async function(key) {
+	const key_jwk = await subtle.exportKey('jwk', key)
+	return Buffer.from(JSON.stringify(key_jwk), 'utf-8').toString('hex')
+}
+
+const key_destringify = async function(key, algo, ops) {
+	const key_jwk = JSON.parse(Buffer.from(key, 'hex').toString('utf-8'))
+	return await subtle.importKey('jwk', key_jwk, algo, true, ops)
+}
+
+const key_password = async function(password, salt=false) {
+	if(!salt) {
+		salt = randomBytes(key_salt_len/2).toString('hex')
+	}
+	const te = new TextEncoder()
+	const mat = await subtle.importKey('raw', te.encode(password), 'PBKDF2', false, ['deriveKey'])
+	const key = await subtle.deriveKey({
+		name: 'PBKDF2',
+		hash: 'SHA-512',
+		salt: te.encode(salt),
+		iterations: 1000
+	}, mat, {
+		name: 'AES-CBC',
+		length: 256
+	}, true, ['encrypt','decrypt'])
+	const key_str = await key_stringify(key)
+	return { key: key_str, salt }
+}
+
 /* symmetric encryption */
 
 const sym_algo = 'AES-CBC'
 const sym_len = 256
 const sym_iv_len = 16
-const sym_salt_len = 24
 
 const encrypt = async function(secret, key) {
-	let salt = ''
 	const te = new TextEncoder()
-	if(typeof key === 'string') {
-		salt = randomBytes(sym_salt_len/2).toString('hex')
-		const mat = await subtle.importKey('raw', te.encode(key), 'PBKDF2', false, ['deriveKey'])
-		key = await subtle.deriveKey({
-			name: 'PBKDF2',
-			hash: 'SHA-512',
-			salt: te.encode(salt),
-			iterations: 1000
-		}, mat, {
-			name: 'AES-CBC',
-			length: 256
-		}, true, ['encrypt'])
-	}
+	key = await key_destringify(key, { name: 'AES-CBC', length: 256 },['encrypt'])
 	const iv = getRandomValues(new Uint8Array(sym_iv_len))
 	const encrypted = await subtle.encrypt({ name: sym_algo, iv }, key, te.encode(secret))
-	return salt + Buffer.from(encrypted).toString('hex') + Buffer.from(iv).toString('hex')
+	return Buffer.from(encrypted).toString('hex') + Buffer.from(iv).toString('hex')
 }
 
 const decrypt = async function(enc, key) {
-	let encrypted = enc.substring(0, enc.length-sym_iv_len*2)
-	const te = new TextEncoder()
-	if(typeof key === 'string') {
-		encrypted = enc.substring(sym_salt_len, enc.length-sym_iv_len*2)
-		const salt = enc.substring(0, sym_salt_len)
-		const mat = await subtle.importKey('raw', te.encode(key), 'PBKDF2', false, ['deriveKey'])
-		key = await subtle.deriveKey({
-			name: 'PBKDF2',
-			hash: 'SHA-512',
-			salt: te.encode(salt),
-			iterations: 1000
-		}, mat, {
-			name: 'AES-CBC',
-			length: 256
-		}, true, ['decrypt'])
-	}
+	key = await key_destringify(key, { name: 'AES-CBC', length: 256 },['decrypt'])
+	const encrypted = enc.substring(0, enc.length-sym_iv_len*2)
 	const iv = enc.substring(enc.length-sym_iv_len*2)
 	const decrypted = await subtle.decrypt({ name: sym_algo, iv: Buffer.from(iv, 'hex') }, key, Buffer.from(encrypted, 'hex'))
-	return new TextDecoder().decode(decrypted)
+	return (new TextDecoder()).decode(decrypted)
 }
 
 /* hash chain */
@@ -75,6 +80,13 @@ const hash_chain = async function(secret, n=1000) {
 	}, true, ['sign'])
 	const val = await subtle.exportKey('raw', key)
 	return Buffer.from(val).toString('hex') + '/' + salt
+}
+
+/* token */
+const token_len = 32
+
+const token_random = function(len=false) {
+	return randomBytes(!!len?len:token_len).toString('hex')
 }
 
 /* signature */
@@ -122,28 +134,33 @@ const pke_generate_keys = async function() {
 	const keys = await subtle.generateKey({
 		name: pke_curve
 	}, true, ['deriveKey'])
-	const public_key = await subtle.exportKey('raw', keys.publicKey)
-	const private_key = await subtle.exportKey('jwk', keys.privateKey) // TODO: should probably wrap instead
-	return { public: public_key, private: private_key.d+'/'+private_key.x }
+	const public_key = await key_stringify(keys.publicKey)
+	const private_key = await key_stringify(keys.privateKey)
+	return { public: public_key, private: private_key }
 }
 
 const pke_derive_secret = async function(public_key, private_key) {
-	const pub_key = await subtle.importKey('raw', public_key, { name: pke_curve }, true, [])
-	const segs = private_key.split('/')
-	const pvt_key = await subtle.importKey('jwk', {
-		d: segs[0],
-		x: segs[1],
-		key_ops: ['deriveKey'],
-		ext: true,
-		crv: pke_curve,
-		kty: 'OKP'
-	}, { name: pke_curve }, true, ['deriveKey'])
-	return await subtle.deriveKey(
+	const pub_key = await key_destringify(public_key, { name: pke_curve }, [])
+	const pvt_key = await key_destringify(private_key, { name: pke_curve }, ['deriveKey'])
+	const secret = await subtle.deriveKey(
 		{ name: pke_curve, public: pub_key },
 		pvt_key,
 		{ name: sym_algo, length: sym_len },
 		true,
 		['encrypt', 'decrypt'])
+	return await key_stringify(secret)
+}
+
+/* conceal token */
+
+const conceal_len = 1000
+
+const conceal_token = async function(token) {
+	const hashed = await hash_chain(token, conceal_len)
+	const id = hashed.slice(0, token_len)
+	const password = hashed.slice(token_len)
+	const { zkpp, salt } = await pake_client_generate_zkpp(id, password)
+	return { id, password, zkpp, salt }
 }
 
 /* password authenticated key exchange */
@@ -189,9 +206,12 @@ const pake_client_verify_proof = function(client_public, client_sesh, server_pro
 }
 
 module.exports = {
+	key_password,
 	encrypt,
 	decrypt,
 	hash_chain,
+	token_random,
+	conceal_token,
 	jwt_keys,
 	jwt_sign,
 	jwt_verify,

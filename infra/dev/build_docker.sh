@@ -4,14 +4,21 @@
 cp .npmrc ../../services/api-democracy/source/
 cp .npmrc ../../services/api-membership/source/
 cp .npmrc ../../services/api-proposal/source/
+cp .npmrc ../../services/api-account/source/
+cp .npmrc ../../services/api-profile/source/
+cp .npmrc ../../services/api-token/source/
 cp .npmrc ../../services/api/source/
 cp ../../services/api-democracy/spec.json ../../services/api-democracy/source/
 cp ../../services/api-membership/spec.json ../../services/api-membership/source/
 cp ../../services/api-proposal/spec.json ../../services/api-proposal/source/
+cp ../../services/api-account/spec.json ../../services/api-account/source/
+cp ../../services/api-profile/spec.json ../../services/api-profile/source/
+cp ../../services/api-token/spec.json ../../services/api-token/source/
 cp ../../services/api/spec.json ../../services/api/source/
 
 # build test data
-SERVICES=(democracy membership proposal)
+SERVICES=(token democracy membership proposal)
+echo "$SERVICES"
 first=true
 echo "{" > .testdata.json
 for s in ${SERVICES[@]}; do
@@ -37,6 +44,9 @@ cp .testdata.json ../../services/api-democracy/source/test/
 cp .testdata.json ../../services/api-membership/source/test/
 cp .testdata.json ../../services/api-proposal/source/test/
 cp .testdata.json ../../services/api/source/test/
+cp .testdata.json ../../services/api-account/source/test/
+cp .testdata.json ../../services/api-profile/source/test/
+cp .testdata.json ../../services/api-token/source/test/
 
 # build docker containers
 docker build -t local-database -f ./local_database/Dockerfile ../../
@@ -48,3 +58,10 @@ docker build -t api-democracy -f ../../services/api-democracy/Dockerfile --build
 docker build -t api-proposal -f ../../services/api-proposal/Dockerfile --build-arg API_PORT=3002 ../../services/api-proposal
 
 docker build -t api-membership -f ../../services/api-membership/Dockerfile --build-arg API_PORT=3003 ../../services/api-membership
+
+docker build -t api-account -f ../../services/api-account/Dockerfile --build-arg API_PORT=3004 ../../services/api-account
+
+docker build -t api-profile -f ../../services/api-profile/Dockerfile --build-arg API_PORT=3005 ../../services/api-profile
+
+docker build -t api-token -f ../../services/api-token/Dockerfile --build-arg API_PORT=3006 ../../services/api-token
+
