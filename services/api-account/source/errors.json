@@ -1,0 +1,7 @@
+{
+	"email_exist": "Email already exists",
+	"internal_error": "Internal error",
+	"bucket_dne": "Invalid bucket",
+	"account_dne": "Account DNE",
+	"token_dne": "Token DNE"
+}
