@@ -1,0 +1,8 @@
+{
+	"internal_error": "Internal error",
+	"bucket_dne": "Invalid bucket",
+	"token_dne": "Invalid token",
+	"profile_dne": "Invalid profile ID",
+	"token_expired": "Token is expired",
+	"id_dupe": "Duplicate ID"
+}
