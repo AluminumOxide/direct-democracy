@@ -2,6 +2,7 @@ const {
 	errors,
 	get_dummy_db,
 	get_dummy_log,
+	get_dummy_lib,
 	get_dummy_reply,
 	proposal_read_unit: prop_read_u,
 	integration_test_setup,
@@ -31,19 +32,20 @@ describe('Proposal Read', () => {
 			}
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{ id: dummy_req.proposal_id }],
-				last_val: [expected],
+				fxn: 'where',
+				args: [{ id: dummy_req.proposal_id }],
+				val: [expected],
 				call_no: 1
 			},{
-				last_fxn: 'where',
-				last_args: [{ proposal_id: dummy_req.proposal_id }],
-				last_val: []
+				fxn: 'where',
+				args: [{ proposal_id: dummy_req.proposal_id }],
+				val: []
 			}])
 
 			// call handler
-			await prop_read_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_read_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expected.proposal_votes = {
@@ -95,19 +97,20 @@ describe('Proposal Read', () => {
 			}]
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{ id: dummy_req.proposal_id }],
-				last_val: [expected],
+				fxn: 'where',
+				args: [{ id: dummy_req.proposal_id }],
+				val: [expected],
 				call_no: 1
 			},{
-				last_fxn: 'where',
-				last_args: [{ proposal_id: dummy_req.proposal_id }],
-				last_val: ballots
+				fxn: 'where',
+				args: [{ proposal_id: dummy_req.proposal_id }],
+				val: ballots
 			}])
 
 			// call handler
-			await prop_read_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_read_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expected.proposal_votes = {
@@ -130,14 +133,15 @@ describe('Proposal Read', () => {
 			const dummy_req = { proposal_id:'00000000-0000-0000-0000-000000000000' }
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{ id: dummy_req.proposal_id }],
-				last_val: []
+				fxn: 'where',
+				args: [{ id: dummy_req.proposal_id }],
+				val: []
 			}])
 
 			// call handler
-			await prop_read_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_read_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -156,15 +160,16 @@ describe('Proposal Read', () => {
 			const dummy_req = { proposal_id:'00000000-0000-0000-0000-000000000000' }
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{ id: dummy_req.proposal_id }],
-				last_val: [],
-				throws_error: true
+				fxn: 'where',
+				args: [{ id: dummy_req.proposal_id }],
+				val: [],
+				err: true
 			}])
 
 			// call handler
-			await prop_read_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_read_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

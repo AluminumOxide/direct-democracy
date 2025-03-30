@@ -1,9 +1,9 @@
 const { internal_error } = require('../../errors.json')
-const { token_random, conceal_token } = require('@aluminumoxide/direct-democracy-lib-auth')
-const account_client = require('@aluminumoxide/direct-democracy-account-api-client')
-const profile_client = require('@aluminumoxide/direct-democracy-profile-api-client')
 
-const fill_buckets = async function(request, reply, db, log) {
+const fill_buckets = async function(request, reply, db, log, lib) {
+
+	const { api_account, api_profile, lib_auth } = lib
+	const { token_random, conceal_token } = lib_auth
 
 	let { bucket_size } = request
 	if(!bucket_size) {
@@ -16,7 +16,7 @@ const fill_buckets = async function(request, reply, db, log) {
 			.returning('token')
 
 		// copy account tokens to account service
-		await account_client.fill_bucket({
+		await api_account.fill_bucket({
 			bucket: 'account',
 			tokens: account_tokens.map(t => { return t.token })})
 
@@ -26,7 +26,7 @@ const fill_buckets = async function(request, reply, db, log) {
 			.returning('token')
 
 		// copy profile tokens to profile service
-		await profile_client.fill_bucket({
+		await api_profile.fill_bucket({
 			bucket: 'profile',
 			tokens: profile_tokens.map(t => { return t.token })})
 
@@ -45,7 +45,7 @@ const fill_buckets = async function(request, reply, db, log) {
 		}
 	
 		// send email tokens to account service
-		await account_client.fill_bucket({ bucket: 'email', tokens: email_tokens })
+		await api_account.fill_bucket({ bucket: 'email', tokens: email_tokens })
 		
 		// generate signup tokens
 		let signup_tokens = []
@@ -62,7 +62,7 @@ const fill_buckets = async function(request, reply, db, log) {
 		}
 
 		// send signup tokens to profile service
-		await profile_client.fill_bucket({ bucket: 'signup', tokens: signup_tokens })
+		await api_profile.fill_bucket({ bucket: 'signup', tokens: signup_tokens })
 
 		log.info(`Fill/Buckets: Success: ${bucket_size}`)
 		return reply.code(200).send()

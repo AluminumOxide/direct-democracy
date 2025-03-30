@@ -4,7 +4,7 @@ const { errors,
 	fill_buckets_integration: fill_i,
 	clean_token_integration: clean_token_i } = require('./helper')
 
-describe('Integration Tests', () => {
+describe('End-to-End Tests', () => {
 
 	const test_data = integration_test_setup()
 

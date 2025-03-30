@@ -3,7 +3,7 @@ const { get_uuid,
 	integration_test_setup } = require('./helper')
 const c = require('@aluminumoxide/direct-democracy-profile-api-client')
 
-describe('Integration Tests', () => {
+describe('End-to-End Tests', () => {
 
 	const test_data = integration_test_setup()
 

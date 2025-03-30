@@ -3,7 +3,7 @@ const {
 	get_uuid,
 	get_dummy_log,
 	get_dummy_reply,
-	get_dummy_api,
+	get_dummy_lib,
 	integration_test_setup,
 	proposal_delete_unit: prop_delete_u,
 	proposal_delete_integration: prop_delete_i,
@@ -32,18 +32,20 @@ describe('Proposal Delete', () => {
 			const dummy_req = { proposal_id: get_uuid(), democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_delete',
 				val: dummy_req,
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: dummy_req,
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log)
+			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(204)
@@ -61,14 +63,15 @@ describe('Proposal Delete', () => {
 			const dummy_req = { proposal_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
-				val: new Error(errors.proposal_dne),
+				val: errors.proposal_dne,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log)
+			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -86,18 +89,20 @@ describe('Proposal Delete', () => {
 			const dummy_req = { proposal_id: get_uuid(), democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_delete',
 				val: dummy_req,
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { membership_id: get_uuid() },
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log)
+			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -115,14 +120,15 @@ describe('Proposal Delete', () => {
 			const dummy_req = { proposal_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log)
+			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

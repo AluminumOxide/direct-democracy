@@ -1,6 +1,6 @@
 const { token_dne, id_dupe, internal_error } = require('../../errors.json')
 
-const sign_up = async function(request, reply, db, log) {
+const sign_up = async function(request, reply, db, log, lib) {
 
 	const { profile_id, zkpp, salt, profile_token } = request
 

@@ -5,7 +5,7 @@ const {
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
-	get_dummy_api,
+	get_dummy_lib,
 	integration_test_setup,
 	democracy_apply_unit: dem_apply_u,
 	democracy_apply_integration: dem_apply_i,
@@ -68,12 +68,13 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				throws_error: false,
-				last_val: [dummy_req]
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [dummy_req]
 			}])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -94,11 +95,12 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'proposal_close',
 				val: {},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {
 					democracy_content: {
@@ -122,6 +124,7 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {
 					democracy_content: {
@@ -131,21 +134,32 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'apply_changes',
+				val: '',
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(200)
 			expect(dummy_reply.send).toBeCalledWith("")
+			expect(dummy_reply.code).toBeCalledWith(200)
+
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(2)
 			expect(dummy_log.warn).toBeCalledTimes(0)
 			expect(dummy_log.error).toBeCalledTimes(0)
 		})
-		
+
 		test('Success: Proposal not passed', async () => {
 
 			// set up mocks
@@ -153,12 +167,13 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				throws_error: false,
-				last_val: [dummy_req]
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [dummy_req]
 			}])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -179,11 +194,12 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'proposal_close',
 				val: {},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {
 					democracy_name: 'name',
@@ -198,6 +214,7 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {
 					democracy_content: {
@@ -207,21 +224,26 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(304)
 			expect(dummy_reply.send).toBeCalledWith()
+			expect(dummy_reply.code).toBeCalledWith(304)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(1)
 			expect(dummy_log.warn).toBeCalledTimes(0)
 			expect(dummy_log.error).toBeCalledTimes(0)
 		})
-		
+
 		test('Success: Proposal closed', async () => {
 
 			// set up mocks
@@ -229,7 +251,8 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -250,11 +273,12 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'proposal_close',
 				val: {},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {
 					democracy_content: {
@@ -273,6 +297,7 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {
 					democracy_content: {
@@ -282,21 +307,31 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'apply_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(204)
 			expect(dummy_reply.send).toBeCalledWith("")
+			expect(dummy_reply.code).toBeCalledWith(204)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(2)
 			expect(dummy_log.warn).toBeCalledTimes(0)
 			expect(dummy_log.error).toBeCalledTimes(0)
 		})
-		
+	
 		test('Success: No democracy rules', async () => {
 
 			// set up mocks
@@ -304,12 +339,13 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				throws_error: false,
-				last_val: [dummy_req]
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [dummy_req]
 			}])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -330,11 +366,12 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'proposal_close',
 				val: {},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {
 					democracy_content: {
@@ -347,6 +384,7 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {
 					democracy_content: {
@@ -356,14 +394,24 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'apply_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(200)
 			expect(dummy_reply.send).toBeCalledWith("")
+			expect(dummy_reply.code).toBeCalledWith(200)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(2)
@@ -378,18 +426,29 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
-				val: new Error(errors.proposal_dne),
+				val: errors.proposal_dne,
 				err: true
-			}])
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read',
+				val: '',
+				err: true
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.proposal_dne))
+			expect(dummy_reply.code).toBeCalledWith(400)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(0)
@@ -404,25 +463,31 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: new Error(),
 				err: true
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toBeCalledWith(500)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(0)
 			expect(dummy_log.warn).toBeCalledTimes(0)
 			expect(dummy_log.error).toBeCalledTimes(1)
 		})
-		
+
 		test('Error: Proposal not votable', async () => {
 
 			// set up mocks
@@ -430,20 +495,26 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: false,
 				},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.voting_closed))
+			expect(dummy_reply.code).toBeCalledWith(400)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(0)
@@ -458,7 +529,8 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -466,22 +538,28 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'proposal_close',
 				val: {},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
-				val: new Error(errors.democracy_dne),
+				val: errors.democracy_dne,
 				err: true
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.democracy_dne))
+			expect(dummy_reply.code).toBeCalledWith(400)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(1)
@@ -496,7 +574,8 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -504,22 +583,28 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'proposal_close',
 				val: {},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: new Error(),
 				err: true
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toBeCalledWith(500)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(0)
@@ -534,30 +619,37 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
 					democracy_id: ''
 				},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: new Error(),
 				err: true
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toBeCalledWith(500)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(0)
@@ -572,30 +664,42 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
 					democracy_id: ''
 				},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: true,
+				err: false
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.target_invalid))
+			expect(dummy_reply.code).toBeCalledWith(400)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(1)
@@ -610,7 +714,8 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -618,23 +723,34 @@ describe('Apply', () =>  {
 					proposal_target: 'bad'
 				},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: true,
+				err: false
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.target_invalid))
+			expect(dummy_reply.code).toBeCalledWith(400)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(1)
@@ -649,7 +765,8 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -657,23 +774,34 @@ describe('Apply', () =>  {
 					proposal_target: 'name'
 				},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: true,
+				err: false
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.changes_dne))
+			expect(dummy_reply.code).toBeCalledWith(400)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(1)
@@ -688,7 +816,8 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -697,30 +826,41 @@ describe('Apply', () =>  {
 					proposal_changes: 'bad'
 				},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: true,
+				err: false
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: false,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.changes_dne))
+			expect(dummy_reply.code).toBeCalledWith(400)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(1)
 			expect(dummy_log.warn).toBeCalledTimes(1)
 			expect(dummy_log.error).toBeCalledTimes(0)
 		})
-		
+	
 		test('Error: Empty changes', async () => {
 
 			// set up mocks
@@ -728,7 +868,8 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -737,23 +878,34 @@ describe('Apply', () =>  {
 					proposal_changes: {}
 				},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: true,
+				err: false
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.changes_dne))
+			expect(dummy_reply.code).toBeCalledWith(400)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(1)
@@ -768,7 +920,8 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -781,8 +934,13 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: true,
+				err: false
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {
 					democracy_content: {
@@ -803,6 +961,7 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {
 					democracy_content: {
@@ -810,14 +969,19 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toBeCalledWith(500)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(0)
@@ -832,7 +996,8 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -845,8 +1010,13 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: true,
+				err: false
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {
 					democracy_content: {
@@ -870,6 +1040,7 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {
 					democracy_content: {
@@ -879,14 +1050,19 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toBeCalledWith(500)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(0)
@@ -901,7 +1077,8 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -919,8 +1096,13 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: true,
+				err: false
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {
 					democracy_content: {
@@ -941,6 +1123,7 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {
 					democracy_content: {
@@ -950,14 +1133,19 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toBeCalledWith(500)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(0)
@@ -972,7 +1160,8 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -991,8 +1180,13 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: true,
+				err: false
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {
 					democracy_content: {
@@ -1013,6 +1207,7 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {
 					democracy_content: {
@@ -1022,14 +1217,19 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toBeCalledWith(500)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(0)
@@ -1044,7 +1244,8 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -1064,8 +1265,13 @@ describe('Apply', () =>  {
 					date_created: new Date().toJSON()
 				},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: true,
+				err: false
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {
 					democracy_content: {
@@ -1086,6 +1292,7 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {
 					democracy_content: {
@@ -1095,14 +1302,19 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.democracy_pop))
+			expect(dummy_reply.code).toBeCalledWith(400)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(1)
@@ -1117,12 +1329,13 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				throws_error: false,
-				last_val: []
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: []
 			}])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -1143,11 +1356,12 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'proposal_close',
 				val: {},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {
 					democracy_content: {
@@ -1171,6 +1385,7 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {
 					democracy_content: {
@@ -1180,14 +1395,24 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'apply_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toBeCalledWith(500)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(0)
@@ -1202,12 +1427,13 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				throws_error: true,
-				last_val: []
+				fxn: 'returning',
+				args: ['*'],
+				err: true,
+				val: []
 			}])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -1228,11 +1454,12 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'proposal_close',
 				val: {},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {
 					democracy_content: {
@@ -1256,6 +1483,7 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {
 					democracy_content: {
@@ -1265,29 +1493,45 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'apply_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toBeCalledWith(500)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(0)
 			expect(dummy_log.warn).toBeCalledTimes(0)
 			expect(dummy_log.error).toBeCalledTimes(1)
 		})
-			
-		test('Error: Invalid changes', async () => {
+
+		test('Error: Invalid changes check', async () => {
 
 			// set up mocks
 			const dummy_req = {}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_db = get_dummy_db([{
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [{}]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -1308,11 +1552,12 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'proposal_close',
 				val: {},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {
 					democracy_content: {
@@ -1323,20 +1568,119 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {
 					democracy_content: {
+						algos: {
+							approval_percent_minimum: 'approved_votes > value'
+						}
 					}
 				},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: false,
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'apply_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toBeCalledWith(400)
+
+			// check log
+			expect(dummy_log.info).toBeCalledTimes(1)
+			expect(dummy_log.warn).toBeCalledTimes(1)
+			expect(dummy_log.error).toBeCalledTimes(0)
+		})
+		
+		test('Error: Invalid changes apply', async () => {
+
+			// set up mocks
+			const dummy_req = {}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_db = get_dummy_db([{
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [{}]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: {
+					proposal_votable: true,
+					democracy_id: '',
+					proposal_target: 'content',
+					proposal_changes: {
+						a: {
+							_add: { b: 2 }
+						}
+					},
+					proposal_votes: {
+						verified: {
+							yes: 1,
+							no: 1
+						},
+					},
+					date_created: new Date().toJSON()
+				},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: {},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read', 
+				val: {
+					democracy_content: {
+					},
+					democracy_metas: {
+					},
+					democracy_population_verified: 1
+				},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_root',
+				val: {
+					democracy_content: {
+						algos: {
+							approval_percent_minimum: 'approved_votes > value'
+						}
+					}
+				},
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'apply_changes',
+				val: errors.changes_invalid,
+				err: true
+			}], errors)
+
+			// call handler
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toBeCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toBeCalledWith(400)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(1)
@@ -1351,12 +1695,13 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				throws_error: false,
-				last_val: [dummy_req]
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [dummy_req]
 			}])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -1377,11 +1722,12 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'proposal_close',
 				val: {},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {
 					democracy_name: 'name',
@@ -1396,6 +1742,7 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {
 					democracy_content: {
@@ -1405,14 +1752,19 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.algo_missing))
+			expect(dummy_reply.code).toBeCalledWith(500)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(0)
@@ -1426,8 +1778,14 @@ describe('Apply', () =>  {
 			const dummy_req = {}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_db = get_dummy_db([{
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [{}]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -1448,11 +1806,12 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'proposal_close',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {
 					democracy_name: 'name',
@@ -1467,6 +1826,7 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {
 					democracy_content: {
@@ -1476,14 +1836,24 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'apply_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toBeCalledWith(500)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(1)
@@ -1498,12 +1868,13 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				throws_error: new Error(errors.changes_invalid),
-				last_val: []
+				fxn: 'returning',
+				args: ['*'],
+				err: new Error(errors.changes_invalid),
+				val: []
 			}])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -1524,11 +1895,12 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'proposal_close',
 				val: {},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {
 					democracy_content: {
@@ -1552,6 +1924,7 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {
 					democracy_content: {
@@ -1561,14 +1934,24 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'apply_changes',
+				val: errors.changes_invalid,
+				err: true
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toBeCalledWith(400)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(1)
@@ -1583,7 +1966,8 @@ describe('Apply', () =>  {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {
 					proposal_votable: true,
@@ -1604,11 +1988,12 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'proposal_close',
 				val: {},
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read', 
 				val: {
 					democracy_content: {
@@ -1632,6 +2017,7 @@ describe('Apply', () =>  {
 				},
 				err: false
 			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_root',
 				val: {
 					democracy_content: {
@@ -1641,22 +2027,27 @@ describe('Apply', () =>  {
 					}
 				},
 				err: false
-			}])
-
-			// mock json changes lib
-			const json_changes = require('@aluminumoxide/direct-democracy-lib-json-changes')
-			json_changes.check_changes = sinon.stub()
-			json_changes.check_changes.throws(new Error())
+			},{
+				lib: 'lib_json',
+				fxn: 'apply_changes',
+				val: new Error(),
+				err: true
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: new Error(),
+				err: true
+			}], errors)
 
 			// call handler
-			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// restore json changes lib
 			sinon.restore()
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toBeCalledWith(500)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(0)

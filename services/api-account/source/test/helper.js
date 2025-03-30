@@ -20,24 +20,61 @@ const {
 const errors = { ...api_account_client.errors }
 
 // unit tests
-const fill_bucket_unit = async(request, reply, db, log) => {
-	return await require('../handlers/bucket/fill')(request, reply, db, log)
+const fill_bucket_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/bucket/fill')(request, reply, db, log, lib)
 }
 
-const sign_up_init_unit = async(request, reply, db, log) => {
-	return await require('../handlers/signup/init')(request, reply, db, log)
+const sign_up_init_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/signup/init')(request, reply, db, log, lib)
 }
 
-const sign_up_verify_unit = async(request, reply, db, log) => {
-	return await require('../handlers/signup/verify')(request, reply, db, log)
+const sign_up_verify_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/signup/verify')(request, reply, db, log, lib)
 }
 
-const sign_in_init_unit = async(request, reply, db, log) => {
-	return await require('../handlers/signin/init')(request, reply, db, log)
+const sign_in_init_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/signin/init')(request, reply, db, log, lib)
 }
 
-const sign_in_verify_unit = async(request, reply, db, log) => {
-	return await require('../handlers/signin/verify')(request, reply, db, log)
+const sign_in_verify_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/signin/verify')(request, reply, db, log, lib)
+}
+
+// integration tests
+const fill_bucket_integration = async(bucket, tokens) => {
+	return await api_account_client.fill_bucket({ bucket, tokens})
+}
+
+const sign_up_init_integration = async(email, zkpp, salt, encrypted_question) => {
+	return await api_account_client.sign_up_init({ email, zkpp, salt, encrypted_question })
+}
+
+const sign_up_verify_integration = async(email_token, account_token, encrypted_profile) => {
+	return await api_account_client.sign_up_verify({ email_token, account_token, encrypted_profile })
+}
+
+const sign_in_init_integration = async(email, key) => {
+	return await api_account_client.sign_in_init({ email, key })
+}
+
+const sign_in_verify_integration = async(email, key) => {
+	return await api_account_client.sign_in_verify({ email, key })
+}
+
+const client_sign_up_one_integration = async(email, password, question) => {
+	return await api_account_client.client_sign_up_one({ email, password, question })
+}
+
+const client_sign_up_two_integration = async(answer, salt, profile_id, email_token, account_token) => {
+	return await api_account_client.client_sign_up_two({ answer, salt, profile_id, email_token, account_token })
+}
+
+const client_sign_in_one_integration = async(email, password) => {
+	return await api_account_client.client_sign_in_one({ email, password })
+}
+
+const client_sign_in_two_integration = async(answer, salt, encrypted_profile) => {
+	return await api_account_client.client_sign_in_two({ answer, salt, encrypted_profile })
 }
 
 // helpers
@@ -67,4 +104,13 @@ module.exports = {
 	sign_up_verify_unit,
 	sign_in_init_unit,
 	sign_in_verify_unit,
+	fill_bucket_integration,
+	sign_up_init_integration,
+	sign_up_verify_integration,
+	sign_in_init_integration,
+	sign_in_verify_integration,
+	client_sign_up_one_integration,
+	client_sign_up_two_integration,
+	client_sign_in_one_integration,
+	client_sign_in_two_integration,
 }

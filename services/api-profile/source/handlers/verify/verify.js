@@ -1,6 +1,6 @@
 const { internal_error, token_dne, profile_dne, token_expired } = require('../../errors.json')
 
-const verify = async function(request, reply, db, log) {
+const verify = async function(request, reply, db, log, lib) {
 
 	const { jwt } = request
 

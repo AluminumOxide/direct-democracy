@@ -3,7 +3,7 @@ const {
 	get_uuid,
 	get_dummy_log,
 	get_dummy_reply,
-	get_dummy_api,
+	get_dummy_lib,
 	integration_test_setup,
 	ballot_list_public_unit: blt_list_u,
 	ballot_list_public_integration: blt_list_i
@@ -33,18 +33,20 @@ describe('Ballot List Public', () => {
 			const dummy_val = []
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { democracy_id: dummy_req.democracy_id },
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_list',
 				val: dummy_val,
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_list_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_list_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -62,9 +64,10 @@ describe('Ballot List Public', () => {
 			const dummy_req = { filter:{profile_id:{}}, democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([])
 			
 			// call handler
-			await blt_list_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_list_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.invalid_auth))
@@ -81,10 +84,11 @@ describe('Ballot List Public', () => {
 			// set up mocks
 			const dummy_req = { filter:{membership_id:{}}, democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
 			
 			// call handler
-			await blt_list_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_list_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.invalid_auth))
@@ -103,14 +107,15 @@ describe('Ballot List Public', () => {
 			const dummy_val = []
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { democracy_id: get_uuid() },
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_list_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_list_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.democracy_invalid))
@@ -129,14 +134,15 @@ describe('Ballot List Public', () => {
 			const dummy_val = []
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
-				val: new Error(errors.proposal_dne),
+				val: errors.proposal_dne,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_list_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_list_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.proposal_dne))
@@ -155,14 +161,15 @@ describe('Ballot List Public', () => {
 			const dummy_val = []
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_list_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_list_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))

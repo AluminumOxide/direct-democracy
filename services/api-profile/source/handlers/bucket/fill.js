@@ -1,6 +1,6 @@
 const { bucket_dne, internal_error } = require('../../errors.json')
 
-const fill_bucket = async function(request, reply, db, log) {
+const fill_bucket = async function(request, reply, db, log, lib) {
 	const { bucket, tokens } = request
 
 	try {

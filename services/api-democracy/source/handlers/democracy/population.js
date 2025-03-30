@@ -1,9 +1,9 @@
 const { internal_error } = require('../../errors.json')
-const api_membership_client = require('@aluminumoxide/direct-democracy-membership-api-client')
 
-const democracy_population_update = async function(request, reply, db, log) {
+const democracy_population_update = async function(request, reply, db, log, lib) {
 
 	const { time_start, time_end } = request
+	const { api_membership } = lib
 
 	try {
 		// use time window in request
@@ -25,8 +25,8 @@ const democracy_population_update = async function(request, reply, db, log) {
 		while(!stopped) {
 
 			// fetch democracies and populations
-			let pops = await api_membership_client.membership_population(args)
-
+			let pops = await api_membership.membership_population(args)
+			
 			// update democracies
 			for(let pop of pops) {
 				await db('democracy')

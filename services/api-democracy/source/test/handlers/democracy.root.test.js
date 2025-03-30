@@ -3,6 +3,7 @@ const { errors,
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
+	get_dummy_lib,
 	democracy_root_unit: dem_root_u,
 	democracy_root_integration: dem_root_i } = require('../helper')
 
@@ -17,14 +18,15 @@ describe('Democracy Root', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'whereNull',
-				last_args: ['democracy.parent_id'],
-				throws_error: false,
-				last_val: [dummy_req]
+				fxn: 'whereNull',
+				args: ['democracy.parent_id'],
+				err: false,
+				val: [dummy_req]
 			}])
+			const dummy_lib = get_dummy_lib([])
 
 			// call handler
-			await dem_root_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_root_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -44,14 +46,15 @@ describe('Democracy Root', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'whereNull',
-				last_args: ['democracy.parent_id'],
-				throws_error: false,
-				last_val: []
+				fxn: 'whereNull',
+				args: ['democracy.parent_id'],
+				err: false,
+				val: []
 			}])
+			const dummy_lib = get_dummy_lib([])
 
 			// call handler
-			await dem_root_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_root_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -71,13 +74,14 @@ describe('Democracy Root', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'whereNull',
-				last_args: ['democracy.parent_id'],
-				throws_error: new Error('db error')
+				fxn: 'whereNull',
+				args: ['democracy.parent_id'],
+				err: new Error('db error')
 			}])
+			const dummy_lib = get_dummy_lib([])
 
 			// call handler
-			await dem_root_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_root_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))

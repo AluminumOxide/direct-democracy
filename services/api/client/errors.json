@@ -1,0 +1,20 @@
+{
+	"algo_missing": "Root democracy is missing algo",
+	"ballot_closed": "Ballot voting is closed",
+	"ballot_dne": "Ballot does not exist",
+	"ballots_cast": "Proposal has cast ballots",
+	"changes_dne": "Proposal has no changes",
+	"changes_invalid": "Proposal changes do not map to democracy contents",
+	"democracy_dne": "Democracy does not exist",
+	"democracy_invalid": "Invalid democracy provided",
+	"democracy_pop": "Democracy has population of 0",
+	"internal_error": "Error: Internal error",
+	"invalid_auth": "Invalid authentication",
+	"membership_dne": "Membership does not exist",
+	"membership_exist": "Membership already exists",
+	"membership_invalid": "Invalid membership provided",
+	"profile_invalid": "Profile does not match membership",
+	"proposal_dne": "Proposal does not exist",
+	"target_invalid": "Proposal target is invalid",
+	"voting_closed": "Proposal voting is closed"
+}

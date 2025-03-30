@@ -1,6 +1,6 @@
 const { internal_error } = require('../../errors.json')
 
-const democracy_list = async function(request, reply, db, log) {
+const democracy_list = async function(request, reply, db, log, lib) {
 	const { limit, last, sort, order, filter } = request
 
 	try {

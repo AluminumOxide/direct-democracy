@@ -1,7 +1,8 @@
 const { internal_error } = require('../../errors.json')
-const { pke_generate_keys, pke_derive_secret } = require('@aluminumoxide/direct-democracy-lib-auth')
 
-const step_one = async function(request, reply, db, log) {
+const step_one = async function(request, reply, db, log, lib) {
+
+	const { pke_generate_keys, pke_derive_secret } = lib.lib_auth 
 	const { pke_key } = request
 
 	try {

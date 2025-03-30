@@ -1,13 +1,15 @@
-const api_proposal_client = require('@aluminumoxide/direct-democracy-proposal-api-client')
 const { proposal_dne, ballot_dne, membership_dne, ballot_closed, voting_closed, internal_error } =  require('../../errors.json')
 
-const ballot_update = async function(request, reply, db, log) {
+const ballot_update = async function(request, reply, db, log, lib) {
+
 	const { ballot_id, proposal_id, membership_id, ballot_approved, ballot_comments } = request
+	const { api_proposal } = lib
+
 	// TODO: get rid of proposal_id
 	// check the proposal_id is valid
 	let prop_check
 	try {
-		prop_check = await api_proposal_client.proposal_read({ proposal_id })
+		prop_check = await api_proposal.proposal_read({ proposal_id })
 	} catch (e) {
 		if(e.message === proposal_dne) {
 			log.warn(`Ballot/Update: Failure: ${proposal_id} Error: Proposal does not exist`)
@@ -27,7 +29,7 @@ const ballot_update = async function(request, reply, db, log) {
 	// check the ballot_id is valid
 	let bllt_check
 	try {
-		bllt_check = await api_proposal_client.ballot_read({ proposal_id, ballot_id })
+		bllt_check = await api_proposal.ballot_read({ proposal_id, ballot_id })
 	} catch (e) {
 		if(e.message === ballot_dne) {
 			log.warn(`Ballot/Update: Failure: ${ballot_id} Error: Ballot does not exist`)

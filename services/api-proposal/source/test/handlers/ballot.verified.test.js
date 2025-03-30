@@ -3,7 +3,7 @@ const {
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
-	get_dummy_api,
+	get_dummy_lib,
 	integration_test_setup,
 	ballot_read_integration: blt_read_i,
 	ballot_list_integration: blt_list_i,
@@ -114,20 +114,21 @@ describe('Verified', () => {
 			const dummy_req = { time_start: '2100-01-01T00:00:00', time_end: '2100-01-01T00:00:00' }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			const dummy_api =  get_dummy_api('membership', [{
+			const dummy_lib =  get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_list',
 				val: [],
 				err: false
-			}])
+			}], errors)
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: false,
-				throws_error: false,
-				last_val: [dummy_req]
+				fxn: 'where',
+				args: false,
+				err: false,
+				val: [dummy_req]
 			}])
 			
 			// call handler
-			await blt_verify_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_verify_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 			
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -145,20 +146,21 @@ describe('Verified', () => {
 			const dummy_req = { time_start: '2100-01-01T00:00:00', time_end: '2100-01-01T00:00:00' }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			const dummy_api =  get_dummy_api('membership', [{
+			const dummy_lib =  get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_list',
 				val: [{ is_verified: true, membership_id: 'test' }],
 				err: false
-			}])
+			}], errors)
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: false,
-				throws_error: false,
-				last_val: [dummy_req]
+				fxn: 'where',
+				args: false,
+				err: false,
+				val: [dummy_req]
 			}])
 			
 			// call handler
-			await blt_verify_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_verify_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 			
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -179,26 +181,28 @@ describe('Verified', () => {
 			const dummy_req = { time_start: '2100-01-01T00:00:00', time_end: '2100-01-01T00:00:00' }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			const dummy_api =  get_dummy_api('membership', [{
+			const dummy_lib =  get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_list',
 				val: mems,
 				err: false,
 				call: 1
 			},{
+				lib: 'api_membership',
 				fxn: 'membership_list',
 				val: [],
 				err: false,
 				call: 2
-			}])
+			}], errors)
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: false,
-				throws_error: false,
-				last_val: [dummy_req]
+				fxn: 'where',
+				args: false,
+				err: false,
+				val: [dummy_req]
 			}])
 			
 			// call handler
-			await blt_verify_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_verify_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 			
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -216,24 +220,25 @@ describe('Verified', () => {
 			const dummy_req = { time_start: '2100-01-01T00:00:00', time_end: '2100-01-01T00:00:00' }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			const dummy_api =  get_dummy_api('membership', [{
+			const dummy_lib =  get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_list',
-				val: new Error(),
+				val: errors.internal_error,
 				err: true
-			}])
+			}], errors)
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: false,
-				throws_error: false,
-				last_val: [dummy_req]
+				fxn: 'where',
+				args: false,
+				err: false,
+				val: [dummy_req]
 			}])
 			
 			// call handler
-			await blt_verify_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_verify_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 			
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error())
+			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
 			
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(1)
@@ -247,24 +252,25 @@ describe('Verified', () => {
 			const dummy_req = { time_start: '2100-01-01T00:00:00', time_end: '2100-01-01T00:00:00' }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			const dummy_api =  get_dummy_api('membership', [{
+			const dummy_lib =  get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_list',
 				val: [{ is_verified: true, membership_id: 'test' }],
 				err: false
-			}])
+			}], errors)
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: false,
-				throws_error: new Error(),
-				last_val: [dummy_req]
+				fxn: 'where',
+				args: false,
+				err: true,
+				val: errors.internal_error
 			}])
 			
 			// call handler
-			await blt_verify_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_verify_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 			
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error())
+			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
 			
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(1)

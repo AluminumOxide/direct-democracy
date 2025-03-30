@@ -2,6 +2,7 @@ const {
 	errors,
 	get_dummy_db,
 	get_dummy_log,
+	get_dummy_lib,
 	get_dummy_reply,
 	integration_test_setup,
 	ballot_read_unit: blt_read_u,
@@ -41,15 +42,16 @@ describe('Ballot Read', () => {
 			const dummy_req = { ballot_id: '' }
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{ 'id': dummy_req.ballot_id }],
-				last_val: [{ 'ballot_id': dummy_req.ballot_id }],
-				throws_error: false
+				fxn: 'where',
+				args: [{ 'id': dummy_req.ballot_id }],
+				val: [{ 'ballot_id': dummy_req.ballot_id }],
+				err: false
 			}])
 
 			// call handler
-			await blt_read_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_read_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -68,15 +70,16 @@ describe('Ballot Read', () => {
 			const dummy_req = { ballot_id: '' }
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{ 'id': dummy_req.ballot_id }],
-				last_val: [],
-				throws_error: false
+				fxn: 'where',
+				args: [{ 'id': dummy_req.ballot_id }],
+				val: [],
+				err: false
 			}])
 
 			// call handler
-			await blt_read_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_read_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -95,15 +98,16 @@ describe('Ballot Read', () => {
 			const dummy_req = { ballot_id: '' }
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{ 'id': dummy_req.ballot_id }],
-				last_val: [],
-				throws_error: true
+				fxn: 'where',
+				args: [{ 'id': dummy_req.ballot_id }],
+				val: [],
+				err: true
 			}])
 
 			// call handler
-			await blt_read_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_read_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

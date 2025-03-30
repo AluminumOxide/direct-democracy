@@ -1,3 +1,4 @@
 {
-	"internal_error": "Error: Internal error"
+	"internal_error": "Error: Internal error",
+	"invalid_input": "Invalid Input"
 }

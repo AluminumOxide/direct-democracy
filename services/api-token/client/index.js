@@ -33,6 +33,9 @@ const clean_token = async function(token) {
 module.exports = { 
 	clean_token,
 	fill_buckets: client.fill_buckets,
+	step_one: client.step_one,
+	step_two: client.step_two,
+	step_three: client.step_three,
 	errors: client.errors,
 	schema: client.schema,
 	ajv: client.ajv,

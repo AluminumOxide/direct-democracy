@@ -1,6 +1,7 @@
 const { ballot_dne, internal_error } = require('../../errors.json')
 
-const ballot_read = async function(request, reply, db, log) {
+const ballot_read = async function(request, reply, db, log, lib) {
+
 	const { ballot_id } = request
 
 	try {

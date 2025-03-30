@@ -3,7 +3,7 @@ const {
 	get_uuid,
 	get_dummy_log,
 	get_dummy_reply,
-	get_dummy_api,
+	get_dummy_lib,
 	integration_test_setup,
 	proposal_create_unit: prop_create_u,
 	proposal_create_integration: prop_create_i
@@ -37,14 +37,15 @@ describe('Proposal Create', () => {
 			const dummy_req = {}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_create',
 				val: dummy_req,
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await prop_create_u(dummy_req, dummy_reply, {}, dummy_log)
+			await prop_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(201)
@@ -62,14 +63,15 @@ describe('Proposal Create', () => {
 			const dummy_req = {}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_create',
-				val: new Error(errors.membership_dne),
+				val: errors.membership_dne,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await prop_create_u(dummy_req, dummy_reply, {}, dummy_log)
+			await prop_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(401)
@@ -87,14 +89,15 @@ describe('Proposal Create', () => {
 			const dummy_req = { democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_create',
-				val: new Error(errors.democracy_invalid),
+				val: errors.democracy_invalid,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await prop_create_u(dummy_req, dummy_reply, {}, dummy_log)
+			await prop_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -112,14 +115,15 @@ describe('Proposal Create', () => {
 			const dummy_req = { democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_create',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await prop_create_u(dummy_req, dummy_reply, {}, dummy_log)
+			await prop_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

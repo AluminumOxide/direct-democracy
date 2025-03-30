@@ -2,10 +2,35 @@ const { errors,
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
-	verify_unit: verify
+	get_dummy_lib,
+	integration_test_setup,
+	verify_unit: verify_u,
+	verify_integration: verify_i
 } = require('../helper')
 
 describe('Verify', () => {
+
+	describe('Integration Tests', () => {
+
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			const v = await verify_i(test_data.profile.profile.id, test_data.profile.profile.auth_token, test_data.profile.profile.auth_expiry)
+			expect(v).toBeTruthy()
+		})
+		
+		test('Error: Invalid Token', async() => {
+			await expect(verify_i(test_data.profile.profile.id, 'bad', test_data.profile.profile.auth_expiry)).rejects.toThrow(errors.token_dne)
+		})
+		
+		test('Error: Invalid Expiry', async() => {
+			await expect(verify_i(test_data.profile.profile.id, test_data.profile.profile.auth_token, '2200-01-01T01:01:01.000Z')).rejects.toThrow(errors.token_dne)
+		})
+		
+		test('Error: Token Expired', async() => {
+			await expect(verify_i(test_data.profile.profile.id, test_data.profile.profile.auth_token, new Date().toString())).rejects.toThrow(errors.token_expired)
+		})
+	})
 
 	describe('Unit Tests', () => {
 
@@ -19,15 +44,16 @@ describe('Verify', () => {
 				auth_token: 'test',
 				auth_expiry: expiry }}
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'select',
-				last_val: [{ auth_token: 'test', auth_expiry: expiry }],
-				throws_error: false
+				fxn: 'select',
+				val: [{ auth_token: 'test', auth_expiry: expiry }],
+				err: false
 			}])
 
 			// call handler
-			await verify(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await verify_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith(true)
@@ -45,14 +71,15 @@ describe('Verify', () => {
                         const dummy_req = { jwt: { profile_id: 'test', auth_token: 'test', auth_expiry: 'test' } }
                         const dummy_log = get_dummy_log()
                         const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([])
                         const dummy_db = get_dummy_db([{
-                                last_fxn: 'select',
-                                throws_error: false,
-                                last_val: []
+                                fxn: 'select',
+                                err: false,
+                                val: []
                         }])
 
                         // call handler
-                        await verify(dummy_req, dummy_reply, dummy_db, dummy_log)
+                        await verify_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
                         // check reply
                         expect(dummy_reply.send).toBeCalledWith(new Error(errors.profile_dne))
@@ -70,14 +97,15 @@ describe('Verify', () => {
                         const dummy_req = { jwt: { profile_id: 'test', auth_token: 'test', auth_expiry: 'test' } }
                         const dummy_log = get_dummy_log()
                         const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([])
                         const dummy_db = get_dummy_db([{
-                                last_fxn: 'select',
-                                throws_error: false,
-                                last_val: [{},{}]
+                                fxn: 'select',
+                                err: false,
+                                val: [{},{}]
                         }])
 
                         // call handler
-                        await verify(dummy_req, dummy_reply, dummy_db, dummy_log)
+                        await verify_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
                         // check reply
                         expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
@@ -95,14 +123,15 @@ describe('Verify', () => {
                         const dummy_req = { jwt: { profile_id: 'test', auth_token: 'test', auth_expiry: 'test' } }
                         const dummy_log = get_dummy_log()
                         const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([])
                         const dummy_db = get_dummy_db([{
-                                last_fxn: 'select',
-                                throws_error: false,
-                                last_val: [{ auth_token: 'bad', auth_expiry: 'bad' }]
+                                fxn: 'select',
+                                err: false,
+                                val: [{ auth_token: 'bad', auth_expiry: 'bad' }]
                         }])
 
                         // call handler
-                        await verify(dummy_req, dummy_reply, dummy_db, dummy_log)
+                        await verify_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
                         // check reply
                         expect(dummy_reply.send).toBeCalledWith(new Error(errors.token_dne))
@@ -122,14 +151,15 @@ describe('Verify', () => {
                         const dummy_req = { jwt: { profile_id: 'test', auth_token: 'test', auth_expiry: expired } }
                         const dummy_log = get_dummy_log()
                         const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([])
                         const dummy_db = get_dummy_db([{
-                                last_fxn: 'select',
-                                throws_error: false,
-                                last_val: [{ auth_token: 'bad', auth_expiry: 'bad' }]
+                                fxn: 'select',
+                                err: false,
+                                val: [{ auth_token: 'bad', auth_expiry: 'bad' }]
                         }])
 
                         // call handler
-                        await verify(dummy_req, dummy_reply, dummy_db, dummy_log)
+                        await verify_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
                         // check reply
                         expect(dummy_reply.send).toBeCalledWith(new Error(errors.token_expired))
@@ -147,14 +177,15 @@ describe('Verify', () => {
                         const dummy_req = { jwt: { profile_id: 'test', auth_token: 'test', auth_expiry: 'test' } }
                         const dummy_log = get_dummy_log()
                         const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([])
                         const dummy_db = get_dummy_db([{
-                                last_fxn: 'select',
-                                throws_error: true,
-                                last_val: [{},{}]
+                                fxn: 'select',
+                                err: true,
+                                val: [{},{}]
                         }])
 
                         // call handler
-                        await verify(dummy_req, dummy_reply, dummy_db, dummy_log)
+                        await verify_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
                         // check reply
                         expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))

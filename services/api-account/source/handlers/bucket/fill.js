@@ -1,6 +1,6 @@
-const { bucket_dne, internal_error } = require('../../errors.json')
+const { bucket_dne, token_empty, internal_error } = require('../../errors.json')
 
-const fill_bucket = async function(request, reply, db, log) {
+const fill_bucket = async function(request, reply, db, log, lib) {
 
 	const { bucket, tokens } = request
 
@@ -9,6 +9,12 @@ const fill_bucket = async function(request, reply, db, log) {
 		if(bucket != 'account' && bucket != 'email') {
 			log.warn(`Bucket/Fill: Failure: ${bucket} Error: Bucket DNE`)
 			return reply.code(400).send(new Error(bucket_dne))
+		}
+		
+		// check tokens
+		if(!tokens.length || tokens.length < 1) {
+			log.warn(`Bucket/Fill: Failure: ${bucket} Error: No Tokens`)
+			return reply.code(400).send(new Error(token_empty))
 		}
 
 		// insert tokens

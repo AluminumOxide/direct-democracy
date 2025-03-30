@@ -2,7 +2,7 @@ const {
 	errors,
 	get_dummy_db,
 	get_dummy_log,
-	get_dummy_api,
+	get_dummy_lib,
 	get_dummy_reply,
 	integration_test_setup,
 	membership_create_unit: mem_create_u,
@@ -32,24 +32,25 @@ describe('Membership Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [dummy_req],
-				last_val: [],
-				throws_error: false
+				fxn: 'where',
+				args: [dummy_req],
+				val: [],
+				err: false
 			},{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				last_val: [expected],
-				throws_error: false
+				fxn: 'returning',
+				args: ['*'],
+				val: [expected],
+				err: false
 			}])	
-			get_dummy_api('democracy', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_democracy',
 				fxn: 'democracy_read',
 				val: { id: expected.democracy_id },
 				err: false
-			}])
+			}], errors)
 
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 			
 			// check reply
 			expected.membership_id = expected.id
@@ -82,24 +83,25 @@ describe('Membership Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [dummy_req],
-				last_val: [],
-				throws_error: false
+				fxn: 'where',
+				args: [dummy_req],
+				val: [],
+				err: false
 			},{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				last_val: [expected],
-				throws_error: false
+				fxn: 'returning',
+				args: ['*'],
+				val: [expected],
+				err: false
 			}])	
-			get_dummy_api('democracy', [{
+			const dummy_lib = get_dummy_lib([{
+				lib:'api_democracy',
 				fxn: 'democracy_read',
-				val: new Error(errors.democracy_dne),
+				val: errors.democracy_dne,
 				err: true
-			}])
+			}], errors)
 
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 			
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -130,24 +132,25 @@ describe('Membership Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [dummy_req],
-				last_val: [],
-				throws_error: false
+				fxn: 'where',
+				args: [dummy_req],
+				val: [],
+				err: false
 			},{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				last_val: [expected],
-				throws_error: false
+				fxn: 'returning',
+				args: ['*'],
+				val: [expected],
+				err: false
 			}])	
-			get_dummy_api('democracy', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_democracy',
 				fxn: 'democracy_read',
 				val: new Error(errors.internal_error),
 				err: true
-			}])
+			}], errors)
 
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 			
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -178,24 +181,25 @@ describe('Membership Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [dummy_req],
-				last_val: [expected],
-				throws_error: false
+				fxn: 'where',
+				args: [dummy_req],
+				val: [expected],
+				err: false
 			},{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				last_val: [expected],
-				throws_error: false
+				fxn: 'returning',
+				args: ['*'],
+				val: [expected],
+				err: false
 			}])	
-			get_dummy_api('democracy', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_democracy',
 				fxn: 'democracy_read',
 				val: { id: expected.democracy_id },
 				err: false
-			}])
+			}], errors)
 
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 			
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -226,24 +230,25 @@ describe('Membership Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [dummy_req],
-				last_val: [],
-				throws_error: new Error(errors.internal_error)
+				fxn: 'where',
+				args: [dummy_req],
+				val: [],
+				err: new Error(errors.internal_error)
 			},{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				last_val: [expected],
-				throws_error: false
+				fxn: 'returning',
+				args: ['*'],
+				val: [expected],
+				err: false
 			}])	
-			get_dummy_api('democracy', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_democracy',
 				fxn: 'democracy_read',
 				val: { id: expected.democracy_id },
 				err: false
-			}])
+			}], errors)
 
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 			
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -274,24 +279,25 @@ describe('Membership Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [dummy_req],
-				last_val: [],
-				throws_error: false
+				fxn: 'where',
+				args: [dummy_req],
+				val: [],
+				err: false
 			},{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				last_val: [],
-				throws_error: false
+				fxn: 'returning',
+				args: ['*'],
+				val: [],
+				err: false
 			}])	
-			get_dummy_api('democracy', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_democracy',
 				fxn: 'democracy_read',
 				val: { id: expected.democracy_id },
 				err: false
-			}])
+			}], errors)
 
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 			
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -322,24 +328,25 @@ describe('Membership Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [dummy_req],
-				last_val: [],
-				throws_error: false
+				fxn: 'where',
+				args: [dummy_req],
+				val: [],
+				err: false
 			},{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				last_val: [],
-				throws_error: new Error(errors.internal_error)
+				fxn: 'returning',
+				args: ['*'],
+				val: [],
+				err: new Error(errors.internal_error)
 			}])	
-			get_dummy_api('democracy', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_democracy',
 				fxn: 'democracy_read',
 				val: { id: expected.democracy_id },
 				err: false
-			}])
+			}], errors)
 
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 			
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

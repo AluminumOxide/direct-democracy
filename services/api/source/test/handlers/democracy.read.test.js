@@ -3,7 +3,7 @@ const {
 	get_uuid,
 	get_dummy_log,
 	get_dummy_reply,
-	get_dummy_api,
+	get_dummy_lib,
 	integration_test_setup,
 	democracy_read_unit: dem_read_u,
 	democracy_read_integration: dem_read_i
@@ -30,14 +30,15 @@ describe('Democracy Read', () => {
 			const dummy_req = { democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('democracy', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_democracy',
 				fxn: 'democracy_read',
 				val: dummy_req,
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await dem_read_u(dummy_req, dummy_reply, {}, dummy_log)
+			await dem_read_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -55,14 +56,15 @@ describe('Democracy Read', () => {
 			const dummy_req = { democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('democracy', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_democracy',
 				fxn: 'democracy_read',
-				val: new Error(errors.democracy_dne),
+				val: errors.democracy_dne,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await dem_read_u(dummy_req, dummy_reply, {}, dummy_log)
+			await dem_read_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -80,14 +82,15 @@ describe('Democracy Read', () => {
 			const dummy_req = { democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('democracy', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_democracy',
 				fxn: 'democracy_read',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await dem_read_u(dummy_req, dummy_reply, {}, dummy_log)
+			await dem_read_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

@@ -3,5 +3,8 @@
 	"internal_error": "Internal error",
 	"bucket_dne": "Invalid bucket",
 	"account_dne": "Account DNE",
-	"token_dne": "Token DNE"
+	"token_dne": "Token DNE",
+	"token_empty": "Token list is empty",
+	"account_unverified": "Account is not verified",
+	"invalid_key": "Invalid key"
 }

@@ -1,12 +1,13 @@
 const { internal_error } = require('../../errors.json')
-const dem_client = require('@aluminumoxide/direct-democracy-democracy-api-client')
 
-const democracy_list = async function(request, reply, db, log) {
+const democracy_list = async function(request, reply, db, log, lib) {
+
 	const { limit, last, sort, order, filter } = request
+	const { api_democracy } = lib
 
 	try {
 		// fetch from democracy service
-		const dems = await dem_client.democracy_list({ limit, last, sort, order, filter })
+		const dems = await api_democracy.democracy_list({ limit, last, sort, order, filter })
 
 		// return results
 		log.info('Democracy/List: Success')

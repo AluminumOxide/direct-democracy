@@ -1,6 +1,6 @@
 const { internal_error, token_dne, profile_dne } = require('../../errors.json')
 
-const sign_out = async function(request, reply, db, log) {
+const sign_out = async function(request, reply, db, log, lib) {
 
 	const { jwt } = request
 

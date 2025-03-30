@@ -1,6 +1,6 @@
 const { internal_error, democracy_dne } = require('../../errors.json')
 
-const democracy_read = async function(request, reply, db, log) {
+const democracy_read = async function(request, reply, db, log, lib) {
 	const { democracy_id } = request
 	try {
 		const rows = await db('democracy')

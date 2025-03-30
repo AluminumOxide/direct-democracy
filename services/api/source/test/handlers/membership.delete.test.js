@@ -3,7 +3,7 @@ const {
 	get_uuid,
 	get_dummy_log,
 	get_dummy_reply,
-	get_dummy_api,
+	get_dummy_lib,
 	integration_test_setup,
 	membership_delete_unit: mem_delete_u,
 	membership_read_integration: mem_read_i,
@@ -33,14 +33,15 @@ describe('Membership Delete', () => {
 			const dummy_req = { membership_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_delete',
 				val: dummy_req,
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await mem_delete_u(dummy_req, dummy_reply, {}, dummy_log)
+			await mem_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(201)
@@ -58,14 +59,15 @@ describe('Membership Delete', () => {
 			const dummy_req = { membership_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_delete',
-				val: new Error(errors.membership_dne),
+				val: errors.membership_dne,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await mem_delete_u(dummy_req, dummy_reply, {}, dummy_log)
+			await mem_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -83,14 +85,15 @@ describe('Membership Delete', () => {
 			const dummy_req = { membership_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_delete',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await mem_delete_u(dummy_req, dummy_reply, {}, dummy_log)
+			await mem_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

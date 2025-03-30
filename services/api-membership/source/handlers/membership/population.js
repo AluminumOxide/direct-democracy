@@ -1,7 +1,9 @@
 const { internal_error } = require('../../errors.json')
 
-const membership_population = async function(request, reply, db, log) {
+const membership_population = async function(request, reply, db, log, lib) {
+
 	let { limit, last, order, filter } = request
+
 	try {
 		const rows = await db.pageQuery(limit, last, 'democracy_id', order, filter,
 			db.select([

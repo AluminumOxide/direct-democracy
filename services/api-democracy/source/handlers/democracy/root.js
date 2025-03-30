@@ -1,6 +1,6 @@
 const { internal_error, democracy_dne } = require('../../errors.json')
 
-const democracy_root = async function(request, reply, db, log) {
+const democracy_root = async function(request, reply, db, log, lib) {
 	try {
 		const rows = await db('democracy')
 		.select({

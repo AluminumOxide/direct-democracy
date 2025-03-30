@@ -51,6 +51,7 @@
 			"$id": "bodies-step_one",
 			"type": "object",
 			"additionalProperties": false,
+			"required": ["pke_key"],
 			"properties": {
 				"pke_key": {
 					"$ref": "schemas-pke_key"
@@ -61,6 +62,7 @@
 			"$id": "bodies-step_two",
 			"type": "object",
 			"additionalProperties": false,
+			"required": ["pke_key","pake_key","encrypted_id"],
 			"properties": {
 				"pke_key": {
 					"$ref": "schemas-pke_key"
@@ -77,6 +79,7 @@
 			"$id": "bodies-step_three",
 			"type": "object",
 			"additionalProperties": false,
+			"required": ["pake_key","pake_proof"],
 			"properties": {
 				"pake_key": {
 					"$ref": "schemas-pake_key"

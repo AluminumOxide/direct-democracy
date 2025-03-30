@@ -1,9 +1,9 @@
 const { profile_dne, internal_error } = require('../../errors.json')
-const { pake_server_generate_keys } = require('@aluminumoxide/direct-democracy-lib-auth')
 
-const sign_in_init = async function(request, reply, db, log) {
+const sign_in_init = async function(request, reply, db, log, lib) {
 
 	const { profile_id, key: client_public } = request
+	const { pake_server_generate_keys } = lib.lib_auth
 
 	try {
 		// lookup profile by profile_id

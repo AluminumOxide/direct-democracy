@@ -17,7 +17,9 @@ const get_dummy_log = function() {
 }
 
 const get_dummy_db = function(mocks) {
-	
+
+	// mock knex functions
+	let mock_db = {}
 	let mock_db_fxns = {}
 	mock_db_fxns.select = sinon.stub().returns(mock_db_fxns)
 	mock_db_fxns.from = sinon.stub().returns(mock_db_fxns)
@@ -34,33 +36,33 @@ const get_dummy_db = function(mocks) {
 	mock_db_fxns.orderByRaw = sinon.stub().returns(mock_db_fxns)
 	mock_db_fxns.groupBy = sinon.stub().returns(mock_db_fxns)
 	mock_db_fxns.returning = sinon.stub().returns(mock_db_fxns)
-  
-	let mock_db = sinon.fake(() => mock_db_fxns)
+  	mock_db = sinon.fake(() => mock_db_fxns)
 	mock_db.raw = sinon.stub().returns(mock_db_fxns)
 	mock_db.select = sinon.stub().returns(mock_db_fxns)
 	mock_db.insert = sinon.stub().returns(mock_db_fxns)
 	mock_db.pageQuery = sinon.stub().returns(mock_db_fxns)
 
-	mocks.forEach(({last_fxn, last_args, last_val, throws_error, call_no}) => {
-		if(!!last_fxn) {
-			let mock = mock_db_fxns[last_fxn]
-			if(last_fxn === 'pageQuery') {
+	// add provided mocks
+	mocks.forEach(({fxn, args, val, err, call}) => {
+		if(!!fxn) {
+			let mock = mock_db_fxns[fxn]
+			if(fxn === 'pageQuery') {
 				mock = mock_db.pageQuery
 			}
-			if(!!last_args) {
-				mock = mock.withArgs(...last_args)
+			if(!!args) {
+				mock = mock.withArgs(...args)
 			}
-			if(!!throws_error) {
-				if(!!call_no) {
-					mock.onCall(call_no-1).throws(throws_error)
+			if(!!err) {
+				if(!!call) {
+					mock.onCall(call-1).throws(new Error(val))
 				} else {
-					mock.throws(throws_error)
+					mock.throws(new Error(val))
 				}
 			} else {
-				if(!!call_no) {
-					mock.onCall(call_no-1).returns(last_val)
+				if(!!call) {
+					mock.onCall(call-1).returns(val)
 				} else {
-					mock.returns(last_val)
+					mock.returns(val)
 				}
 			}
 		}
@@ -68,54 +70,30 @@ const get_dummy_db = function(mocks) {
 	return mock_db
 }
 
-const get_dummy_api = function(lib, mocks) {
-	const api_client = require('@aluminumoxide/direct-democracy-'+lib+'-api-client')
-	Object.keys(api_client).forEach(key => {
-		if(['schema','errors','ajv','env','url'].indexOf(key) === -1) {
-			api_client[key] = sinon.stub()
+const get_dummy_lib = function(mocks, errors) {
+	let libs = {}
+	mocks.forEach(({lib, fxn, val, err, call}) => {
+		if(Object.keys(libs).indexOf(lib) < 0) {
+			libs[lib] = {errors}
 		}
-	})
-	mocks.forEach(({fxn, val, err, call}) => {
-		let mock = api_client[fxn]
+		if(Object.keys(libs[lib]).indexOf(fxn) < 0) {
+			libs[lib][fxn] = sinon.stub()
+		}
 		if(!!err) {
 			if(!!call) {
-				mock.onCall(call-1).throws(val)
+				libs[lib][fxn].onCall(call-1).throws(new Error(val))
 			} else {
-				mock.throws(val)
+				libs[lib][fxn].throws(new Error(val))
 			}
 		} else {
 			if(!!call) {
-				mock.onCall(call-1).returns(val)
+				libs[lib][fxn].onCall(call-1).returns(val)
 			} else {
-				mock.returns(val)
+				libs[lib][fxn].returns(val)
 			}
 		}
 	})
-	return api_client
-}
-
-const get_dummy_lib = function(lib, mocks) {
-	const lib_client = require('@aluminumoxide/direct-democracy-lib-'+lib)
-	Object.keys(lib_client).forEach(key => {
-		lib_client[key] = sinon.stub()
-	})
-	mocks.forEach(({fxn, val, err, call}) => {
-		let mock = lib_client[fxn]
-		if(!!err) {
-			if(!!call) {
-				mock.onCall(call-1).throws(val)
-			} else {
-				mock.throws(val)
-			}
-		} else {
-			if(!!call) {
-				mock.onCall(call-1).returns(val)
-			} else {
-				mock.returns(val)
-			}
-		}
-	})
-	return lib_client
+	return libs
 }
 
 const integration_test_setup = function() {
@@ -170,4 +148,4 @@ const get_first_timestamp = function() {
 	return '1970-01-01T00:00:00.000Z'
 }
 
-module.exports = { get_uuid, get_first_uuid, get_timestamp, get_first_timestamp, get_dummy_reply, get_dummy_log, get_dummy_api, get_dummy_lib, get_dummy_db, integration_test_setup, integration_test_query }
+module.exports = { get_uuid, get_first_uuid, get_timestamp, get_first_timestamp, get_dummy_reply, get_dummy_log, get_dummy_lib, get_dummy_db, integration_test_setup, integration_test_query, sinon }

@@ -3,7 +3,7 @@ const {
 	get_uuid,
 	get_dummy_log,
 	get_dummy_reply,
-	get_dummy_api,
+	get_dummy_lib,
 	integration_test_setup,
 	ballot_delete_unit: blt_delete_u,
 	ballot_read_integration: blt_read_i,
@@ -33,18 +33,20 @@ describe('Ballot Delete', () => {
 			const dummy_req = { proposal_id: get_uuid(), democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'ballot_delete',
 				val: false,
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
 				val: dummy_req,
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(204)
@@ -62,14 +64,15 @@ describe('Ballot Delete', () => {
 			const dummy_req = { proposal_id: get_uuid(), democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
-				val: new Error(errors.ballot_dne),
+				val: errors.ballot_dne,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -87,14 +90,15 @@ describe('Ballot Delete', () => {
 			const dummy_req = { profile_id: get_uuid(), proposal_id: get_uuid(), democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
 				val: { membership_id: get_uuid() },
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(401)
@@ -112,18 +116,20 @@ describe('Ballot Delete', () => {
 			const dummy_req = { proposal_id: get_uuid(), democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'ballot_delete',
-				val: new Error(errors.ballot_dne),
+				val: errors.ballot_dne,
 				err: true
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
 				val: dummy_req,
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -141,18 +147,20 @@ describe('Ballot Delete', () => {
 			const dummy_req = { proposal_id: get_uuid(), democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'ballot_delete',
-				val: new Error(errors.proposal_dne),
+				val: errors.proposal_dne,
 				err: true
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
 				val: dummy_req,
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -170,18 +178,20 @@ describe('Ballot Delete', () => {
 			const dummy_req = { proposal_id: get_uuid(), democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'ballot_delete',
-				val: new Error(errors.membership_dne),
+				val: errors.membership_dne,
 				err: true
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
 				val: dummy_req,
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(401)
@@ -199,18 +209,20 @@ describe('Ballot Delete', () => {
 			const dummy_req = { proposal_id: get_uuid(), democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'ballot_delete',
-				val: new Error(errors.ballot_closed),
+				val: errors.ballot_closed,
 				err: true
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
 				val: dummy_req,
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -228,18 +240,20 @@ describe('Ballot Delete', () => {
 			const dummy_req = { proposal_id: get_uuid(), democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'ballot_delete',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
 				val: dummy_req,
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

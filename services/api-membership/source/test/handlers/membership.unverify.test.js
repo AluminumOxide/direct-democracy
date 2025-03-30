@@ -2,6 +2,7 @@ const {
 	errors,
 	get_dummy_db,
 	get_dummy_log,
+	get_dummy_lib,
 	get_dummy_reply,
 	integration_test_setup,
 	membership_unverify_unit: mem_unverify_u,
@@ -20,16 +21,17 @@ describe('Membership Unverify', () => {
 				membership_id: '9cc71698-5845-4186-8620-2efb1cecc964'
 			}
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning', 
-				last_args: false,
-				last_val: [dummy_req],
-				throws_error: false
+				fxn: 'returning', 
+				args: false,
+				val: [dummy_req],
+				err: false
 			}])
 
 			// call handler
-			await mem_unverify_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_unverify_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -49,16 +51,17 @@ describe('Membership Unverify', () => {
 				membership_id: '9cc71698-5845-4186-8620-2efb1cecc964'
 			}
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning', 
-				last_args: false,
-				last_val: [],
-				throws_error: false
+				fxn: 'returning', 
+				args: false,
+				val: [],
+				err: false
 			}])
 
 			// call handler
-			await mem_unverify_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_unverify_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -78,16 +81,17 @@ describe('Membership Unverify', () => {
 				membership_id: '9cc71698-5845-4186-8620-2efb1cecc964'
 			}
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning', 
-				last_args: false,
-				last_val: false,
-				throws_error: new Error('db error')
+				fxn: 'returning', 
+				args: false,
+				val: false,
+				err: new Error('db error')
 			}])
 
 			// call handler
-			await mem_unverify_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_unverify_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

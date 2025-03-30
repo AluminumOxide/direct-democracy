@@ -2,10 +2,30 @@ const { errors,
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
-	sign_up_init_unit: sign_up
+	get_dummy_lib,
+	integration_test_setup,
+	fill_bucket_integration: fill_bucket,
+	sign_up_init_unit: sign_up_u,
+	sign_up_init_integration: sign_up_i
 } = require('../helper')
 
 describe('Sign Up Init', () => {
+
+	describe('Integration Tests', () => {
+
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			await fill_bucket('email', ['asdfasdfasdfasdfasdfsadfasdfasdfasfd'])
+			await sign_up_i('test@testymctest.face', test_data.account.verified.auth_zkpp, test_data.account.verified.auth_salt, test_data.account.verified.encrypted_question)
+			expect(true) // TODO: verify token sent to email
+		})
+
+		test('Error: Duplicate Email', async() => {
+			await fill_bucket('email', ['asdfasdfasdfasdfasdfsadfasdfasdfasfd'])
+			await expect(sign_up_i(test_data.account.verified.email, test_data.account.verified.auth_zkpp, test_data.account.verified.auth_salt, test_data.account.verified.encrypted_question)).rejects.toThrow(errors.email_exist)
+		})
+	})
 
 	describe('Unit Tests', () => {
 
@@ -16,17 +36,18 @@ describe('Sign Up Init', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'del',
-				throws_error: false,
-				last_val: [{ token: 'test'}]
+				fxn: 'del',
+				err: false,
+				val: [{ token: 'test'}]
 			},{
-				last_fxn: 'returning',
-				throws_error: false,
-				last_val: [{}]
+				fxn: 'returning',
+				err: false,
+				val: [{}]
 			}])
+			const dummy_lib = get_dummy_lib([])
 
 			// call handler
-			await sign_up(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await sign_up_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith()
@@ -46,13 +67,14 @@ describe('Sign Up Init', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'del',
-				throws_error: false,
-				last_val: []
+				fxn: 'del',
+				err: false,
+				val: []
 			}])
+			const dummy_lib = get_dummy_lib([])
 
 			// call handler
-			await sign_up(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await sign_up_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
@@ -71,18 +93,19 @@ describe('Sign Up Init', () => {
 			const dummy_req = { email: 'test', zkpp: 'test', salt: 'test', encrypted_question: 'test' }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'del',
-				throws_error: false,
-				last_val: [{ token: 'test'}]
+				fxn: 'del',
+				err: false,
+				val: [{ token: 'test'}]
 			},{
-				last_fxn: 'returning',
-				throws_error: false,
-				last_val: []
+				fxn: 'returning',
+				err: false,
+				val: []
 			}])
 
 			// call handler
-			await sign_up(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await sign_up_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
@@ -101,13 +124,15 @@ describe('Sign Up Init', () => {
 			const dummy_req = { email: 'test', zkpp: 'test', salt: 'test', encrypted_question: 'test' }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'del',
-				throws_error: new Error('...duplicate key value violates unique constraint...')
+				fxn: 'where',
+				err: false,
+				val: [{ email: 'test' }]
 			}])
 
 			// call handler
-			await sign_up(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await sign_up_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.email_exist))
@@ -126,13 +151,14 @@ describe('Sign Up Init', () => {
 			const dummy_req = { email: 'test', zkpp: 'test', salt: 'test', encrypted_question: 'test' }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'del',
-				throws_error: true
+				fxn: 'del',
+				err: true
 			}])
 
 			// call handler
-			await sign_up(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await sign_up_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))

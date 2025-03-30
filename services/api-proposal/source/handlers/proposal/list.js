@@ -1,8 +1,9 @@
-const mem_client = require('@aluminumoxide/direct-democracy-membership-api-client')
 const { internal_error } = require('../../errors.json')
 
-const proposal_list = async function(request, reply, db, log) {
-	let { limit, last, sort, order, filter } = request
+const proposal_list = async function(request, reply, db, log, lib) {
+
+	const { limit, last, sort, order, filter } = request
+
 	try {
 		// list proposals
 		const rows = await db.pageQuery(limit, last, sort, order, filter,

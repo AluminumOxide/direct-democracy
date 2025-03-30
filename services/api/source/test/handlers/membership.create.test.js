@@ -3,7 +3,7 @@ const {
 	get_uuid,
 	get_dummy_log,
 	get_dummy_reply,
-	get_dummy_api,
+	get_dummy_lib,
 	integration_test_setup,
 	membership_create_unit: mem_create_u,
 	membership_create_integration: mem_create_i
@@ -29,14 +29,15 @@ describe('Membership Create', () => {
 			const dummy_req = { democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_create',
 				val: dummy_req,
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, {}, dummy_log)
+			await mem_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -54,14 +55,15 @@ describe('Membership Create', () => {
 			const dummy_req = { democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_create',
-				val: new Error(errors.democracy_dne),
+				val: errors.democracy_dne,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, {}, dummy_log)
+			await mem_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -79,14 +81,15 @@ describe('Membership Create', () => {
 			const dummy_req = { democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_create',
-				val: new Error(errors.membership_exist),
+				val: errors.membership_exist,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, {}, dummy_log)
+			await mem_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -104,14 +107,15 @@ describe('Membership Create', () => {
 			const dummy_req = { democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_create',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, {}, dummy_log)
+			await mem_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

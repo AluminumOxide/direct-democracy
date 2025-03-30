@@ -17,7 +17,7 @@ cp ../../services/api-token/spec.json ../../services/api-token/source/
 cp ../../services/api/spec.json ../../services/api/source/
 
 # build test data
-SERVICES=(token democracy membership proposal)
+SERVICES=(token democracy membership proposal account profile)
 echo "$SERVICES"
 first=true
 echo "{" > .testdata.json

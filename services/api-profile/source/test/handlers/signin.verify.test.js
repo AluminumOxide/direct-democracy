@@ -1,12 +1,34 @@
 const { errors,
+	get_uuid,
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
 	get_dummy_lib,
-	sign_in_verify_unit: sign_in
+	integration_test_setup,
+	sign_in_verify_unit: sign_in_u,
+	sign_in_verify_integration: sign_in_i
 } = require('../helper')
 
 describe('Sign In Verify', () => {
+
+	describe('Integration Tests', () => {
+
+		const test_data = integration_test_setup()
+
+		test('Success', async() => {
+			const { proof, jwt } = await sign_in_i(test_data.profile.profile.id, test_data.profile.profile.proof)
+			expect(proof).toBeDefined()
+			expect(jwt).toBeDefined()
+		})
+
+		test('Error: Invalid Profile', async() => {
+			await expect(sign_in_i(get_uuid(), test_data.profile.profile.proof)).rejects.toThrow(errors.profile_dne)
+		})
+		
+		test('Error: Invalid Key', async() => {
+			await expect(sign_in_i(test_data.profile.profile.id, 'bad')).rejects.toThrow(Error)
+		})
+	})
 
 	describe('Unit Tests', () => {
 
@@ -17,28 +39,30 @@ describe('Sign In Verify', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{ id: 'test' }],
-				call_no: 1,
-				throws_error: false,
-				last_val: [{ auth_salt: 'test', auth_zkpp: 'test', auth_public: 'test', auth_private: 'test' }]
+				fxn: 'where',
+				args: [{ id: 'test' }],
+				call: 1,
+				err: false,
+				val: [{ auth_salt: 'test', auth_zkpp: 'test', auth_public: 'test', auth_private: 'test' }]
 			},{
-				last_fxn: 'update',
-				throws_error: false,
-				last_val: true
+				fxn: 'update',
+				err: false,
+				val: true
 			}])
-			get_dummy_lib('auth', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'lib_auth',
 				fxn: 'pake_server_derive_proof',
 				val: 'test',
 				err: false
 			},{
+				lib: 'lib_auth',
 				fxn: 'token_random',
 				val: 'test',
 				err: false
 			}])
 
 			// call handler
-			await sign_in(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await sign_in_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			let auth_expiry = new Date()
@@ -64,15 +88,26 @@ describe('Sign In Verify', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{ id: 'test' }],
-				call_no: 1,
-				throws_error: false,
-				last_val: []
+				fxn: 'where',
+				args: [{ id: 'test' }],
+				call: 1,
+				err: false,
+				val: []
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'lib_auth',
+				fxn: 'pake_server_derive_proof',
+				val: 'test',
+				err: false
+			},{
+				lib: 'lib_auth',
+				fxn: 'token_random',
+				val: 'test',
+				err: false
 			}])
 
 			// call handler
-			await sign_in(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await sign_in_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.profile_dne))
@@ -91,15 +126,26 @@ describe('Sign In Verify', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{ id: 'test' }],
-				call_no: 1,
-				throws_error: false,
-				last_val: [{},{}]
+				fxn: 'where',
+				args: [{ id: 'test' }],
+				call: 1,
+				err: false,
+				val: [{},{}]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'lib_auth',
+				fxn: 'pake_server_derive_proof',
+				val: 'test',
+				err: false
+			},{
+				lib: 'lib_auth',
+				fxn: 'token_random',
+				val: 'test',
+				err: false
 			}])
 
 			// call handler
-			await sign_in(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await sign_in_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
@@ -118,14 +164,25 @@ describe('Sign In Verify', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{ id: 'test' }],
-				call_no: 1,
-				throws_error: true
+				fxn: 'where',
+				args: [{ id: 'test' }],
+				call: 1,
+				err: true
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'lib_auth',
+				fxn: 'pake_server_derive_proof',
+				val: 'test',
+				err: false
+			},{
+				lib: 'lib_auth',
+				fxn: 'token_random',
+				val: 'test',
+				err: false
 			}])
 
 			// call handler
-			await sign_in(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await sign_in_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
@@ -137,6 +194,38 @@ describe('Sign In Verify', () => {
 			expect(dummy_log.error).toBeCalledTimes(1)
 		})
 		
-		// TODO: test auth lib error
+		test('Error: Auth Error', async() => {
+
+			// set up mocks
+			const dummy_req = { profile_id: 'test', key: 'test' }
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_db = get_dummy_db([{
+				fxn: 'where',
+				args: [{ id: 'test' }],
+				call: 1,
+				err: false,
+				val: [{ auth_salt: 'test', auth_zkpp: 'test', auth_public: 'test', auth_private: 'test' }]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'lib_auth',
+				fxn: 'pake_server_derive_proof',
+				val: new Error(),
+				err: true
+			}])
+
+
+			// call handler
+			await sign_in_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toBeCalledWith(500)
+
+			// check log
+			expect(dummy_log.info).toBeCalledTimes(0)
+			expect(dummy_log.warn).toBeCalledTimes(0)
+			expect(dummy_log.error).toBeCalledTimes(1)
+		})
 	})
 })

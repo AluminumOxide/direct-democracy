@@ -10,7 +10,7 @@ const {
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
-	get_dummy_api,
+	get_dummy_lib,
 	reset_test_data,
 	integration_test_setup
 } = require('@aluminumoxide/direct-democracy-lib-server').testing
@@ -19,24 +19,24 @@ const {
 const errors = { ...api_democracy_client.errors, ...api_membership_client.errors, ...api_proposal_client.errors }
 
 // unit tests
-const democracy_list_unit = async(request, reply, db, log) => {
-	return await require('../handlers/democracy/list')(request, reply, db, log)
+const democracy_list_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/democracy/list')(request, reply, db, log, lib)
 }
 
-const democracy_read_unit = async(request, reply, db, log) => {
-	return await require('../handlers/democracy/read')(request, reply, db, log)
+const democracy_read_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/democracy/read')(request, reply, db, log, lib)
 }
 
-const democracy_root_unit = async(request, reply, db, log) => {
-	return await require('../handlers/democracy/root')(request, reply, db, log)
+const democracy_root_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/democracy/root')(request, reply, db, log, lib)
 }
 
-const democracy_population_unit = async(request, reply, db, log) => {
-	return await require('../handlers/democracy/population')(request, reply, db, log)
+const democracy_population_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/democracy/population')(request, reply, db, log, lib)
 }
 
-const democracy_apply_unit = async(request, reply, db, log) => {
-	return await require('../handlers/democracy/apply')(request, reply, db, log)
+const democracy_apply_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/democracy/apply')(request, reply, db, log, lib)
 }
 
 // integration tests
@@ -78,7 +78,7 @@ module.exports = {
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
-	get_dummy_api,
+	get_dummy_lib,
 	reset_test_data,
 	integration_test_setup,
 	democracy_list_unit,

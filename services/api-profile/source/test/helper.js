@@ -20,29 +20,55 @@ const {
 const errors = { ...api_profile_client.errors }
 
 // unit tests
-const fill_bucket_unit = async(request, reply, db, log) => {
-	return await require('../handlers/bucket/fill')(request, reply, db, log)
+const fill_bucket_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/bucket/fill')(request, reply, db, log, lib)
 }
 
-const sign_up_unit = async(request, reply, db, log) => {
-	return await require('../handlers/signup/signup')(request, reply, db, log)
+const sign_up_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/signup/signup')(request, reply, db, log, lib)
 }
 
-const sign_in_init_unit = async(request, reply, db, log) => {
-	return await require('../handlers/signin/init')(request, reply, db, log)
+const sign_in_init_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/signin/init')(request, reply, db, log, lib)
 }
 
-const sign_in_verify_unit = async(request, reply, db, log) => {
-	return await require('../handlers/signin/verify')(request, reply, db, log)
+const sign_in_verify_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/signin/verify')(request, reply, db, log, lib)
 }
 
-const sign_out_unit = async(request, reply, db, log) => {
-	return await require('../handlers/signout/signout')(request, reply, db, log)
+const sign_out_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/signout/signout')(request, reply, db, log, lib)
 }
 
-const verify_unit = async(request, reply, db, log) => {
-	return await require('../handlers/verify/verify')(request, reply, db, log)
+const verify_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/verify/verify')(request, reply, db, log, lib)
 }
+
+// integration tests
+const fill_bucket_integration = async(bucket, tokens) => {
+	return await api_profile_client.fill_bucket({ bucket, tokens })
+}
+
+const sign_up_integration = async(profile_id, zkpp, salt, profile_token) => {
+	return await api_profile_client.sign_up({ profile_id, zkpp, salt, profile_token })
+}
+
+const sign_in_init_integration = async(profile_id, key) => {
+	return await api_profile_client.sign_in_init({ profile_id, key })
+}
+
+const sign_in_verify_integration = async(profile_id, key) => {
+	return await api_profile_client.sign_in_verify({ profile_id, key })
+}
+
+const sign_out_integration = async(jwt) => {
+	return await api_profile_client.sign_out({ jwt })
+}
+
+const verify_integration = async(profile_id, auth_token, auth_expiry) => {
+	return await api_profile_client.verify({ jwt: { profile_id, auth_token, auth_expiry }})
+}
+
 
 /* helpers */
 
@@ -71,5 +97,11 @@ module.exports = {
 	sign_up_unit,
 	sign_in_init_unit,
 	sign_in_verify_unit,
-	verify_unit
+	verify_unit,
+	fill_bucket_integration,
+	sign_out_integration,
+	sign_up_integration,
+	sign_in_init_integration,
+	sign_in_verify_integration,
+	verify_integration
 }

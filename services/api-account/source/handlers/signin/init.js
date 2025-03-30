@@ -1,13 +1,13 @@
-const { account_dne, internal_error } = require('../../errors.json')
-const { pake_server_generate_keys } = require('@aluminumoxide/direct-democracy-lib-auth')
+const { account_dne, internal_error, account_unverified } = require('../../errors.json')
 
-const sign_in_init = async function(request, reply, db, log) {
+const sign_in_init = async function(request, reply, db, log, lib) {
 
 	const { email, key: client_public } = request
+	const { pake_server_generate_keys } = lib.lib_auth
 
 	try {
 		// lookup account by email
-		const account_query = await db('account').select(['auth_salt','auth_zkpp']).where({ email })
+		const account_query = await db('account').select(['is_verified','auth_salt','auth_zkpp']).where({ email })
 
 		// handle missing account
 		if(!account_query || account_query.length < 1) {
@@ -19,7 +19,13 @@ const sign_in_init = async function(request, reply, db, log) {
 			log.error(`Account/Signin/Init: Failure: ${email} Error: Double Account!`)
 			return reply.code(500).send(new Error(internal_error))
 		}
-		const { auth_salt: salt, auth_zkpp: zkpp } = { ...account_query[0] }
+		const { auth_salt: salt, auth_zkpp: zkpp, is_verified } = { ...account_query[0] }
+
+		// handle unverified account
+		if(!is_verified) {
+			log.warn(`Account/Signin/Init: Failure: ${email} Error: Account not verified`)
+			return reply.code(400).send(new Error(account_unverified))
+		}
 
 		// generate server keys
 		const { public: server_public, private: server_private } = await pake_server_generate_keys(zkpp)

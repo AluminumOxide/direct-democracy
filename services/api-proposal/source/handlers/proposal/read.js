@@ -1,7 +1,9 @@
 const { proposal_dne, internal_error } = require('../../errors.json')
 
-const proposal_read = async function(request, reply, db, log) {
+const proposal_read = async function(request, reply, db, log, lib) {
+
 	const { proposal_id } = request
+
 	try {
 		// get proposal
 		const rows = await db('proposal')

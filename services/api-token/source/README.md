@@ -82,6 +82,10 @@ Properties:
 
 Type: object
 
+Required:
+
+- pke_key
+
 Additional Properties: false
 
 Properties:
@@ -93,6 +97,12 @@ Properties:
 #### bodies-step_two
 
 Type: object
+
+Required:
+
+- pke_key
+- pake_key
+- encrypted_id
 
 Additional Properties: false
 
@@ -113,6 +123,11 @@ Properties:
 #### bodies-step_three
 
 Type: object
+
+Required:
+
+- pake_key
+- pake_proof
 
 Additional Properties: false
 

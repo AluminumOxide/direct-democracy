@@ -2,6 +2,7 @@ const {
 	errors,
 	get_dummy_db,
 	get_dummy_log,
+	get_dummy_lib,
 	get_dummy_reply,
 	integration_test_setup,
 	membership_population_unit: mem_pop_u,
@@ -18,16 +19,17 @@ describe('Population', () => {
 			// set up mocks
 			const dummy_req = {}
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'pageQuery',
-				last_args: false,
-				last_val: [],
-				throws_error: false
+				fxn: 'pageQuery',
+				args: false,
+				val: [],
+				err: false
 			}])
 
 			// call handler
-			await mem_pop_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_pop_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -45,16 +47,17 @@ describe('Population', () => {
 			// set up mocks
 			const dummy_req = {}
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'pageQuery',
-				last_args: false,
-				last_val: [],
-				throws_error: true
+				fxn: 'pageQuery',
+				args: false,
+				val: [],
+				err: true
 			}])
 
 			// call handler
-			await mem_pop_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_pop_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

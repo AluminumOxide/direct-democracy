@@ -1,6 +1,6 @@
 const {
 	errors,
-	get_dummy_api,
+	get_dummy_lib,
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
@@ -103,23 +103,25 @@ describe('Ballot Update', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				last_val: [expected],
-				throws_error: false
+				fxn: 'returning',
+				args: ['*'],
+				val: [expected],
+				err: false
 			}])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { proposal_votable: true },
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
 				val: { ballot_modifiable: true, membership_id: expected.membership_id },
 				err: false
-			}])
+			}], errors)
 
 			// call handler
-			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expected.ballot_id = expected.id
@@ -153,14 +155,15 @@ describe('Ballot Update', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
-				val: new Error(errors.proposal_dne),
+				val: errors.proposal_dne,
 				err: true
-			}])
+			}], errors)
 
 			// call handler
-			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -186,14 +189,15 @@ describe('Ballot Update', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
-			}])
+			}], errors)
 
 			// call handler
-			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -219,14 +223,15 @@ describe('Ballot Update', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { proposal_votable: false },
 				err: false
-			}])
+			}], errors)
 
 			// call handler
-			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -252,18 +257,20 @@ describe('Ballot Update', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { proposal_votable: true },
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
-				val: new Error(errors.ballot_dne),
+				val: errors.ballot_dne,
 				err: true
-			}])
+			}], errors)
 
 			// call handler
-			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 
@@ -290,18 +297,20 @@ describe('Ballot Update', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { proposal_votable: true },
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
-			}])
+			}], errors)
 
 			// call handler
-			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -327,18 +336,20 @@ describe('Ballot Update', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { proposal_votable: true },
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
 				val: { ballot_modifiable: false, membership_id: dummy_req.membership_id },
 				err: false
-			}])
+			}], errors)
 
 			// call handler
-			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -364,18 +375,20 @@ describe('Ballot Update', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { proposal_votable: true },
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
 				val: { ballot_modifiable: true, membership_id: dummy_req.ballot_id },
 				err: false
-			}])
+			}], errors)
 
 			// call handler
-			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -401,23 +414,25 @@ describe('Ballot Update', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				last_val: [],
-				throws_error: false
+				fxn: 'returning',
+				args: ['*'],
+				val: [],
+				err: false
 			}])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { proposal_votable: true },
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
 				val: { ballot_modifiable: true, membership_id: dummy_req.membership_id },
 				err: false
-			}])
+			}], errors)
 
 			// call handler
-			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -443,23 +458,25 @@ describe('Ballot Update', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				last_val: [],
-				throws_error: true
+				fxn: 'returning',
+				args: ['*'],
+				val: [],
+				err: true
 			}])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { proposal_votable: true },
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
 				val: { ballot_modifiable: true, membership_id: dummy_req.membership_id },
 				err: false
-			}])
+			}], errors)
 
 			// call handler
-			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

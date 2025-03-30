@@ -1,6 +1,6 @@
 const {
 	errors,
-	get_dummy_api,
+	get_dummy_lib,
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
@@ -19,16 +19,17 @@ describe('Proposal List', () => {
 			// set up mocks
 			const dummy_req = {}
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'pageQuery',
-				last_args: false,
-				throws_error: false,
-				last_val: []
+				fxn: 'pageQuery',
+				args: false,
+				err: false,
+				val: []
 			}])
 
 			// call handler
-			await prop_list_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_list_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -46,15 +47,16 @@ describe('Proposal List', () => {
 			// set up mocks
 			const dummy_req = {}
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'pageQuery',
-				last_args: false,
-				throws_error: new Error('db error')
+				fxn: 'pageQuery',
+				args: false,
+				err: new Error('db error')
 			}])
 
 			// call handler
-			await prop_list_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_list_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

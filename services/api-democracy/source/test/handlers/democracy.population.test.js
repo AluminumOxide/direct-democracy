@@ -4,7 +4,7 @@ const {
 	get_first_uuid,
 	get_timestamp,
 	get_first_timestamp,
-	get_dummy_api,
+	get_dummy_lib,
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
@@ -71,19 +71,20 @@ describe('Population', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: false,
-				throws_error: false,
-				last_val: []
+				fxn: 'where',
+				args: false,
+				err: false,
+				val: []
 			}])
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_population',
 				val: [],
 				err: false
 			}])
 
 			// call handler
-			await dem_pop_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_pop_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -103,12 +104,13 @@ describe('Population', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: false,
-				throws_error: false,
-				last_val: []
+				fxn: 'where',
+				args: false,
+				err: false,
+				val: []
 			}])
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_population',
 				val: [{
 					democracy_id: get_first_uuid(),
@@ -119,7 +121,7 @@ describe('Population', () => {
 			}])
 
 			// call handler
-			await dem_pop_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_pop_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -139,10 +141,10 @@ describe('Population', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: false,
-				throws_error: false,
-				last_val: []
+				fxn: 'where',
+				args: false,
+				err: false,
+				val: []
 			}])
 			let pops = []
 			while(pops.length < 101) {
@@ -152,25 +154,27 @@ describe('Population', () => {
 					unverified: 100
 				})
 			}
-			get_dummy_api('membership', [{
-				fxn: 'membership_population',
-				val: pops,
-				err: false,
-				call: 1
-			},{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_population',
 				val: [],
 				err: false,
 				call: 2
-
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_population',
+				val: pops,
+				err: false,
+				call: 1
 			}])
 
 			// call handler
-			await dem_pop_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_pop_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(200)
 			expect(dummy_reply.send).toBeCalledWith()
+			expect(dummy_reply.code).toBeCalledWith(200)
+			
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(4)
@@ -186,19 +190,20 @@ describe('Population', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: false,
-				throws_error: false,
-				last_val: []
+				fxn: 'where',
+				args: false,
+				err: false,
+				val: []
 			}])
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_population',
 				val: new Error('api error'),
 				err: true
 			}])
 
 			// call handler
-			await dem_pop_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_pop_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -218,12 +223,13 @@ describe('Population', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: false,
-				throws_error: new Error('db error'),
-				last_val: []
+				fxn: 'where',
+				args: false,
+				err: new Error('db error'),
+				val: []
 			}])
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_population',
 				val: [{
 					democracy_id: get_first_uuid(),
@@ -234,7 +240,7 @@ describe('Population', () => {
 			}])
 
 			// call handler
-			await dem_pop_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_pop_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

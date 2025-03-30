@@ -1,6 +1,6 @@
 const { account_dne, token_dne, internal_error } = require('../../errors.json')
 
-const sign_up_verify = async function(request, reply, db, log) {
+const sign_up_verify = async function(request, reply, db, log, lib) {
 
 	const { email_token, account_token, encrypted_profile } = request
 

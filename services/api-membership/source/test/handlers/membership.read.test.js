@@ -3,6 +3,7 @@ const {
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
+	get_dummy_lib,
 	integration_test_setup,
 	membership_read_unit: mem_read_u,
 	membership_read_integration: mem_read_i
@@ -18,16 +19,17 @@ describe('Membership Read', () => {
 			// set up mocks
 			const dummy_req = {membership_id: '9cc71698-5845-4186-8620-2efb1cecc964'}
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where', 
-				last_args: ['membership.id', dummy_req.membership_id],
-				last_val: [dummy_req],
-				throws_error: false
+				fxn: 'where', 
+				args: ['membership.id', dummy_req.membership_id],
+				val: [dummy_req],
+				err: false
 			}])
 
 			// call handler
-			await mem_read_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_read_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -45,16 +47,17 @@ describe('Membership Read', () => {
 			// set up mocks
 			const dummy_req = {membership_id: '9cc71698-5845-4186-8620-2efb1cecc964'}
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where', 
-				last_args: ['membership.id', dummy_req.membership_id],
-				last_val: [],
-				throws_error: false
+				fxn: 'where', 
+				args: ['membership.id', dummy_req.membership_id],
+				val: [],
+				err: false
 			}])
 
 			// call handler
-			await mem_read_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_read_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -72,16 +75,17 @@ describe('Membership Read', () => {
 			// set up mocks
 			const dummy_req = {membership_id: '9cc71698-5845-4186-8620-2efb1cecc964'}
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where', 
-				last_args: ['membership.id', dummy_req.membership_id],
-				last_val: false,
-				throws_error: new Error('db error')
+				fxn: 'where', 
+				args: ['membership.id', dummy_req.membership_id],
+				val: false,
+				err: new Error('db error')
 			}])
 
 			// call handler
-			await mem_read_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_read_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
