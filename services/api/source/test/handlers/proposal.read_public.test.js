@@ -3,7 +3,7 @@ const {
 	get_uuid,
 	get_dummy_log,
 	get_dummy_reply,
-	get_dummy_api,
+	get_dummy_lib,
 	integration_test_setup,
 	proposal_read_public_unit: prop_read_u,
 	proposal_read_public_integration: prop_read_i
@@ -31,14 +31,15 @@ describe('Proposal Read Public', () => {
 			const dummy_req = { proposal_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: dummy_req,
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await prop_read_u(dummy_req, dummy_reply, {}, dummy_log)
+			await prop_read_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -56,14 +57,15 @@ describe('Proposal Read Public', () => {
 			const dummy_req = { proposal_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { democracy_id: get_uuid() },
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await prop_read_u(dummy_req, dummy_reply, {}, dummy_log)
+			await prop_read_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -81,14 +83,15 @@ describe('Proposal Read Public', () => {
 			const dummy_req = { proposal_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
-				val: new Error(errors.proposal_dne),
+				val: errors.proposal_dne,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await prop_read_u(dummy_req, dummy_reply, {}, dummy_log)
+			await prop_read_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -106,14 +109,15 @@ describe('Proposal Read Public', () => {
 			const dummy_req = { proposal_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await prop_read_u(dummy_req, dummy_reply, {}, dummy_log)
+			await prop_read_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

@@ -1,0 +1,20 @@
+{
+	"name": "@aluminumoxide/direct-democracy-profile-api-client",
+	"version": "1.0.1",
+	"description": "Client library for profile API",
+	"main": "index.js",
+	"dependencies": {
+		"@aluminumoxide/direct-democracy-lib-client": "^1.0.14"
+	},
+	"files": [
+		"spec.json",
+		"errors.json"
+	],
+	"publishConfig": {
+		"registry": "https://npm.pkg.github.com"
+	},
+	"repository": "https://github.com/aluminumoxide/direct-democracy",
+	"devDependencies": {},
+	"author": "Sapphyre Gervais",
+	"license": "GPL3"
+}

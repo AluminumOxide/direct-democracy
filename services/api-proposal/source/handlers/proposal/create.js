@@ -1,20 +1,19 @@
-const json_changes = require('@aluminumoxide/direct-democracy-lib-json-changes')
 const { democracy_dne, democracy_invalid, membership_dne, changes_invalid, internal_error } = require('../../errors.json')
-const api_membership_client = require('@aluminumoxide/direct-democracy-membership-api-client')
-const api_democracy_client = require('@aluminumoxide/direct-democracy-democracy-api-client')
 
-const proposal_create = async function(request, reply, db, log) {
+const proposal_create = async function(request, reply, db, log, lib) {
+
 	const { proposal_name, proposal_description, proposal_target, proposal_changes, democracy_id, membership_id } = request
+	const { api_membership, api_democracy, lib_json } = lib
 
 	// check the membership_id & democracy_id are valid
 	try {
-		const mem_check = await api_membership_client.membership_read({ membership_id })
+		const mem_check = await api_membership.membership_read({ membership_id })
 		if(mem_check.democracy_id !== democracy_id) {
 			log.warn(`Proposal/Create: Failure: ${democracy_id} Error: Invalid democracy`)
 			return reply.code(400).send(new Error(democracy_invalid))
 		}
 	} catch (e) {
-		if(e.message === api_membership_client.errors.membership_dne) {
+		if(e.message === api_membership.errors.membership_dne) {
 			log.warn(`Proposal/Create: Failure: ${membership_id} Error: Membership does not exist`)
 			return reply.code(400).send(new Error(membership_dne))
 		}
@@ -25,9 +24,9 @@ const proposal_create = async function(request, reply, db, log) {
 	// fetch democracy
 	let democracy
 	try {
-		democracy = await api_democracy_client.democracy_read({ democracy_id })
+		democracy = await api_democracy.democracy_read({ democracy_id })
 	} catch (e) {
-		if(e.message === api_democracy_client.errors.democracy_dne) {
+		if(e.message === api_democracy.errors.democracy_dne) {
 			log.warn(`Proposal/Create: Failure: ${democracy_id} Error: Democracy does not exist`)
 			return reply.code(400).send(new Error(democracy_dne))
 		}
@@ -36,7 +35,7 @@ const proposal_create = async function(request, reply, db, log) {
 	}
 
 	// check the proposed changes are valid
-	if(!json_changes.check_changes(proposal_changes, democracy['democracy_'+proposal_target])) {
+	if(!lib_json.check_changes(proposal_changes, democracy['democracy_'+proposal_target])) {
 		log.warn(`Proposal/Create: Failure: ${membership_id} Invalid changes`)
 		return reply.code(400).send(new Error(changes_invalid))
 	}

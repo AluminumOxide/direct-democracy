@@ -1,4 +1,5 @@
 const { reqData } = require('./request')
+const libs = require('./libs')
 
 const add_defn = function(x, spec, fastify, autodoc) {
 	for(const x_id in spec[x]) {
@@ -28,7 +29,7 @@ const add_routes = function(spec, version, handlers, fastify, autodoc) {
 				url: `/${version}${url}`,
 				schema,
 				handler: async function(req, reply) {
-					return await handlers[op_id](reqData(req), reply, fastify.knex, req.log)
+					return await handlers[op_id](reqData(req), reply, fastify.knex, req.log, libs)
 				}
 			})
 			autodoc.add_route(method, `/${version}${url}`, Object.assign(schema, {

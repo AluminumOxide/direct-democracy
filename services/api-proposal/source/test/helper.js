@@ -4,7 +4,7 @@ const {
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
-	get_dummy_api,
+	get_dummy_lib,
 	integration_test_setup
 } = require('@aluminumoxide/direct-democracy-lib-server').testing
 
@@ -12,48 +12,48 @@ const {
 const errors = api_proposal_client.errors
 
 // unit tests
-const ballot_list_unit = async(request, reply, db, log) => {
-        return await require('../handlers/ballot/list')(request, reply, db, log)
+const ballot_list_unit = async(request, reply, db, log, lib) => {
+        return await require('../handlers/ballot/list')(request, reply, db, log, lib)
 }
 
-const ballot_read_unit = async(request, reply, db, log) => {
-	return await require('../handlers/ballot/read')(request, reply, db, log)
+const ballot_read_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/ballot/read')(request, reply, db, log, lib)
 }
 
-const ballot_create_unit = async(request, reply, db, log) => {
-	return await require('../handlers/ballot/create')(request, reply, db, log)
+const ballot_create_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/ballot/create')(request, reply, db, log, lib)
 }
 
-const ballot_update_unit = async(request, reply, db, log) => {
-	return await require('../handlers/ballot/update')(request, reply, db, log)
+const ballot_update_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/ballot/update')(request, reply, db, log, lib)
 }
 
-const ballot_delete_unit = async(request, reply, db, log) => {
-	return await require('../handlers/ballot/delete')(request, reply, db, log)
+const ballot_delete_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/ballot/delete')(request, reply, db, log, lib)
 }
 
-const ballot_verified_unit = async(request, reply, db, log) => {
-	return await require('../handlers/ballot/verified')(request, reply, db, log)
+const ballot_verified_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/ballot/verified')(request, reply, db, log, lib)
 }
 
-const proposal_list_unit = async(request, reply, db, log) => {
-        return await require('../handlers/proposal/list')(request, reply, db, log)
+const proposal_list_unit = async(request, reply, db, log, lib) => {
+        return await require('../handlers/proposal/list')(request, reply, db, log, lib)
 }
 
-const proposal_read_unit = async(request, reply, db, log) => {
-	return await require('../handlers/proposal/read')(request, reply, db, log)
+const proposal_read_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/proposal/read')(request, reply, db, log, lib)
 }
 
-const proposal_create_unit = async(request, reply, db, log) => {
-	return await require('../handlers/proposal/create')(request, reply, db, log)
+const proposal_create_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/proposal/create')(request, reply, db, log, lib)
 }
 
-const proposal_close_unit = async(request, reply, db, log) => {
-	return await require('../handlers/proposal/close')(request, reply, db, log)
+const proposal_close_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/proposal/close')(request, reply, db, log, lib)
 }
 
-const proposal_delete_unit = async(request, reply, db, log) => {
-	return await require('../handlers/proposal/delete')(request, reply, db, log)
+const proposal_delete_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/proposal/delete')(request, reply, db, log, lib)
 }
 
 // integration tests
@@ -123,7 +123,7 @@ module.exports = {
 	errors,
 	get_uuid,
 	get_dummy_db,
-	get_dummy_api,
+	get_dummy_lib,
 	get_dummy_log,
 	get_dummy_reply,
 	ballot_list_unit,

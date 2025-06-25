@@ -3,40 +3,40 @@ const {
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
-	get_dummy_api,
-	integration_test_setup
+	get_dummy_lib,
+	integration_test_setup,
 } = require('@aluminumoxide/direct-democracy-lib-server').testing
 
 // errors
 const errors = api_membership_client.errors
 
 // unit tests
-const membership_list_unit = async(request, reply, db, log) => {
-	return await require('../handlers/membership/list')(request, reply, db, log)
+const membership_list_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/membership/list')(request, reply, db, log, lib)
 }
 
-const membership_create_unit = async(request, reply, db, log) => {
-	return await require('../handlers/membership/create')(request, reply, db, log)
+const membership_create_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/membership/create')(request, reply, db, log, lib)
 }
 
-const membership_read_unit = async(request, reply, db, log) => {
-	return await require('../handlers/membership/read')(request, reply, db, log)
+const membership_read_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/membership/read')(request, reply, db, log, lib)
 }
 
-const membership_delete_unit = async(request, reply, db, log) => {
-	return await require('../handlers/membership/delete')(request, reply, db, log)
+const membership_delete_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/membership/delete')(request, reply, db, log, lib)
 }
 
-const membership_verify_unit = async(request, reply, db, log) => {
-	return await require('../handlers/membership/verify')(request, reply, db, log)
+const membership_verify_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/membership/verify')(request, reply, db, log, lib)
 }
 
-const membership_unverify_unit = async(request, reply, db, log) => {
-	return await require('../handlers/membership/unverify')(request, reply, db, log)
+const membership_unverify_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/membership/unverify')(request, reply, db, log, lib)
 }
 
-const membership_population_unit = async(request, reply, db, log) => {
-	return await require('../handlers/membership/population')(request, reply, db, log)
+const membership_population_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/membership/population')(request, reply, db, log, lib)
 }
 
 
@@ -80,7 +80,7 @@ module.exports = {
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
-	get_dummy_api,
+	get_dummy_lib,
 	integration_test_setup,
 	membership_list_unit,
 	membership_list_integration,

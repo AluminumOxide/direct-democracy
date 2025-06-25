@@ -3,7 +3,7 @@ const {
 	get_uuid,
 	get_dummy_log,
 	get_dummy_reply,
-	get_dummy_api,
+	get_dummy_lib,
 	integration_test_setup,
 	ballot_list_unit: blt_list_u,
 	ballot_list_integration: blt_list_i
@@ -29,14 +29,15 @@ describe('Ballot List', () => {
 			const dummy_req = { filter: {} }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'ballot_list',
 				val: dummy_req,
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_list_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_list_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -54,14 +55,15 @@ describe('Ballot List', () => {
 			const dummy_req = { }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'ballot_list',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_list_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_list_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

@@ -1,8 +1,8 @@
-const api_membership_client = require('@aluminumoxide/direct-democracy-membership-api-client')
   
-const ballot_verified_update = async function(request, reply, db, log) {
+const ballot_verified_update = async function(request, reply, db, log, lib) {
 
 	const { time_start, time_end } = request
+	const { api_membership } = lib
 
 	try {
 		// use time window in request
@@ -23,7 +23,7 @@ const ballot_verified_update = async function(request, reply, db, log) {
 		while(!stopped) {
 
 			// fetch memberships
-			let mems = await api_membership_client.membership_list(args)
+			let mems = await api_membership.membership_list(args)
 
 			// update democracies
 			for(let mem of mems) {

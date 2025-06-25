@@ -1,7 +1,9 @@
 const { proposal_dne, internal_error, voting_closed } = require('../../errors.json')
 
-const proposal_close = async function(request, reply, db, log) {
+const proposal_close = async function(request, reply, db, log, lib) {
+
 	const { proposal_id, passed } = request
+		
 	try {
 		// get proposal
 		const rows = await db('proposal')

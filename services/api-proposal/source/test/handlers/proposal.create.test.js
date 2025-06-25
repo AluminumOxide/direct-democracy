@@ -1,6 +1,6 @@
 const {
 	errors,
-	get_dummy_api,
+	get_dummy_lib,
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
@@ -42,24 +42,29 @@ describe('Proposal Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				last_val: [expected]
+				fxn: 'returning',
+				args: ['*'],
+				val: [expected]
 			}])
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_read',
 				val: { democracy_id: dummy_req.democracy_id },
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read',
 				val: { 'democracy_target':{} },
 				err: false
-			}])
-			json_changes.check_changes = jest.fn().mockReturnValue(true)
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expected.proposal_id = expected.id
@@ -98,14 +103,15 @@ describe('Proposal Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_read',
 				val: { democracy_id: 'nottheid' },
 				err: false
-			}])
+			}], errors)
 
 			// call handler
-			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -132,14 +138,15 @@ describe('Proposal Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_read',
-				val: new Error(errors.membership_dne),
+				val: errors.membership_dne,
 				err: true
-			}])
+			}], errors)
 
 			// call handler
-			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -166,14 +173,15 @@ describe('Proposal Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_read',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
-			}])
+			}], errors)
 
 			// call handler
-			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -200,19 +208,25 @@ describe('Proposal Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_read',
 				val: { democracy_id: dummy_req.democracy_id },
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read',
-				val: new Error(errors.democracy_dne),
+				val: errors.democracy_dne,
 				err: true
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -239,19 +253,25 @@ describe('Proposal Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_read',
 				val: { democracy_id: dummy_req.democracy_id },
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
-			}])
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -278,20 +298,25 @@ describe('Proposal Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_read',
 				val: { democracy_id: dummy_req.democracy_id },
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read',
 				val: { 'democracy_target':{} },
 				err: false
-			}])
-			json_changes.check_changes = jest.fn().mockReturnValue(false)
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: false,
+				err: false
+			}], errors)
 
 			// call handler
-			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.changes_invalid))
@@ -319,25 +344,30 @@ describe('Proposal Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				last_val: [],
-				throws_error: false
+				fxn: 'returning',
+				args: ['*'],
+				val: [],
+				err: false
 			}])
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_read',
 				val: { democracy_id: dummy_req.democracy_id },
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read',
 				val: { 'democracy_target':{} },
 				err: false
-			}])
-			json_changes.check_changes = jest.fn().mockReturnValue(true)
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -364,25 +394,30 @@ describe('Proposal Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				last_val: [],
-				throws_error: true
+				fxn: 'returning',
+				args: ['*'],
+				val: [],
+				err: true
 			}])
-			get_dummy_api('membership', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
 				fxn: 'membership_read',
 				val: { democracy_id: dummy_req.democracy_id },
 				err: false
-			}])
-			get_dummy_api('democracy', [{
+			},{
+				lib: 'api_democracy',
 				fxn: 'democracy_read',
 				val: { 'democracy_target':{} },
 				err: false
-			}])
-			json_changes.check_changes = jest.fn().mockReturnValue(true)
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
 
 			// call handler
-			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

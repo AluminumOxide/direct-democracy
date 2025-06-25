@@ -3,6 +3,7 @@ const {
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
+	get_dummy_lib,
 	integration_test_setup,
 	democracy_read_integration: dem_read_i,
 	democracy_read_unit: dem_read_u
@@ -20,14 +21,15 @@ describe('Democracy Read', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: ['democracy.id', dummy_req.democracy_id],
-				throws_error: false,
-				last_val: [dummy_req]
+				fxn: 'where',
+				args: ['democracy.id', dummy_req.democracy_id],
+				err: false,
+				val: [dummy_req]
 			}])
+			const dummy_lib = get_dummy_lib([])
 
 			// call handler
-			await dem_read_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_read_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -48,14 +50,15 @@ describe('Democracy Read', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: ['democracy.id', dummy_req.democracy_id],
-				throws_error: false,
-				last_val: []
+				fxn: 'where',
+				args: ['democracy.id', dummy_req.democracy_id],
+				err: false,
+				val: []
 			}])
+			const dummy_lib = get_dummy_lib([])
 
 			// call handler
-			await dem_read_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_read_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -75,13 +78,14 @@ describe('Democracy Read', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: ['democracy.id', dummy_req.democracy_id],
-				throws_error: new Error('db error')
+				fxn: 'where',
+				args: ['democracy.id', dummy_req.democracy_id],
+				err: new Error('db error')
 			}])
+			const dummy_lib = get_dummy_lib([])
 
 			// call handler
-			await dem_read_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await dem_read_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

@@ -1,6 +1,3 @@
-const json_changes = require('@aluminumoxide/direct-democracy-lib-json-changes')
-const api_proposal_client = require('@aluminumoxide/direct-democracy-proposal-api-client')
-const api_democracy_client = require('@aluminumoxide/direct-democracy-democracy-api-client')
 const { democracy_dne, democracy_pop, algo_missing, internal_error } = require('../../errors.json')
    
 // Response Codes:
@@ -9,19 +6,21 @@ const { democracy_dne, democracy_pop, algo_missing, internal_error } = require('
 // 	304 - Not passing yet, try again later
 // 	400 - Problem with proposal, it's been closed
 // 	500 - System error, try again later
-const apply_proposal = async function(request, reply, db, log) {
-	const { proposal_id } = request
+const apply_proposal = async function(request, reply, db, log, lib) {
 
+	const { proposal_id } = request
+	const { lib_json, api_proposal, api_democracy } = lib
+		
 	try {
 
 		// grab the proposal
 		let proposal
 		try {
-			proposal = await api_proposal_client.proposal_read({ proposal_id })
+			proposal = await api_proposal.proposal_read({ proposal_id })
 		} catch (e) {
-			if(e.message === api_proposal_client.errors.proposal_dne) {
+			if(e.message === api_proposal.errors.proposal_dne) {
 				log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal does not exist`)
-				return reply.code(400).send(new Error(api_proposal_client.errors.proposal_dne))
+				return reply.code(400).send(new Error(api_proposal.errors.proposal_dne))
 			}
 			log.error(`Proposal/Apply: Failure: ${proposal_id} Error: Internal error fetching proposal: ${e.message}`)
 			return reply.code(500).send(new Error(internal_error))
@@ -30,19 +29,19 @@ const apply_proposal = async function(request, reply, db, log) {
 		// verify proposal is votable
 		if(!proposal.proposal_votable) {
 				log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal is not votable`)
-				return reply.code(400).send(new Error(api_proposal_client.errors.voting_closed))
+				return reply.code(400).send(new Error(api_proposal.errors.voting_closed))
 		}
 
 		// grab the democracy
 		const democracy_id = proposal.democracy_id
 		let democracy
 		try {
-			democracy = await api_democracy_client.democracy_read({ democracy_id })
+			democracy = await api_democracy.democracy_read({ democracy_id })
 		} catch(e) {
 			if(e.message === democracy_dne) {
 				log.warn(`Proposal/Apply: Failure: ${proposal_id},${democracy_id} Error: Democracy does not exist`)
 				// close proposal and return applicable error
-				return await close_proposal(reply, log, proposal_id, 400, false, democracy_dne)
+				return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, democracy_dne)
 			}
 			log.error(`Proposal/Apply: Failure: ${proposal_id},${democracy_id} Error: Internal error fetching democracy`)
 			return reply.code(500).send(new Error(internal_error))
@@ -51,7 +50,7 @@ const apply_proposal = async function(request, reply, db, log) {
 		// grab the root democracy
 		let root
 		try {
-			root = await api_democracy_client.democracy_root()
+			root = await api_democracy.democracy_root()
 		} catch (e) {
 			// should never happen
 			log.error(`Proposal/Apply: Failure: ${proposal_id},${democracy_id} Error: Root democracy doesn't exist?!?`)
@@ -63,7 +62,7 @@ const apply_proposal = async function(request, reply, db, log) {
 		if(!(['name','description','conduct','content','metas']).includes(target)) {
 			log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal has invalid target`)
 			// close proposal and return applicable error
-			return await close_proposal(reply, log, proposal_id, 400, false, api_proposal_client.errors.target_invalid)
+			return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.target_invalid)
 		}
 
 		// proposal changes
@@ -71,15 +70,15 @@ const apply_proposal = async function(request, reply, db, log) {
 		if(!changes || typeof(changes) !== "object" || Object.keys(changes).length === 0) {
 			log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal has no changes`) 
 			// close proposal and return applicable error
-			return await close_proposal(reply, log, proposal_id, 400, false, api_proposal_client.errors.changes_dne)
+			return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.changes_dne)
 		}
 
 		// targeted contents
 		const contents = democracy['democracy_'+target]
-		if(!json_changes.check_changes(changes, contents)) {
+		if(!lib_json.check_changes(changes, contents)) {
 			log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal changes do not map to democracy contents`)
 			// close proposal and return applicable error
-			return await close_proposal(reply, log, proposal_id, 400, false, api_proposal_client.errors.changes_invalid)
+			return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.changes_invalid)
 		}
 		
 		// democracy rules for proposal target
@@ -119,7 +118,7 @@ const apply_proposal = async function(request, reply, db, log) {
 			// should never happen
 			log.error(`Proposal/Apply: Failure: ${proposal_id},${democracy_id} Error: Population 0`)
 			// close proposal and return applicable error
-			return await close_proposal(reply, log, proposal_id, 400, false, democracy_pop)
+			return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, democracy_pop)
 		}
 
 
@@ -129,7 +128,7 @@ const apply_proposal = async function(request, reply, db, log) {
 				
 				// close proposal and return that closers passed
 				log.info(`Proposal/Apply: Failure: ${proposal_id} Closing conditions passed`)
-				return await close_proposal(reply, log, proposal_id, 204, false, false)
+				return await close_proposal(api_proposal, reply, log, proposal_id, 204, false, false)
 			}
 
 			// check all applicable democracy rules pass
@@ -137,7 +136,7 @@ const apply_proposal = async function(request, reply, db, log) {
 
 					// apply changes
 					let a = {}
-					a[target] = json_changes.apply_changes(changes, contents)
+					a[target] = lib_json.apply_changes(changes, contents)
 
 					// save changes
 					let rows = await db('democracy').update(a).where({ id: democracy_id }).returning('*')
@@ -148,7 +147,7 @@ const apply_proposal = async function(request, reply, db, log) {
 
 					// close proposal and return successfully applied
 					log.info(`Proposal/Apply: Success: ${proposal_id} passed and applied!`)
-					return await close_proposal(reply, log, proposal_id, 200, true, false)
+					return await close_proposal(api_proposal, reply, log, proposal_id, 200, true, false)
 				}
 
 			// return successfully ran but did not pass or close
@@ -156,17 +155,16 @@ const apply_proposal = async function(request, reply, db, log) {
 			return reply.code(304).send()
 
 		} catch(e) {
-
 			// handle invalid algo
 			if(e.message ===  algo_missing) {
 				log.error(`Proposal/Apply: Failure: ${proposal_id} Error: Missing algo`)
 				return reply.code(500).send(new Error(algo_missing))
 
 			// handle invalid changes
-			} else if(e.message === api_proposal_client.errors.changes_invalid) {
+			} else if(e.message === api_proposal.errors.changes_invalid) {
 				log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Invalid changes`)
 				// close proposal and return applicable error
-				return await close_proposal(reply, log, proposal_id, 400, false, api_proposal_client.errors.changes_invalid)
+				return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.changes_invalid)
 			}
 
 			// handle all other errors
@@ -184,9 +182,9 @@ const apply_proposal = async function(request, reply, db, log) {
 /*** Helpers ***/
 
 // close proposal
-const close_proposal = async function(reply, log, proposal_id, code, passed, msg) {
+const close_proposal = async function(api_proposal, reply, log, proposal_id, code, passed, msg) {
 	try {
-		await api_proposal_client.proposal_close({ proposal_id, passed })
+		await api_proposal.proposal_close({ proposal_id, passed })
 	} catch(e) {
 		log.error(`Proposal/Apply: Failure: ${proposal_id} Error: Unable to close proposal: ${e.message}`)
 		return reply.code(500).send(new Error(internal_error))

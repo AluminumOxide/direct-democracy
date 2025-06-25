@@ -2,6 +2,7 @@ const {
 	errors,
 	get_dummy_db,
 	get_dummy_log,
+	get_dummy_lib,
 	get_dummy_reply,
 	integration_test_setup,
 	proposal_close_unit: prop_close_u,
@@ -23,25 +24,26 @@ describe('Proposal Close', () => {
 			}
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{id: dummy_req.proposal_id}],
-				last_val: [{proposal_votable: true}],
-				throws_error: false,
-				call_no: 1
+				fxn: 'where',
+				args: [{id: dummy_req.proposal_id}],
+				val: [{proposal_votable: true}],
+				err: false,
+				call: 1
 			},{
-				last_fxn: 'returning',
-				last_args: ["*"],
-				last_val: [{}],
-				throws_error: false
+				fxn: 'returning',
+				args: ["*"],
+				val: [{}],
+				err: false
 			}])
 
 			// call handler
-			await prop_close_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_close_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(200)
 			expect(dummy_reply.send).toBeCalledWith()
+			expect(dummy_reply.code).toBeCalledWith(200)
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(1)
@@ -59,15 +61,16 @@ describe('Proposal Close', () => {
 			}
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{id: dummy_req.proposal_id}],
-				last_val: [],
-				throws_error: false
+				fxn: 'where',
+				args: [{id: dummy_req.proposal_id}],
+				val: [],
+				err: false
 			}])
 
 			// call handler
-			await prop_close_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_close_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -89,15 +92,16 @@ describe('Proposal Close', () => {
 			}
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{id: dummy_req.proposal_id}],
-				last_val: [],
-				throws_error: true
+				fxn: 'where',
+				args: [{id: dummy_req.proposal_id}],
+				val: [],
+				err: true
 			}])
 
 			// call handler
-			await prop_close_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_close_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -119,15 +123,16 @@ describe('Proposal Close', () => {
 			}
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{id: dummy_req.proposal_id}],
-				last_val: [{proposal_votable: false}],
-				throws_error: false
+				fxn: 'where',
+				args: [{id: dummy_req.proposal_id}],
+				val: [{proposal_votable: false}],
+				err: false
 			}])
 
 			// call handler
-			await prop_close_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_close_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -149,21 +154,22 @@ describe('Proposal Close', () => {
 			}
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{id: dummy_req.proposal_id}],
-				last_val: [{proposal_votable: true}],
-				throws_error: false,
+				fxn: 'where',
+				args: [{id: dummy_req.proposal_id}],
+				val: [{proposal_votable: true}],
+				err: false,
 				call_no: 1
 			},{
-				last_fxn: 'returning',
-				last_args: ["*"],
-				last_val: [],
-				throws_error: false
+				fxn: 'returning',
+				args: ["*"],
+				val: [],
+				err: false
 			}])
 
 			// call handler
-			await prop_close_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_close_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -185,21 +191,22 @@ describe('Proposal Close', () => {
 			}
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{id: dummy_req.proposal_id}],
-				last_val: [{proposal_votable: true}],
-				throws_error: false,
+				fxn: 'where',
+				args: [{id: dummy_req.proposal_id}],
+				val: [{proposal_votable: true}],
+				err: false,
 				call_no: 1
 			},{
-				last_fxn: 'returning',
-				last_args: ["*"],
-				last_val: [],
-				throws_error: true
+				fxn: 'returning',
+				args: ["*"],
+				val: [],
+				err: true
 			}])
 
 			// call handler
-			await prop_close_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await prop_close_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

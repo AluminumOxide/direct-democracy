@@ -1,6 +1,6 @@
 const {
 	errors,
-	get_dummy_api,
+	get_dummy_lib,
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
@@ -85,24 +85,25 @@ describe('Ballot Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				last_val: [expected],
-				throws_error: false
+				fxn: 'returning',
+				args: ['*'],
+				val: [expected],
+				err: false
 			}])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { proposal_votable: true },
 				err: false
-			}])
-			get_dummy_api('membership', [{
+			},{
+				lib: 'api_membership',
 				fxn: 'membership_read',
 				val: { is_verified: true },
 				err: false
-			}])
+			}], errors)
 
 			// call handler
-			await blt_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expected.ballot_id = expected.id
@@ -135,14 +136,15 @@ describe('Ballot Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
-				val: new Error(errors.proposal_dne),
+				val: errors.proposal_dne,
 				err: true
-			}])
+			}], errors)
 
 			// call handler
-			await blt_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -167,14 +169,15 @@ describe('Ballot Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
-			}])
+			}], errors)
 
 			// call handler
-			await blt_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -199,14 +202,15 @@ describe('Ballot Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { proposal_votable: false },
 				err: false
-			}])
+			}], errors)
 
 			// call handler
-			await blt_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -231,23 +235,25 @@ describe('Ballot Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { proposal_votable: true },
 				err: false
-			}])
-			get_dummy_api('membership', [{
+			},{
+				lib: 'api_membership',
 				fxn: 'membership_read',
-				val: new Error(errors.membership_dne),
+				val: errors.membership_dne,
 				err: true
-			}])
+			}], errors)
 
 			// call handler
-			await blt_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
 			expect(dummy_reply.send).toBeCalledWith(new Error(errors.membership_dne))
+			expect(dummy_reply.code).toBeCalledWith(400)
+
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(0)
@@ -268,19 +274,20 @@ describe('Ballot Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { proposal_votable: true },
 				err: false
-			}])
-			get_dummy_api('membership', [{
+			},{
+				lib: 'api_membership',
 				fxn: 'membership_read',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
-			}])
+			}], errors)
 
 			// call handler
-			await blt_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -305,24 +312,25 @@ describe('Ballot Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				last_val: [],
-				throws_error: false
+				fxn: 'returning',
+				args: ['*'],
+				val: [],
+				err: false
 			}])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { proposal_votable: true },
 				err: false
-			}])
-			get_dummy_api('membership', [{
+			},{
+				lib: 'api_membership',
 				fxn: 'membership_read',
 				val: { is_verified: true },
 				err: false
-			}])
+			}], errors)
 
 			// call handler
-			await blt_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -357,24 +365,25 @@ describe('Ballot Create', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'returning',
-				last_args: ['*'],
-				last_val: [expected],
-				throws_error: true
+				fxn: 'returning',
+				args: ['*'],
+				val: [expected],
+				err: true
 			}])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: { proposal_votable: true },
 				err: false
-			}])
-			get_dummy_api('membership', [{
+			},{
+				lib: 'api_membership',
 				fxn: 'membership_read',
 				val: { is_verified: true },
 				err: false
-			}])
+			}], errors)
 
 			// call handler
-			await blt_create_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

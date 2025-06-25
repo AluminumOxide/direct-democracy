@@ -41,8 +41,6 @@ token.db[id] = { bucket: 'signup', zkpp: auth.pake_client_generate_zkpp(id, pass
 profile.signup_tokens = token.signup_tokens
 delete token.signup_tokens
 
-console.log(JSON.stringify(token))
-
 /* sign up */
 console.log("---sign up---")
 
@@ -73,34 +71,33 @@ client.email_token = account.email_tokens[0]
 console.log("to user email", client.email_token)
 let clean_token = async function(dirty_token) {
 	
-	// establish PKE connection
+	// step one
 	let { public: client_pke_public, private: client_pke_private } = await auth.pke_generate_keys()
 	console.log("to token server", client_pke_public)
-
 	let { public: server_pke_public, private: server_pke_private } = await auth.pke_generate_keys()
+	// store client_pke_public, server_pke_private
 	console.log("to client", server_pke_public)
 
 	let hashed = await auth.hash_chain(dirty_token, N)
-	console.log("HASHED2", hashed)
 	let id = hashed.slice(0, M)
 	let pass = hashed.slice(M)
 	let client_shared_secret = await auth.pke_derive_secret(server_pke_public, client_pke_private)
 	let encrypted_id = await auth.encrypt(id, client_shared_secret)
 	let { public: client_pake_public, private: client_pake_private } = await auth.pake_client_generate_keys()
-	
+
+	// step two
 	console.log("to token server", client_pke_public, encrypted_id, client_pake_public)
-	// lookup private key for public key
 	let server_shared_secret = await auth.pke_derive_secret(client_pke_public, server_pke_private)
 	let decrypted_id = await auth.decrypt(encrypted_id, server_shared_secret)
-	console.log("DECRYPTID", decrypted_id)
 	let db_entry = token.db[decrypted_id]
 	let { public: server_pake_public, private: server_pake_private } = await auth.pake_server_generate_keys(db_entry.zkpp.zkpp)
 	let salt = db_entry.zkpp.salt
-	
+	// store server_shared_secret, server_pake_private, id, client_pake_public
 	console.log("to client", server_pake_public, salt)
 	let client_sesh = await auth.pake_client_derive_proof(salt, id, pass, client_pake_private, server_pake_public)
 	let client_proof = client_sesh.proof
-	
+
+	// step three
 	console.log("to token server:", client_proof)
 	let server_proof = await auth.pake_server_derive_proof(server_pake_private, client_pake_public, salt, db_entry.zkpp.zkpp, decrypted_id, client_proof)
 	let random_token = token.profile_tokens[0]

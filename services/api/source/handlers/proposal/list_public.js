@@ -1,7 +1,8 @@
-const prop_client = require('@aluminumoxide/direct-democracy-proposal-api-client')
 
-const proposal_list = async function(request, reply, db, log) {
+const proposal_list = async function(request, reply, db, log, lib) {
+
  	let { limit, last, sort, order, filter, democracy_id } = request
+	const { api_proposal } = lib
 
 	// construct filter
 	if(!filter) {
@@ -14,7 +15,7 @@ const proposal_list = async function(request, reply, db, log) {
 
 	try {
 		// fetch from proposal service
-		const props = await prop_client.proposal_list({ limit, last, sort, order, filter })
+		const props = await api_proposal.proposal_list({ limit, last, sort, order, filter })
 
 		// return results
 		log.info(`Proposal/List: Success: ${democracy_id}`)
@@ -24,7 +25,7 @@ const proposal_list = async function(request, reply, db, log) {
 
 		// handle errors
 		log.error(`Proposal/List: Failure: Error: ${e}`)
-		return reply.code(500).send(new Error(prop_client.errors.internal_error))
+		return reply.code(500).send(new Error(api_proposal.errors.internal_error))
 	}
 }
 

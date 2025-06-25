@@ -1,0 +1,4 @@
+DELETE FROM auth;
+INSERT INTO auth (id, token_id, pke_public, pke_private, pke_secret, pake_public, pake_private) (SELECT (data->>'id')::uuid, data->>'token_id', data->>'pke_public', data->>'pke_private', data->>'pke_secret', data->>'pake_public', data->>'pake_private' FROM tempauth) ON CONFLICT (id) DO UPDATE SET token_id = EXCLUDED.token_id, pake_public = EXCLUDED.pake_public, pake_private = EXCLUDED.pake_private, pke_public = EXCLUDED.pke_public, pke_private = EXCLUDED.pke_private, pke_secret = EXCLUDED.pke_secret;
+DELETE FROM token;
+INSERT INTO token (id, bucket, token, zkpp, salt) (SELECT (data->>'id')::uuid, (data->>'bucket')::buckets, data->>'token', data->>'zkpp', data->>'salt' FROM temptoken) ON CONFLICT (id) DO UPDATE SET bucket = EXCLUDED.bucket, token = EXCLUDED.token, zkpp = EXCLUDED.zkpp, salt = EXCLUDED.salt;

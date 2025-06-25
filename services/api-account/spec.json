@@ -1,0 +1,253 @@
+{
+	"servers": {
+		"local": "http://0.0.0.0:3004/v1",
+		"dev": "http://0.0.0.0:3004/v1"
+	},
+	"schemas": {
+		"sign_in_init": {
+			"$id": "schemas-sign_in_init",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"email": {
+					"type": "string"
+				},
+				"key": {
+					"type": "string"
+				}
+			}
+		},
+		"sign_in_verify": {
+			"$id": "schemas-sign_in_verify",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"email": {
+					"type": "string"
+				},
+				"key": {
+					"type": "string"
+				}
+			}
+		},
+		"sign_up_init": {
+			"$id": "schemas-sign_up_init",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"email": {
+					"type": "string"
+				},
+				"zkpp": {
+					"type": "string"
+				},
+				"salt": {
+					"type": "string"
+				},
+				"encrypted_question": {
+					"type": "string"
+				}
+			}
+		},
+		"sign_up_verify": {
+			"$id": "schemas-sign_up_verify",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"email_token": {
+					"type": "string"
+				},
+				"account_token": {
+					"type": "string"
+				},
+				"encrypted_profile": {
+					"type": "string"
+				}
+			}
+		},
+		"token": {
+			"$id": "schemas-token",
+			"type": "string"
+		}
+	},
+	"params": {
+	},
+	"queries": {
+	},
+	"bodies": {
+		"sign_in_init": {
+			"$id": "bodies-sign_in_init",
+			"$ref": "schemas-sign_in_init"
+		},
+		"sign_in_verify": {
+			"$id": "bodies-sign_in_verify",
+			"$ref": "schemas-sign_in_verify"
+		},
+		"sign_up_init": {
+			"$id": "bodies-sign_up_init",
+			"$ref": "schemas-sign_up_init"
+		},
+		"sign_up_verify": {
+			"$id": "bodies-sign_up_verify",
+			"$ref": "schemas-sign_up_verify"
+		},
+		"fill_bucket": {
+			"$id": "bodies-fill_bucket",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"bucket": {
+					"type": "string",
+					"enum": ["email","account"]
+				},
+				"tokens": {
+					"type": "array",
+					"items": { 
+						"$ref": "schemas-token"
+					}
+				}
+			},
+			"required": ["bucket", "tokens"]
+		}
+
+	},
+	"responses": {
+		"200": {
+			"$id": "responses-200",
+			"description": "Success"
+		},
+		"400": {
+			"$id": "responses-400",
+			"description": "Bad Request"
+		},
+		"401": {
+			"$id": "responses-401",
+			"description": "Unauthorized"
+		},
+		"500": {
+			"$id": "responses-500",
+			"description": "Internal Error"
+		},
+		"sign_in_init": {
+			"$id": "responses-sign_in_init",
+			"description": "Successfully completed first sign in step",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"salt": {
+					"type": "string"
+				},
+				"key": {
+					"type": "string"
+				}
+			}
+		},
+		"sign_in_verify": {
+			"$id": "responses-sign_in_verify",
+			"description": "Successfully completed sign in",
+			"type": "string"
+		}
+	},
+	"routes": {
+		"/signin": {
+			"POST": {
+				"description": "Initiate sign in",
+				"operationId": "sign_in_init",
+				"body": {
+					"$ref": "bodies-sign_in_init"
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-sign_in_init"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/signin/verify": {
+			"POST": {
+				"description": "Verify sign in",
+				"operationId": "sign_in_verify",
+				"body": {
+					"$ref": "bodies-sign_in_verify"
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-sign_in_verify"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/signup": {
+			"POST": {
+				"description": "Sign up",
+				"operationId": "sign_up_init",
+				"body": {
+					"$ref": "bodies-sign_up_init"
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-200"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/signup/verify": {
+			"POST": {
+				"description": "Verify email",
+				"operationId": "sign_up_verify",
+				"body": {
+					"$ref": "bodies-sign_up_verify"
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-200"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/bucket/fill": {
+			"POST": {
+				"description": "Fill tokens bucket",
+				"operationId": "fill_bucket",
+				"body": {
+					"$ref": "bodies-fill_bucket"
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-200"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		}
+	}
+}

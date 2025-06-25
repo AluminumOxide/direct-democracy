@@ -1,6 +1,7 @@
 const { internal_error } = require('../../errors.json')
 
-const ballot_list = async function(request, reply, db, log) {
+const ballot_list = async function(request, reply, db, log, lib) {
+
 	let { limit, last, sort, order, filter={}, proposal_id } = request
 
 	if(!!proposal_id) {

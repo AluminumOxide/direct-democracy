@@ -1,6 +1,6 @@
 const {
 	errors,
-	get_dummy_api,
+	get_dummy_lib,
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
@@ -61,12 +61,13 @@ describe('Ballot Delete', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'del',
-				last_args: [],
-				last_val: [],
-				throws_error: false
+				fxn: 'del',
+				args: [],
+				val: [],
+				err: false
 			}])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
 				val: {
 					ballot_modifiable: true,
@@ -76,7 +77,7 @@ describe('Ballot Delete', () => {
 			}])
 
 			// call handler
-			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(204)
@@ -99,14 +100,15 @@ describe('Ballot Delete', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
-				val: new Error(errors.ballot_dne),
+				val: errors.ballot_dne,
 				err: true
 			}])
 
 			// call handler
-			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -129,12 +131,13 @@ describe('Ballot Delete', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'del',
-				last_args: [],
-				last_val: [],
-				throws_error: false
+				fxn: 'del',
+				args: [],
+				val: [],
+				err: false
 			}])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
 				val: {
 					ballot_modifiable: true,
@@ -144,7 +147,7 @@ describe('Ballot Delete', () => {
 			}])
 
 			// call handler
-			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -167,14 +170,15 @@ describe('Ballot Delete', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
 			}])
 
 			// call handler
-			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -197,7 +201,8 @@ describe('Ballot Delete', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
 				val: {
 					ballot_modifiable: false,
@@ -207,7 +212,7 @@ describe('Ballot Delete', () => {
 			}])
 
 			// call handler
-			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -230,12 +235,13 @@ describe('Ballot Delete', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_log = get_dummy_log()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'del',
-				last_args: [],
-				last_val: [],
-				throws_error: true
+				fxn: 'del',
+				args: [],
+				val: [],
+				err: true
 			}])
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
 				val: {
 					ballot_modifiable: true,
@@ -245,7 +251,7 @@ describe('Ballot Delete', () => {
 			}])
 
 			// call handler
-			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

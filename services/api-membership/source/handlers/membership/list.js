@@ -1,6 +1,7 @@
 const { internal_error } = require('../../errors.json')
 
-const membership_list = async function(request, reply, db, log) {
+const membership_list = async function(request, reply, db, log, lib) {
+
 	const { limit, last, sort, order, filter } = request
 
 	try {

@@ -1,6 +1,7 @@
 const { internal_error, ballots_cast, proposal_dne } = require('../../errors.json')
 
-const proposal_delete = async function(request, reply, db, log) {
+const proposal_delete = async function(request, reply, db, log, lib) {
+
 	const { proposal_id } = request
 
 	try {

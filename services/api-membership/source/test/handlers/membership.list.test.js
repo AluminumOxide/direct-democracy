@@ -3,6 +3,7 @@ const {
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
+	get_dummy_lib,
 	integration_test_setup,
 	membership_list_unit: mem_list_u,
 	membership_list_integration: mem_list_i
@@ -18,16 +19,17 @@ describe('Membership List', () => {
 			// set up mocks
 			const dummy_req = {}
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'pageQuery',
-				last_args: false,
-				throws_error: false,
-				last_val: []
+				fxn: 'pageQuery',
+				args: false,
+				err: false,
+				val: []
 			}])
 
 			// call handler
-			await mem_list_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_list_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -45,16 +47,17 @@ describe('Membership List', () => {
 			// set up mocks
 			const dummy_req = {}
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'pageQuery',
-				last_args: false,
-				throws_error: true,
-				last_val: []
+				fxn: 'pageQuery',
+				args: false,
+				err: true,
+				val: []
 			}])
 
 			// call handler
-			await mem_list_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_list_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

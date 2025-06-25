@@ -1,8 +1,9 @@
-const prop_client = require('@aluminumoxide/direct-democracy-proposal-api-client')
 const { invalid_auth } = require('../../errors.json')
 
-const ballot_list = async function(request, reply, db, log) {
+const ballot_list = async function(request, reply, db, log, lib) {
+
 	let  { limit, last, sort, order, filter={}, democracy_id, proposal_id } = request
+	const { api_proposal } = lib
 
 	try {
 		// handle attempts to glean ballots' profile_ids
@@ -18,16 +19,16 @@ const ballot_list = async function(request, reply, db, log) {
 		}
 
 		// fetch proposal
-		const prop = await prop_client.proposal_read({ proposal_id })
+		const prop = await api_proposal.proposal_read({ proposal_id })
 
 		// handle invalid democracy_id
 		if(prop.democracy_id !== democracy_id) {
 			log.warn(`Ballot/List: Failure: ${proposal_id} Error: Invalid democracy_id`)
-			return reply.code(400).send(new Error(prop_client.errors.democracy_invalid))
+			return reply.code(400).send(new Error(api_proposal.errors.democracy_invalid))
 		}
 
 		// fetch ballots
-		const ballots = await prop_client.ballot_list({ limit, last, sort, order, filter, proposal_id })
+		const ballots = await api_proposal.ballot_list({ limit, last, sort, order, filter, proposal_id })
 
 		// return results
 		log.info(`Ballot/List: Success: ${proposal_id}`)
@@ -36,14 +37,14 @@ const ballot_list = async function(request, reply, db, log) {
 	} catch(e) {
 		
 		// handle invalid proposal_id
-		if(e.message === prop_client.errors.proposal_dne) {
+		if(e.message === api_proposal.errors.proposal_dne) {
 			log.warn(`Ballot/List: Failure: ${proposal_id} Error: Invalid proposal_id`)
-			return reply.code(400).send(new Error(prop_client.errors.proposal_dne))
+			return reply.code(400).send(new Error(api_proposal.errors.proposal_dne))
 		}
 		
 		// handle all other errors
 		log.error(`Ballot/List: Failure: ${proposal_id} Error: ${e}`)
-		return reply.code(500).send(new Error(prop_client.errors.internal_error))
+		return reply.code(500).send(new Error(api_proposal.errors.internal_error))
 	}
 }
 

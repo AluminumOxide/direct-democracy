@@ -3,7 +3,7 @@ const {
 	get_uuid,
 	get_dummy_log,
 	get_dummy_reply,
-	get_dummy_api,
+	get_dummy_lib,
 	integration_test_setup,
 	ballot_create_unit: blt_create_u,
 	ballot_create_integration: blt_create_i
@@ -35,18 +35,20 @@ describe('Ballot Create', () => {
 			const dummy_req = {}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_create',
 				val: dummy_req,
 				err: false
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(201)
@@ -64,18 +66,20 @@ describe('Ballot Create', () => {
 			const dummy_req = {}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_create',
-				val: new Error(errors.membership_dne),
+				val: errors.membership_dne,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(401)
@@ -93,18 +97,20 @@ describe('Ballot Create', () => {
 			const dummy_req = { democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_create',
-				val: new Error(errors.proposal_dne),
+				val: errors.proposal_dne,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -122,18 +128,20 @@ describe('Ballot Create', () => {
 			const dummy_req = { democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_create',
-				val: new Error(errors.voting_closed),
+				val: errors.voting_closed,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -151,18 +159,20 @@ describe('Ballot Create', () => {
 			const dummy_req = { democracy_id: get_uuid() }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			get_dummy_api('proposal', [{
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
 				fxn: 'proposal_read',
 				val: {},
 				err: false
 			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_create',
-				val: new Error(errors.internal_error),
+				val: errors.internal_error,
 				err: true
-			}])
+			}], errors)
 			
 			// call handler
-			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log)
+			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

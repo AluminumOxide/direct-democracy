@@ -1,9 +1,9 @@
 const {
 	errors,
 	get_uuid,
-	get_dummy_api,
 	get_dummy_db,
 	get_dummy_log,
+	get_dummy_lib,
 	get_dummy_reply,
 	integration_test_setup,
 	ballot_list_unit: blt_list_u,
@@ -20,16 +20,17 @@ describe('List', () => {
 			// set up mocks
 			const dummy_req = { proposal_id: get_uuid() }
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'pageQuery', 
-				last_args: false,
-				throws_error: false, 
-				last_val: []
+				fxn: 'pageQuery', 
+				args: false,
+				err: false, 
+				val: []
 			}])
 			
 			// call handler
-			await blt_list_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_list_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 			
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
@@ -47,15 +48,16 @@ describe('List', () => {
 			// set up mocks
 			const dummy_req = {}
 			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'pageQuery',
-				last_args: false,
-				throws_error: new Error('db error')
+				fxn: 'pageQuery',
+				args: false,
+				err: new Error('db error')
 			}])
 			
 			// call handler
-			await blt_list_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await blt_list_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 			
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)

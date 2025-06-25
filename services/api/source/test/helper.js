@@ -8,85 +8,86 @@ const {
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
-	get_dummy_api,
+	get_dummy_lib,
 	reset_test_data,
-	integration_test_setup
+	integration_test_setup,
+	integration_test_query
 } = require('@aluminumoxide/direct-democracy-lib-server').testing
 
 // errors
 const errors = api_external_client.errors
 
 // unit tests
-const democracy_list_unit = async(request, reply, db, log) => {
-	return await require('../handlers/democracy/list')(request, reply, db, log)
+const democracy_list_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/democracy/list')(request, reply, db, log, lib)
 }
 
-const democracy_read_unit = async(request, reply, db, log) => {
-	return await require('../handlers/democracy/read')(request, reply, db, log)
+const democracy_read_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/democracy/read')(request, reply, db, log, lib)
 }
 
-const membership_list_unit = async(request, reply, db, log) => {
-	return await require('../handlers/membership/list')(request, reply, db, log)
+const membership_list_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/membership/list')(request, reply, db, log, lib)
 }
 
-const membership_create_unit = async(request, reply, db, log) => {
-	return await require('../handlers/membership/create')(request, reply, db, log)
+const membership_create_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/membership/create')(request, reply, db, log, lib)
 }
 
-const membership_read_unit = async(request, reply, db, log) => {
-	return await require('../handlers/membership/read')(request, reply, db, log)
+const membership_read_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/membership/read')(request, reply, db, log, lib)
 }
 
-const membership_delete_unit = async(request, reply, db, log) => {
-	return await require('../handlers/membership/delete')(request, reply, db, log)
+const membership_delete_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/membership/delete')(request, reply, db, log, lib)
 }
 
-const proposal_list_unit = async(request, reply, db, log) => {
-	return await require('../handlers/proposal/list')(request, reply, db, log)
+const proposal_list_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/proposal/list')(request, reply, db, log, lib)
 }
 
-const proposal_list_public_unit = async(request, reply, db, log) => {
-	return await require('../handlers/proposal/list_public')(request, reply, db, log)
+const proposal_list_public_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/proposal/list_public')(request, reply, db, log, lib)
 }
 
-const proposal_create_unit = async(request, reply, db, log) => {
-	return await require('../handlers/proposal/create')(request, reply, db, log)
+const proposal_create_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/proposal/create')(request, reply, db, log, lib)
 }
 
-const proposal_read_unit = async(request, reply, db, log) => {
-	return await require('../handlers/proposal/read')(request, reply, db, log)
+const proposal_read_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/proposal/read')(request, reply, db, log, lib)
 }
 
-const proposal_read_public_unit = async(request, reply, db, log) => {
-	return await require('../handlers/proposal/read_public')(request, reply, db, log)
+const proposal_read_public_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/proposal/read_public')(request, reply, db, log, lib)
 }
 
-const proposal_delete_unit = async(request, reply, db, log) => {
-	return await require('../handlers/proposal/delete')(request, reply, db, log)
+const proposal_delete_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/proposal/delete')(request, reply, db, log, lib)
 }
 
-const ballot_list_unit = async(request, reply, db, log) => {
-	return await require('../handlers/ballot/list')(request, reply, db, log)
+const ballot_list_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/ballot/list')(request, reply, db, log, lib)
 }
 
-const ballot_list_public_unit = async(request, reply, db, log) => {
-	return await require('../handlers/ballot/list_public')(request, reply, db, log)
+const ballot_list_public_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/ballot/list_public')(request, reply, db, log, lib)
 }
 
-const ballot_create_unit = async(request, reply, db, log) => {
-	return await require('../handlers/ballot/create')(request, reply, db, log)
+const ballot_create_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/ballot/create')(request, reply, db, log, lib)
 }
 
-const ballot_read_unit = async(request, reply, db, log) => {
-	return await require('../handlers/ballot/read')(request, reply, db, log)
+const ballot_read_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/ballot/read')(request, reply, db, log, lib)
 }
 
-const ballot_update_unit = async(request, reply, db, log) => {
-	return await require('../handlers/ballot/update')(request, reply, db, log)
+const ballot_update_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/ballot/update')(request, reply, db, log, lib)
 }
 
-const ballot_delete_unit = async(request, reply, db, log) => {
-	return await require('../handlers/ballot/delete')(request, reply, db, log)
+const ballot_delete_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/ballot/delete')(request, reply, db, log, lib)
 }
 
 // integration tests
@@ -172,8 +173,9 @@ module.exports = {
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
-	get_dummy_api,
+	get_dummy_lib,
 	integration_test_setup,
+	integration_test_query,
 	democracy_list_unit,
 	democracy_read_unit,
 	membership_list_unit,

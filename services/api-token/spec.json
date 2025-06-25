@@ -1,0 +1,232 @@
+{  
+	"servers": {	
+		"local": "http://0.0.0.0:3006/v1",
+		"dev": "http://0.0.0.0:3006/v1"	
+	},
+	"schemas": {
+		"uuid": {
+			"$id": "schemas-uuid",
+			"type": "string",
+			"pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+		},
+		"salt": {
+			"$id": "schemas-salt",
+			"type": "string"
+		},
+		"pke_key": {
+			"$id": "schemas-pke_key",
+			"type": "string"
+		},
+		"pake_key": {
+			"$id": "schemas-pake_key",
+			"type": "string"
+		},
+		"pake_proof": {
+			"$id": "schemas-pake_proof",
+			"type": "string"
+		},
+		"encrypted_id": {
+			"$id": "schemas-encrypted_id",
+			"type": "string"
+		},
+		"encrypted_token": {
+			"$id": "schemas-encrypted_token",
+			"type": "string"
+		}
+	},
+	"bodies": {
+		"fill": {
+			"$id": "bodies-fill",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"bucket_size": {
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 10000
+				}
+			}
+		},
+		"step_one": {
+			"$id": "bodies-step_one",
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["pke_key"],
+			"properties": {
+				"pke_key": {
+					"$ref": "schemas-pke_key"
+				}
+			}
+		},
+		"step_two": {
+			"$id": "bodies-step_two",
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["pke_key","pake_key","encrypted_id"],
+			"properties": {
+				"pke_key": {
+					"$ref": "schemas-pke_key"
+				},
+				"pake_key": {
+					"$ref": "schemas-pake_key"
+				},
+				"encrypted_id": {
+					"$ref": "schemas-encrypted_id"
+				}
+			}
+		},
+		"step_three": {
+			"$id": "bodies-step_three",
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["pake_key","pake_proof"],
+			"properties": {
+				"pake_key": {
+					"$ref": "schemas-pake_key"
+				},
+				"pake_proof": {
+					"$ref": "schemas-pake_proof"
+				}
+			}
+		}
+	},
+	"params": {
+	},
+	"queries": {
+	},
+	"responses": {
+		"200": {
+			"$id": "responses-200",
+			"description": "Success"
+		},
+		"400": {
+			"$id": "responses-400",
+			"description": "Bad Request"
+		},
+		"500": {
+			"$id": "responses-500",
+			"description": "Internal Error"
+		},
+		"step_one": {
+			"$id": "responses-sign_one",
+			"description": "Successfully completed step one",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"pke_key": {
+					"$ref": "schemas-pke_key"
+				}
+			}
+		},
+		"step_two": {
+			"$id": "responses-sign_two",
+			"description": "Successfully completed step two",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"pake_key": {
+					"$ref": "schemas-pake_key"
+				},
+				"salt": {
+					"$ref": "schemas-salt"
+				}
+			}
+		},
+		"step_three": {
+			"$id": "responses-sign_three",
+			"description": "Successfully completed step three",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"encrypted_token": {
+					"$ref": "schemas-encrypted_token"
+				},
+				"pake_proof": {
+					"$ref": "schemas-pake_proof"
+				}
+			}
+		}
+	},
+	"routes": {
+		"/fill": {
+			"POST": {
+				"description": "Fill token buckets",
+				"operationId": "fill_buckets",
+				"body": {
+					"$ref": "bodies-fill"
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-200"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/step/one": {
+			"POST": {
+				"description": "Step 1",
+				"operationId": "step_one",
+				"body": {
+					"$ref": "bodies-step_one"			
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-step_one"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/step/two": {
+			"POST": {
+				"description": "Step 2",
+				"operationId": "step_two",
+				"body": {
+					"$ref": "bodies-step_two"			
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-step_two"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/step/three": {
+			"POST": {
+				"description": "Step 3",
+				"operationId": "step_three",
+				"body": {
+					"$ref": "bodies-step_three"			
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-step_three"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		}
+	}
+}

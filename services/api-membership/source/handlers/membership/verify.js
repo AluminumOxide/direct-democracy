@@ -1,6 +1,7 @@
 const { internal_error, membership_dne } = require('../../errors.json')
 
-const membership_verify = async function(request, reply, db, log) {
+const membership_verify = async function(request, reply, db, log, lib) {
+
 	const { membership_id } = request
 
 	try {

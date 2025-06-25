@@ -1,6 +1,7 @@
 const { membership_dne, internal_error, profile_invalid } = require('../../errors.json')
 
-const membership_delete = async function(request, reply, db, log) {
+const membership_delete = async function(request, reply, db, log, lib) {
+
 	const { membership_id, profile_id } = request
 
 	// check the membership exists

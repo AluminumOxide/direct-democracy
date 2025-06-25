@@ -1,17 +1,20 @@
 const { democracy_dne, internal_error, membership_exist } = require('../../errors.json')
-const api_democracy_client = require('@aluminumoxide/direct-democracy-democracy-api-client')
 
-const membership_create = async function(request, reply, db, log) {
+const membership_create = async function(request, reply, db, log, lib) {
+
 	const { democracy_id, profile_id } = request
+	const { api_democracy } = lib
 
 	// check democracy_id is valid
 	try {
-		await api_democracy_client.democracy_read({ democracy_id })
+		await api_democracy.democracy_read({ democracy_id })
 	} catch (e) {
-		if(e.message === api_democracy_client.errors.democracy_dne) {
+
+		if(e.message === api_democracy.errors.democracy_dne) {
 			log.warn(`Membership/Create: Failure: ${democracy_id},${profile_id} Error: Democracy does not exist`)
 			return reply.code(400).send(new Error(democracy_dne))
 		}
+
 		log.error(`Membership/Create: Failure: ${democracy_id},${profile_id} Error: fetching democracy ${e}`)
 		return reply.code(500).send(new Error(internal_error))
 	}

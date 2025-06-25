@@ -3,6 +3,7 @@ const {
 	get_dummy_db,
 	get_dummy_log,
 	get_dummy_reply,
+	get_dummy_lib,
 	integration_test_setup,
 	membership_delete_unit: mem_del_u,
 	membership_read_integration: mem_read_i,
@@ -23,22 +24,23 @@ describe('Membership Delete', () => {
 			}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{ id: dummy_req.membership_id }],
-				last_val: [dummy_req],
-				throws_error: false,
-				call_no: 1
+				fxn: 'where',
+				args: [{ id: dummy_req.membership_id }],
+				val: [dummy_req],
+				err: false,
+				call: 1
 			},{
-				last_fxn: 'del',
-				last_args: false,
-				last_val: [],
-				throws_error: false,
-				call_no: false
+				fxn: 'del',
+				args: false,
+				val: [],
+				err: false,
+				call: false
 			}])
 
 			// call handler
-			await mem_del_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.send).toBeCalledWith()
@@ -60,15 +62,16 @@ describe('Membership Delete', () => {
 			}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{ id: dummy_req.membership_id }],
-				last_val: [],
-				throws_error: false
+				fxn: 'where',
+				args: [{ id: dummy_req.membership_id }],
+				val: [],
+				err: false
 			}])
 
 			// call handler
-			await mem_del_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -90,15 +93,16 @@ describe('Membership Delete', () => {
 			}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{ id: dummy_req.membership_id }],
-				last_val: [],
-				throws_error: true
+				fxn: 'where',
+				args: [{ id: dummy_req.membership_id }],
+				val: [],
+				err: true
 			}])
 
 			// call handler
-			await mem_del_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
@@ -120,18 +124,19 @@ describe('Membership Delete', () => {
 			}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{ id: dummy_req.membership_id }],
-				last_val: [{
+				fxn: 'where',
+				args: [{ id: dummy_req.membership_id }],
+				val: [{
 					membership_id: dummy_req.membership_id,
 					profile_id: dummy_req.membership_id
 				}],
-				throws_error: false
+				err: false
 			}])
 
 			// call handler
-			await mem_del_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(400)
@@ -153,22 +158,23 @@ describe('Membership Delete', () => {
 			}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([])
 			const dummy_db = get_dummy_db([{
-				last_fxn: 'where',
-				last_args: [{ id: dummy_req.membership_id }],
-				last_val: [dummy_req],
-				throws_error: false,
-				call_no: 1
+				fxn: 'where',
+				args: [{ id: dummy_req.membership_id }],
+				val: [dummy_req],
+				err: false,
+				call: 1
 			},{
-				last_fxn: 'del',
-				last_args: false,
-				last_val: [],
-				throws_error: true,
-				call_no: false
+				fxn: 'del',
+				args: false,
+				val: [],
+				err: true,
+				call: false
 			}])
 
 			// call handler
-			await mem_del_u(dummy_req, dummy_reply, dummy_db, dummy_log)
+			await mem_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(500)
