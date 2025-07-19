@@ -23,7 +23,13 @@ const add_routes = function(spec, version, handlers, fastify, autodoc) {
 			}
 			if('body' in spec[url][method]) {
 				schema.body = spec[url][method].body
-			} 
+			}
+			if('headers' in spec[url][method]) {
+				schema.headers = {
+					type: 'object',
+					properties: spec[url][method].headers
+				}
+			}
 			fastify.route({
 				method,
 				url: `/${version}${url}`,

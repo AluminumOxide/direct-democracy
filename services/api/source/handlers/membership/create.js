@@ -1,13 +1,13 @@
-const auth = require('../../helpers/auth')
+const { validate_jwt } = require('../../helpers/auth')
 
 const membership_create = async function(request, reply, db, log, lib) {
 
-	const { democracy_id } = request
+	const { democracy_id, jwt } = request
 	const { api_membership } = lib
 
 	try {
 		// get auth info
-		const profile_id = await auth.get_profile_id(request, log)
+		const profile_id = await validate_jwt(jwt)
 
 		// fetch from membership service
 		const mem = await api_membership.membership_create({ democracy_id, profile_id })

@@ -14,6 +14,7 @@ class ApiClient {
 		this.schema = schema
 		this.errors = errors
 		this.errors._invalid_arg = 'Invalid argument value(s)'
+		this.errors._invalid_header = 'Invalid header value(s)'
 		this.errors._invalid_query = 'Invalid query value(s)'
 		this.errors._invalid_param = 'Invalid parameter value(s)'
 		this.errors._invalid_body = 'Invalid body value(s)'
@@ -62,7 +63,21 @@ class ApiClient {
 
 				// add endpoint function
 				this[opid] = async function(args) {
-					let request = { params: {}, query: {}, body: Object.assign({}, args)}
+					let request = { headers: {}, params: {}, query: {}, body: Object.assign({}, args)}
+					// verify headers
+					if('headers' in defn) {
+						for(const header in defn.headers) {
+							if(!!args && header in args) {
+								if(!!args[header]) {
+									if(! this.ajv.validate(defn.headers[header], args[header])) {
+										throw new Error(this.errors._invalid_header)
+									}
+									request.headers[header] = args[header]
+								}
+								delete request.body[header]
+							}
+						}
+					}
 
 					// verify params
 					if('param' in defn) {
@@ -100,7 +115,7 @@ class ApiClient {
 
 					// verify body
 					if('body' in defn) {
-						request.headers = {'Content-Type':'application/json'}
+						request.headers['Content-Type'] = 'application/json'
 						if(! this.ajv.validate(defn.body, request.body)) {
 							throw new Error(this.errors._invalid_body)
 						}
@@ -136,7 +151,7 @@ class ApiClient {
 						const response = await axios({
 							method: op.toLowerCase(),
 							url: uri,
-							headers: { 'content-type': 'application/json' },
+							headers: request.headers,
 							data: request.body ? request.body : {}
 						})
 

@@ -1,18 +1,15 @@
-const auth = require('../../helpers/auth')
+const { validate_jwt } = require('../../helpers/auth')
 
 const membership_list = async function(request, reply, db, log, lib) {
 
-	let { limit, last, sort, order, filter } = request
+	let { limit, last, sort, order, filter={}, jwt } = request
 	const { api_membership } = lib
 
 	try {
 		// get profile_id
-		const profile_id = await auth.get_profile_id(request, log)
+		const profile_id = await validate_jwt(jwt)
 
 		// set up filter
-		if(!filter) {
-			filter = {}
-		}
 		filter['profile_id'] = { op: '=', val: profile_id }
 
 		// fetch from membership service

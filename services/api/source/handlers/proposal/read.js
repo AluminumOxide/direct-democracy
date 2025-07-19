@@ -1,20 +1,37 @@
-const auth = require('../../helpers/auth')
-const { invalid_auth } = require('../../errors.json')
+const { validate_jwt } = require('../../helpers/auth')
+const { invalid_auth, internal_error } = require('../../errors.json')
 
 const proposal_read = async function(request, reply, db, log, lib) {
 
-	const { proposal_id } = request
-	const { api_proposal } = lib
+	const { proposal_id, jwt } = request
+	const { api_proposal, api_membership } = lib
 
 	try {
+		// validate jwt
+		const profile_id = await validate_jwt(jwt)
+		
 		// fetch from proposal service
 		const prop = await api_proposal.proposal_read({ proposal_id })
 
-		// get membership_id
-		const profile_id = await auth.get_profile_id(request, log)
-		const membership_id = await auth.get_membership_id(profile_id, prop.democracy_id, log)
+		// get membership
+		const membership = await api_membership.membership_list({
+			filter: {
+				democracy_id: { op: '=', val: prop.democracy_id },
+				profile_id: { op: '=', val: profile_id }
+			}
+		})
 
-		// handle invalid membership_id
+		// check membership
+		if(membership.length === 0) {
+			log.warn(`Proposal/Create: Failure: Error: Invalid Auth`)
+			return reply.code(401).send(new Error(invalid_auth))
+		}
+		if(membership.length > 1) {
+			// should never happen
+			log.error(`Proposal/Create: Failure: Error: Duplicate Membership`)
+			return reply.code(500).send(new Error(internal_error))
+		}
+		const membership_id = membership[0].membership_id
 		if(prop.membership_id !== membership_id) {
 			log.warn(`Proposal/Read: Failure: ${proposal_id} Error: Invalid auth`)
 			return reply.code(401).send(new Error(invalid_auth))

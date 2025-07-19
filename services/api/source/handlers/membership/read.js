@@ -1,14 +1,14 @@
-const auth = require('../../helpers/auth')
+const { validate_jwt } = require('../../helpers/auth')
 const { invalid_auth } = require('../../errors.json')
 
 const membership_read = async function(request, reply, db, log, lib) {
 
-	let { membership_id } = request
+	let { membership_id, jwt } = request
 	const { api_membership } = lib
 
 	try {
 		// get auth info
-		const profile_id = await auth.get_profile_id(request, log)
+		const profile_id = await validate_jwt(jwt)
 
 		// fetch from membership service
 		const mem = await api_membership.membership_read({ membership_id })

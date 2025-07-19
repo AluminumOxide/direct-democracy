@@ -1,15 +1,24 @@
-const auth = require('../../helpers/auth')
+const { validate_jwt } = require('../../helpers/auth')
+const { internal_error } = require('../../errors.json')
 
 const ballot_list = async function(request, reply, db, log, lib) {
 
-	let { limit, last, sort, order, filter={} } = request
-	const { api_proposal } = lib
+	let { limit, last, sort, order, filter={}, jwt } = request
+	const { api_proposal, api_membership } = lib
 
 	try {
-		// get membership_ids and add to filter
-		const profile_id = await auth.get_profile_id(request, log)
-		const memberships = await auth.get_membership_ids(profile_id)
+		// validate jwt
+		const profile_id = await validate_jwt(jwt)
+
+		// get membership ids
+		const memberships = await api_membership.membership_list({
+			filter: {
+				profile_id: { op: '=', val: profile_id }
+			}
+		})
 		const membership_ids = memberships.map((x) => x.membership_id )
+
+		// add membership ids to filter
 		filter['membership_id'] = { op: 'IN', val: membership_ids }
 
 		// fetch from proposal service
@@ -23,7 +32,7 @@ const ballot_list = async function(request, reply, db, log, lib) {
 		
 		// handle errors
 		log.error(`Ballot/List: Failure: Error: ${e}`)
-		return reply.code(500).send(new Error(api_proposal.errors.internal_error))
+		return reply.code(500).send(new Error(internal_error))
 	}
 }
 

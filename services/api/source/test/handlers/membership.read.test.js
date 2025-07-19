@@ -25,10 +25,13 @@ describe('Membership Read', () => {
 
 	describe('Unit Tests', () => {
 
+		const profile_id = get_uuid()
+		const jwt = JSON.stringify({ profile_id })
+
 		test('Success', async() => {
 
 			// set up mocks
-			const dummy_req = { membership_id: get_uuid() }
+			const dummy_req = { membership_id: get_uuid(), profile_id, jwt }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
@@ -54,7 +57,7 @@ describe('Membership Read', () => {
 		test('Error: Invalid profile ID', async() => {
 
 			// set up mocks
-			const dummy_req = { membership_id: get_uuid() }
+			const dummy_req = { membership_id: get_uuid(), profile_id: get_uuid(), jwt }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
@@ -80,7 +83,7 @@ describe('Membership Read', () => {
 		test('Error: Democracy DNE', async() => {
 
 			// set up mocks
-			const dummy_req = { membership_id: get_uuid() }
+			const dummy_req = { membership_id: get_uuid(), profile_id, jwt }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
@@ -106,7 +109,7 @@ describe('Membership Read', () => {
 		test('Error: Internal error', async() => {
 
 			// set up mocks
-			const dummy_req = { membership_id: get_uuid() }
+			const dummy_req = { membership_id: get_uuid(), profile_id, jwt }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{

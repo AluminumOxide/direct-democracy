@@ -22,11 +22,13 @@ describe('Membership Create', () => {
 	})
 
 	describe('Unit Tests', () => {
+		
+		const jwt = JSON.stringify({ profile_id: get_uuid() })
 
 		test('Success', async() => {
 
 			// set up mocks
-			const dummy_req = { democracy_id: get_uuid() }
+			const dummy_req = { democracy_id: get_uuid(), jwt }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
@@ -52,7 +54,7 @@ describe('Membership Create', () => {
 		test('Error: Democracy DNE', async() => {
 
 			// set up mocks
-			const dummy_req = { democracy_id: get_uuid() }
+			const dummy_req = { democracy_id: get_uuid(), jwt }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
@@ -78,7 +80,7 @@ describe('Membership Create', () => {
 		test('Error: Membership exists', async() => {
 
 			// set up mocks
-			const dummy_req = { democracy_id: get_uuid() }
+			const dummy_req = { democracy_id: get_uuid(), jwt }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
@@ -104,7 +106,7 @@ describe('Membership Create', () => {
 		test('Error: Internal error', async() => {
 
 			// set up mocks
-			const dummy_req = { democracy_id: get_uuid() }
+			const dummy_req = { democracy_id: get_uuid(), jwt }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{

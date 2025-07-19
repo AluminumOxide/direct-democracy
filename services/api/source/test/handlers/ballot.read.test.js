@@ -17,25 +17,41 @@ describe('Ballot Read', () => {
 
 		test('Success', async() => {
 			const ballot_id = test_data.ballot.rnf_au_1.id
-			const member_id = test_data.ballot.rnf_au_1.membership_id
-			const ballot = await blt_read_i(ballot_id, member_id)
+			const profile_id = test_data.membership.unverified_root_1.profile_id
+			const ballot = await blt_read_i(ballot_id, profile_id)
 			expect(ballot.ballot_id).toBe(ballot_id)
 		})
 	})
 
 	describe('Unit Tests', () => {
 
+		const profile_id = get_uuid()
+		const proposal_id = get_uuid()
+		const membership_id = get_uuid()
+		const democracy_id = get_uuid()
+		const ballot_id = get_uuid()
+		const jwt = JSON.stringify({ profile_id })
+
 		test('Success', async() => {
 
 			// set up mocks
-			let dummy_req = { profile_id: get_uuid(), democracy_id: get_uuid() }
-			dummy_req = { membership_id: dummy_req.profile_id, ...dummy_req }
+			const dummy_req = { ballot_id, jwt }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
 				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: { democracy_id },
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_list',
+				val: [{ membership_id }],
+				err: false
+			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
-				val: dummy_req,
+				val: { membership_id, proposal_id },
 				err: false
 			}], errors)
 			
@@ -44,7 +60,7 @@ describe('Ballot Read', () => {
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
-			expect(dummy_reply.send).toBeCalledWith(dummy_req)
+			expect(dummy_reply.send).toBeCalledWith({membership_id,proposal_id})
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(1)
@@ -55,13 +71,95 @@ describe('Ballot Read', () => {
 		test('Error: Invalid auth', async() => {
 
 			// set up mocks
-			const dummy_req = { profile_id: get_uuid(), democracy_id: get_uuid() }
+			const dummy_req = { ballot_id, jwt }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
 				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: { democracy_id },
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_list',
+				val: [],
+				err: false
+			},{
+				lib: 'api_proposal',
 				fxn: 'ballot_read',
-				val: { membership_id: get_uuid() },
+				val: { membership_id, proposal_id },
+				err: false
+			}], errors)
+			
+			// call handler
+			await blt_read_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toBeCalledWith(401)
+			expect(dummy_reply.send).toBeCalledWith(new Error(errors.invalid_auth))
+
+			// check log
+			expect(dummy_log.info).toBeCalledTimes(0)
+			expect(dummy_log.warn).toBeCalledTimes(1)
+			expect(dummy_log.error).toBeCalledTimes(0)
+		})
+	
+		test('Error: Duplicate auth', async() => {
+
+			// set up mocks
+			const dummy_req = { ballot_id, jwt }
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: { democracy_id },
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_list',
+				val: [{}, {}],
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'ballot_read',
+				val: { membership_id, proposal_id },
+				err: false
+			}], errors)
+			
+			// call handler
+			await blt_read_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toBeCalledWith(500)
+			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+
+			// check log
+			expect(dummy_log.info).toBeCalledTimes(0)
+			expect(dummy_log.warn).toBeCalledTimes(0)
+			expect(dummy_log.error).toBeCalledTimes(1)
+		})
+		
+		test('Error: Invalid Membership', async() => {
+
+			// set up mocks
+			const dummy_req = { ballot_id, jwt }
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: { democracy_id },
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_list',
+				val: [{ membership_id: get_uuid() }],
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'ballot_read',
+				val: { membership_id, proposal_id },
 				err: false
 			}], errors)
 			
@@ -81,7 +179,7 @@ describe('Ballot Read', () => {
 		test('Error: No Ballot', async() => {
 
 			// set up mocks
-			const dummy_req = { profile_id: get_uuid(), democracy_id: get_uuid() }
+			const dummy_req = { ballot_id, jwt }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
@@ -107,12 +205,17 @@ describe('Ballot Read', () => {
 		test('Error: Proposal DNE', async() => {
 
 			// set up mocks
-			const dummy_req = { profile_id: get_uuid(), democracy_id: get_uuid() }
+			const dummy_req = { ballot_id, jwt }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
 				lib: 'api_proposal',
 				fxn: 'ballot_read',
+				val: { proposal_id },
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
 				val: errors.proposal_dne,
 				err: true
 			}], errors)
@@ -130,32 +233,6 @@ describe('Ballot Read', () => {
 			expect(dummy_log.error).toBeCalledTimes(0)
 		})
 
-		test('Error: Ballot DNE', async() => {
-
-			// set up mocks
-			const dummy_req = { profile_id: get_uuid(), democracy_id: get_uuid() }
-			const dummy_log = get_dummy_log()
-			const dummy_reply = get_dummy_reply()
-			const dummy_lib = get_dummy_lib([{
-				lib: 'api_proposal',
-				fxn: 'ballot_read',
-				val: errors.ballot_dne,
-				err: true
-			}], errors)
-			
-			// call handler
-			await blt_read_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
-
-			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.ballot_dne))
-
-			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
-		})
-		
 		test('Error: Internal error', async() => {
 
 			// set up mocks

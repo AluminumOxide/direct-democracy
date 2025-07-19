@@ -1,16 +1,26 @@
-const auth = require('../../helpers/auth')
+const { validate_jwt } = require('../../helpers/auth')
 
 const proposal_list = async function(request, reply, db, log, lib) {
 
- 	let { limit, last, sort, order, filter={} } = request
-	const { api_proposal } = lib
+ 	let { limit, last, sort, order, filter={}, jwt } = request
+	const { api_proposal, api_membership } = lib
 
 	try {
-		// get democracy_ids and add to filter
-		const profile_id = await auth.get_profile_id(request, log)
-		const membership_ids = await auth.get_membership_ids(profile_id)
-		const democracy_ids = membership_ids.map((x) => x.democracy_id)
-		filter['democracy_id'] = { op: 'IN', val: democracy_ids }
+		// validate jwt
+		const profile_id = await validate_jwt(jwt)
+
+		// get membership ids
+		const membership = await api_membership.membership_list({
+			filter: {
+				profile_id: { op: '=', val: profile_id }
+			}
+		})
+	
+		// add membership filter
+		if(membership.length > 0) {
+			const membership_ids = membership.map((x) => x.membership_id)
+			filter['membership_id'] = { op: 'IN', val: membership_ids }
+		}
 
 		// fetch from proposal service
 		const prop = await api_proposal.proposal_list({ limit, last, sort, order, filter })

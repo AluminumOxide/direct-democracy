@@ -16,23 +16,29 @@ describe('Proposal List', () => {
 		const test_data = integration_test_setup()
 
 		test('Success', async() => {
-			const props = await prop_list_i({})
+			const props = await prop_list_i({ jwt: JSON.stringify({ profile_id: test_data.membership.verified_root_1.profile_id }) })
 			expect(props.length === test_data['proposal'].length)
 		})
 	})
 
 	describe('Unit Tests', () => {
 
-		test('Success', async() => {
+		const jwt = JSON.stringify({ profile_id: get_uuid() })
+
+		test('Success: Has Memberships', async() => {
 
 			// set up mocks
-			const dummy_req = { filter: {} }
+			const dummy_req = { jwt }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
+				fxn: 'membership_list',
+				val: [{ membership_id: get_uuid() }]
+			},{
 				lib: 'api_proposal',
 				fxn: 'proposal_list',
-				val: dummy_req,
+				val: [],
 				err: false
 			}], errors)
 			
@@ -41,7 +47,37 @@ describe('Proposal List', () => {
 
 			// check reply
 			expect(dummy_reply.code).toBeCalledWith(200)
-			expect(dummy_reply.send).toBeCalledWith(dummy_req)
+			expect(dummy_reply.send).toBeCalledWith([])
+
+			// check log
+			expect(dummy_log.info).toBeCalledTimes(1)
+			expect(dummy_log.warn).toBeCalledTimes(0)
+			expect(dummy_log.error).toBeCalledTimes(0)
+		})
+		
+		test('Success: No Memberships', async() => {
+
+			// set up mocks
+			const dummy_req = { jwt }
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
+				fxn: 'membership_list',
+				val: []
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_list',
+				val: [],
+				err: false
+			}], errors)
+			
+			// call handler
+			await prop_list_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toBeCalledWith(200)
+			expect(dummy_reply.send).toBeCalledWith([])
 
 			// check log
 			expect(dummy_log.info).toBeCalledTimes(1)
@@ -52,7 +88,7 @@ describe('Proposal List', () => {
 		test('Error: Internal error', async() => {
 
 			// set up mocks
-			const dummy_req = { }
+			const dummy_req = { jwt }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{

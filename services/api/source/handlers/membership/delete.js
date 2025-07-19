@@ -1,13 +1,13 @@
-const auth = require('../../helpers/auth')
+const { validate_jwt } = require('../../helpers/auth')
 
 const membership_delete = async function(request, reply, db, log, lib) {
 
-	const { membership_id } = request
+	const { membership_id, jwt } = request
 	const { api_membership } = lib
 
 	try {
 		// get profile_id
-		const profile_id = await auth.get_profile_id(request, log)
+		const profile_id = await validate_jwt(jwt)
 
 		// fetch from membership service
 		await api_membership.membership_delete({ membership_id, profile_id })

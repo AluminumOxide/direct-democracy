@@ -17,18 +17,19 @@ describe('Membership List', () => {
 
 		test('Success', async() => {
 			const mems = await mem_list_i({
-				profile_id: test_data['membership']['verified_root_1'].profile_id
-			})
+				jwt: JSON.stringify({ profile_id: test_data['membership']['verified_root_1'].profile_id })})
 			expect(mems.length).toBe(1)
 		})
 	})
 
 	describe('Unit Tests', () => {
 
+		const jwt = JSON.stringify({ profile_id: get_uuid() })
+
 		test('Success', async() => {
 
 			// set up mocks
-			const dummy_req = { filter: {} }
+			const dummy_req = { filter: {}, jwt }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
@@ -54,7 +55,7 @@ describe('Membership List', () => {
 		test('Error: Internal error', async() => {
 
 			// set up mocks
-			const dummy_req = { }
+			const dummy_req = { jwt }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{

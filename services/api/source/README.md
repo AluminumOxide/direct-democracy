@@ -211,10 +211,6 @@ Properties:
 
 	 - [queries-proposal_filter](#queries-proposal_filter)
 
-- **profile_id**
-
-	 - [schemas-profile_id](#schemas-profile_id)
-
 
 **Responses**
 undefined
@@ -222,17 +218,6 @@ undefined
 ### GET /v1/my/proposal/:proposal_id
 
 *Read a proposal*
-
-**Queries**
-
-Type: object
-
-Properties:
-
-- **profile_id**
-
-	 - [schemas-profile_id](#schemas-profile_id)
-
 
 **Params**
 
@@ -245,17 +230,6 @@ undefined
 
 *Delete a proposal*
 
-**Queries**
-
-Type: object
-
-Properties:
-
-- **profile_id**
-
-	 - [schemas-profile_id](#schemas-profile_id)
-
-
 **Params**
 
 - [proposal_id](#params-proposal_id)
@@ -266,17 +240,6 @@ undefined
 ### POST /v1/my/proposal/:proposal_id
 
 *Cast my ballot*
-
-**Queries**
-
-Type: object
-
-Properties:
-
-- **profile_id**
-
-	 - [schemas-profile_id](#schemas-profile_id)
-
 
 **Params**
 
@@ -293,34 +256,12 @@ undefined
 
 *List my ballots*
 
-**Queries**
-
-Type: object
-
-Properties:
-
-- **profile_id**
-
-	 - [schemas-profile_id](#schemas-profile_id)
-
-
 **Responses**
 undefined
 
 ### GET /v1/my/ballot/:ballot_id
 
 *Get my ballot*
-
-**Queries**
-
-Type: object
-
-Properties:
-
-- **profile_id**
-
-	 - [schemas-profile_id](#schemas-profile_id)
-
 
 **Params**
 
@@ -332,17 +273,6 @@ undefined
 ### PATCH /v1/my/ballot/:ballot_id
 
 *Edit my ballot*
-
-**Queries**
-
-Type: object
-
-Properties:
-
-- **profile_id**
-
-	 - [schemas-profile_id](#schemas-profile_id)
-
 
 **Params**
 
@@ -358,17 +288,6 @@ undefined
 ### DELETE /v1/my/ballot/:ballot_id
 
 *Delete my ballot*
-
-**Queries**
-
-Type: object
-
-Properties:
-
-- **profile_id**
-
-	 - [schemas-profile_id](#schemas-profile_id)
-
 
 **Params**
 
@@ -407,10 +326,6 @@ Properties:
 
 	 - [queries-membership_filter](#queries-membership_filter)
 
-- **profile_id**
-
-	 - [schemas-profile_id](#schemas-profile_id)
-
 
 **Responses**
 
@@ -422,17 +337,6 @@ Properties:
 ### GET /v1/my/membership/:membership_id
 
 *Get a membership*
-
-**Queries**
-
-Type: object
-
-Properties:
-
-- **profile_id**
-
-	 - [schemas-profile_id](#schemas-profile_id)
-
 
 **Params**
 
@@ -448,17 +352,6 @@ Properties:
 ### DELETE /v1/my/membership/:membership_id
 
 *Delete a membership*
-
-**Queries**
-
-Type: object
-
-Properties:
-
-- **profile_id**
-
-	 - [schemas-profile_id](#schemas-profile_id)
-
 
 **Params**
 
@@ -478,6 +371,9 @@ Properties:
 
 ## Headers
 
+#### headers-jwt
+
+Type: string
 ## Params
 
 #### params-proposal_id
@@ -2156,3 +2052,11 @@ Properties:
 - **date_updated**
 
 	Type: [schemas-date_updated](#schemas-date_updated)
+
+#### schemas-jwt
+
+
+*jwt*
+
+
+Type: string
