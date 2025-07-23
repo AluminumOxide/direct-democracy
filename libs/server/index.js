@@ -4,12 +4,22 @@ const { add_defn, add_routes } = require('./spec')
 const { spawn } = require('child_process')
 const testing = require('./test')
 const { AutoDoc } = require('./docs')
+const fs = require('node:fs')
 
 const start = async function({ env, address, port, spec, version, handlers, db_user, db_password, db_name, db_port, db_address }) {
 
 	try {
 		// set up fastify
-		const fastify = require('fastify')({ logger: true, querystringParser: queryParser })
+		const fastify = require('fastify')({
+			logger: true,
+			http2: true,
+			https: {
+				allowHTTP1: true,
+				key: fs.readFileSync('./ssl.key'),
+				cert: fs.readFileSync('./ssl.crt')
+			},
+			querystringParser: queryParser
+		})
 
 		// connect to db
 		await fastify.register(require('./fastify-knexjs'), {
