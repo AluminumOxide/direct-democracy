@@ -16,16 +16,18 @@ describe('Proposal Create', () => {
 		const test_data = integration_test_setup()
 
 		test('Success', async() => {
+			const profile = test_data.profile.profile
 			const test_prop = {
 				democracy_id: test_data.democracy.root_child.id,
-				profile_id: test_data.membership.verified_child_1.profile_id,
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
 				proposal_target: 'name',
 				proposal_changes: {'_update':{'name':'qwer'}},
-				jwt: JSON.stringify({ profile_id: test_data.membership.verified_child_1.profile_id })
+				profile_id: profile.id,
+				auth_token: profile.auth_token,
+				auth_expiry: profile.auth_expiry
 			}
-			const { profile_id, jwt, ...expected } = test_prop
+			const { profile_id, auth_token, auth_expiry, ...expected } = test_prop
 			await expect(prop_create_i(test_prop)).resolves.toMatchObject(expected)
 		})
 	})
@@ -43,6 +45,11 @@ describe('Proposal Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
+				lib: 'api_profile',
+				fxn: 'sign_in_verify',
+				val: { profile_id },
+				err: false
+			},{
 				lib: 'api_membership',
 				fxn: 'membership_list',
 				val: [{ membership_id }],
@@ -67,6 +74,78 @@ describe('Proposal Create', () => {
 			expect(dummy_log.error).toBeCalledTimes(0)
 		})
 		
+		test('Error: Invalid JWT', async() => {
+
+			// set up mocks
+			const dummy_req = { jwt }
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_profile',
+				fxn: 'sign_in_verify',
+				val: errors.invalid_auth,
+				err: true
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_list',
+				val: [{ membership_id }],
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_create',
+				val: dummy_req,
+				err: false
+			}], errors)
+			
+			// call handler
+			await prop_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toBeCalledWith(401)
+			expect(dummy_reply.send).toBeCalledWith(new Error(errors.invalid_auth))
+
+			// check log
+			expect(dummy_log.info).toBeCalledTimes(0)
+			expect(dummy_log.warn).toBeCalledTimes(1)
+			expect(dummy_log.error).toBeCalledTimes(0)
+		})
+		
+		test('Error: Invalid Profile', async() => {
+
+			// set up mocks
+			const dummy_req = { jwt }
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_profile',
+				fxn: 'sign_in_verify',
+				val: {},
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_list',
+				val: [{ membership_id }],
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_create',
+				val: dummy_req,
+				err: false
+			}], errors)
+			
+			// call handler
+			await prop_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toBeCalledWith(401)
+			expect(dummy_reply.send).toBeCalledWith(new Error(errors.invalid_auth))
+
+			// check log
+			expect(dummy_log.info).toBeCalledTimes(0)
+			expect(dummy_log.warn).toBeCalledTimes(0)
+			expect(dummy_log.error).toBeCalledTimes(1)
+		})
+		
 		test('Error: Membership DNE', async() => {
 
 			// set up mocks
@@ -74,6 +153,11 @@ describe('Proposal Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
+				lib: 'api_profile',
+				fxn: 'sign_in_verify',
+				val: { profile_id },
+				err: false
+			},{
 				lib: 'api_membership',
 				fxn: 'membership_list',
 				val: [],
@@ -100,6 +184,11 @@ describe('Proposal Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
+				lib: 'api_profile',
+				fxn: 'sign_in_verify',
+				val: { profile_id },
+				err: false
+			},{
 				lib: 'api_membership',
 				fxn: 'membership_list',
 				val: [{},{}],
@@ -126,6 +215,11 @@ describe('Proposal Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
+				lib: 'api_profile',
+				fxn: 'sign_in_verify',
+				val: { profile_id },
+				err: false
+			},{
 				lib: 'api_membership',
 				fxn: 'membership_list',
 				val: [{ membership_id }],
@@ -157,6 +251,11 @@ describe('Proposal Create', () => {
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
+				lib: 'api_profile',
+				fxn: 'sign_in_verify',
+				val: { profile_id },
+				err: false
+			},{
 				lib: 'api_membership',
 				fxn: 'membership_list',
 				val: [{ membership_id }],

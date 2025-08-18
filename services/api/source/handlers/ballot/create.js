@@ -1,14 +1,18 @@
-const { validate_jwt } = require('../../helpers/auth')
 const { invalid_auth, internal_error } = require('../../errors.json')
 
 const ballot_create = async function(request, reply, db, log, lib) {
 
 	const { proposal_id, ballot_approved, ballot_comments, jwt } = request
-	const { api_proposal, api_membership } = lib
+	const { api_proposal, api_membership, api_profile } = lib
 
 	try {
 		// validate jwt
-		const profile_id = await validate_jwt(jwt)
+		const { profile_id } = await api_profile.sign_in_verify({ jwt })
+		if(!profile_id) {
+			// shouldn't happen
+			log.error(`Ballot/Create: Failure: ${jwt} Error: JWT verify`)
+			return reply.code(401).send(new Error(invalid_auth))
+		}
 
 		// get proposal
 		const proposal = await api_proposal.proposal_read({ proposal_id })
@@ -41,6 +45,12 @@ const ballot_create = async function(request, reply, db, log, lib) {
 		return reply.code(201).send(ballot)
 
 	} catch(e) {
+
+		// handle invalid jwt
+		if(e.message === api_profile.errors.invalid_auth) {
+			log.warn(`Ballot/Create: Failure: ${jwt} Error: Invalid token`)
+			return reply.code(401).send(new Error(invalid_auth))
+		}
 
 		// handle invalid proposal_id
 		if(e.message === api_proposal.errors.proposal_dne) {

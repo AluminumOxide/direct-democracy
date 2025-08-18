@@ -1,14 +1,18 @@
-const { validate_jwt } = require('../../helpers/auth')
 const { invalid_auth, internal_error } = require('../../errors.json')
 
 const proposal_create = async function(request, reply, db, log, lib) {
 
   	const { democracy_id, proposal_name, proposal_description, proposal_target, proposal_changes, jwt } = request
-	const { api_proposal, api_membership } = lib
+	const { api_profile, api_proposal, api_membership } = lib
 
 	try {
 		// validate jwt
-		const profile_id = await validate_jwt(jwt)
+		const { profile_id } = await api_profile.sign_in_verify({ jwt })
+		if(!profile_id) {
+			// shouldn't happen
+			log.error(`Proposal/Create: Failure: ${jwt} Error: JWT verify`)
+			return reply.code(401).send(new Error(invalid_auth))
+		}
 
 		// get membership
 		const membership = await api_membership.membership_list({
@@ -38,6 +42,12 @@ const proposal_create = async function(request, reply, db, log, lib) {
 		return reply.code(201).send(prop)
 
 	} catch(e) {
+
+		// handle invalid jwt
+		if(e.message === api_profile.errors.invalid_auth) {
+			log.warn(`Proposal/Create: Failure: ${jwt} Error: Invalid token`)
+			return reply.code(401).send(new Error(invalid_auth))
+		}
 
 		// handle invalid democracy
 		if(e.message === api_proposal.errors.democracy_invalid) {

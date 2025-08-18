@@ -11,6 +11,7 @@ const {
 	get_dummy_lib,
 	reset_test_data,
 	integration_test_setup,
+	integration_test_jwt,
 	integration_test_query
 } = require('@aluminumoxide/direct-democracy-lib-server').testing
 
@@ -99,24 +100,26 @@ const democracy_read_integration = async(democracy_id) => {
 	return await api_external_client.democracy_read({ democracy_id })
 }
 
-const membership_list_integration = async(args) => {
-	return await api_external_client.membership_list(args)
+const membership_list_integration = async(profile_id, auth_token, auth_expiry) => {
+	return await api_external_client.membership_list({jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile')})
 }
 
-const membership_create_integration = async(democracy_id, profile_id) => {
-	return await api_external_client.membership_create({ democracy_id, profile_id, jwt: JSON.stringify({ profile_id })})
+const membership_create_integration = async(democracy_id, profile_id, auth_token, auth_expiry) => {
+	return await api_external_client.membership_create({ democracy_id, profile_id, jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile')})
 }
 
-const membership_read_integration = async(membership_id, profile_id) => {
-	return await api_external_client.membership_read({ membership_id, jwt: JSON.stringify({ profile_id })})
+const membership_read_integration = async(membership_id, profile_id, auth_token, auth_expiry) => {
+	return await api_external_client.membership_read({ membership_id, jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile')})
 }
 
-const membership_delete_integration = async(membership_id, profile_id) => {
-	return await api_external_client.membership_delete({ membership_id, jwt: JSON.stringify({ profile_id })})
+const membership_delete_integration = async(membership_id, profile_id, auth_token, auth_expiry) => {
+	return await api_external_client.membership_delete({ membership_id, jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile')})
 }
 
 const proposal_list_integration = async(args) => {
-	return await api_external_client.proposal_list(args)
+	let { profile_id, auth_token, auth_expiry, ...prop } = args
+	prop.jwt = await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile')
+	return await api_external_client.proposal_list(prop)
 }
 
 const proposal_list_public_integration = async(democracy_id) => {
@@ -124,43 +127,45 @@ const proposal_list_public_integration = async(democracy_id) => {
 }
 
 const proposal_create_integration = async(args) => {
-	return await api_external_client.proposal_create(args)
+	let { profile_id, auth_token, auth_expiry, ...prop } = args
+	prop.jwt = await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile')
+	return await api_external_client.proposal_create(prop)
 }
 
-const proposal_read_integration = async(proposal_id, profile_id) => {
-	return await api_external_client.proposal_read({ proposal_id, jwt: JSON.stringify({ profile_id }) })
+const proposal_read_integration = async(proposal_id, profile_id, auth_token, auth_expiry) => {
+	return await api_external_client.proposal_read({ proposal_id, jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile') })
 }
 
 const proposal_read_public_integration = async(proposal_id, democracy_id) => {
 	return await api_external_client.proposal_read_public({ proposal_id, democracy_id })
 }
 
-const proposal_delete_integration = async(proposal_id, profile_id) => {
-	return await api_external_client.proposal_delete({ proposal_id, jwt: JSON.stringify({ profile_id }) })
+const proposal_delete_integration = async(proposal_id, profile_id, auth_token, auth_expiry) => {
+	return await api_external_client.proposal_delete({ proposal_id, jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile') })
 }
 
-const ballot_list_integration = async(profile_id) => {
-	return await api_external_client.ballot_list({ jwt: JSON.stringify({ profile_id }) })
+const ballot_list_integration = async(profile_id, auth_token, auth_expiry) => {
+	return await api_external_client.ballot_list({ jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile') })
 }
 
 const ballot_list_public_integration = async(args) => {
 	return await api_external_client.ballot_list_public(args)
 }
 
-const ballot_create_integration = async(args) => {
-	return await api_external_client.ballot_create(args)
+const ballot_create_integration = async({ proposal_id, ballot_approved, ballot_comments, profile_id, auth_token, auth_expiry }) => {
+	return await api_external_client.ballot_create({ proposal_id, ballot_approved, ballot_comments, jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile') })
 }
 
-const ballot_read_integration = async(ballot_id, profile_id) => {
-	return await api_external_client.ballot_read({ ballot_id, jwt: JSON.stringify({ profile_id }) })
+const ballot_read_integration = async(ballot_id, profile_id, auth_token, auth_expiry) => {
+	return await api_external_client.ballot_read({ ballot_id, jwt: await integration_test_jwt({profile_id, auth_token, auth_expiry}, 'profile')})
 }
 
-const ballot_update_integration = async(ballot_id, ballot_approved, ballot_comments, profile_id) => {
-	return await api_external_client.ballot_update({ ballot_id, ballot_approved, ballot_comments, jwt: JSON.stringify({profile_id})})
+const ballot_update_integration = async(ballot_id, ballot_approved, ballot_comments, profile_id, auth_token, auth_expiry) => {
+	return await api_external_client.ballot_update({ ballot_id, ballot_approved, ballot_comments, jwt: await integration_test_jwt({profile_id, auth_token, auth_expiry}, 'profile')})
 }
 
-const ballot_delete_integration = async(ballot_id, profile_id) => {
-	return await api_external_client.ballot_delete({ ballot_id, jwt: JSON.stringify({ profile_id }) })
+const ballot_delete_integration = async(ballot_id, profile_id, auth_token, auth_expiry) => {
+	return await api_external_client.ballot_delete({ ballot_id, jwt: await integration_test_jwt({profile_id, auth_token, auth_expiry}, 'profile')})
 }
 
 module.exports = {

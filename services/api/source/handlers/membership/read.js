@@ -1,14 +1,18 @@
-const { validate_jwt } = require('../../helpers/auth')
 const { invalid_auth } = require('../../errors.json')
 
 const membership_read = async function(request, reply, db, log, lib) {
 
 	let { membership_id, jwt } = request
-	const { api_membership } = lib
+	const { api_profile, api_membership } = lib
 
 	try {
 		// get auth info
-		const profile_id = await validate_jwt(jwt)
+		const { profile_id } = await api_profile.sign_in_verify({ jwt })
+		if(!profile_id) {
+			// shouldn't happen
+			log.error(`Membership/Read: Failure: ${jwt} Error: JWT verify`)
+			return reply.code(401).send(new Error(invalid_auth))
+		}
 
 		// fetch from membership service
 		const mem = await api_membership.membership_read({ membership_id })
@@ -24,6 +28,12 @@ const membership_read = async function(request, reply, db, log, lib) {
 		return reply.code(200).send(mem)
 
 	} catch(e) {
+
+		// handle invalid jwt
+		if(e.message === api_profile.errors.invalid_auth) {
+			log.warn(`Membership/Read: Failure: ${jwt} Error: Invalid token`)
+			return reply.code(401).send(new Error(invalid_auth))
+		}
 
 		// handle invalid membership_id
 		if(e.message === api_membership.errors.membership_dne) {
