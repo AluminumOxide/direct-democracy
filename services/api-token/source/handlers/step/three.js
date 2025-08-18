@@ -46,9 +46,7 @@ const step_three = async function(request, reply, db, log, lib) {
 		const rand_token = rand_lookup[0].token
 
 		// sign token
-		// TODO: should we verify on the client that the token is unmodified?
-		//const sign_token = await jwt_sign(key, { 'token': rand_token })
-		const sign_token = rand_token
+		const sign_token = await lib.jwt.sign({ 'token': rand_token })
 
 		// encrypt token
 		const encrypted_token = await encrypt(sign_token, pke_secret)

@@ -11,6 +11,7 @@ const {
 	get_dummy_api,
 	get_dummy_lib,
 	reset_test_data,
+	integration_test_jwt,
 	integration_test_setup,
 	integration_test_query
 } = require('@aluminumoxide/direct-democracy-lib-server').testing
@@ -56,6 +57,10 @@ const clean_token_integration = async (token) => {
 	return await api_token_client.clean_token(token)
 }
 
+const verify_token_integration = async(token) => {
+	return await api_token_client.verify_token(token)
+}
+
 module.exports = {
 	sinon,
 	errors,
@@ -69,11 +74,13 @@ module.exports = {
 	get_dummy_api,
 	get_dummy_lib,
 	reset_test_data,
+	integration_test_jwt,
 	integration_test_setup,
 	integration_test_query,
 	fill_buckets_unit,
 	fill_buckets_integration,
 	clean_token_integration,
+	verify_token_integration,
 	step_one_unit,
 	step_one_integration,
 	step_two_unit,

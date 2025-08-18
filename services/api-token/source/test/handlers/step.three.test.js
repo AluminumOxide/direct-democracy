@@ -84,6 +84,11 @@ describe('Step Three', () => {
 				fxn: 'encrypt',
 				val: 'test',
 				err: false
+			},{
+				lib: 'jwt',
+				fxn: 'sign',
+				val: 'test',
+				err: false
 			}])
 
 			// call handler
@@ -146,6 +151,11 @@ describe('Step Three', () => {
 				fxn: 'encrypt',
 				val: 'test',
 				err: false
+			},{
+				lib: 'jwt',
+				fxn: 'sign',
+				val: 'test',
+				err: false
 			}])
 
 			// call handler
@@ -189,6 +199,11 @@ describe('Step Three', () => {
 			},{
 				lib: 'lib_auth',
 				fxn: 'encrypt',
+				val: 'test',
+				err: false
+			},{
+				lib: 'jwt',
+				fxn: 'sign',
 				val: 'test',
 				err: false
 			}])
@@ -240,6 +255,11 @@ describe('Step Three', () => {
 			},{
 				lib: 'lib_auth',
 				fxn: 'encrypt',
+				val: 'test',
+				err: false
+			},{
+				lib: 'jwt',
+				fxn: 'sign',
 				val: 'test',
 				err: false
 			}])
@@ -299,6 +319,11 @@ describe('Step Three', () => {
 			},{
 				lib: 'lib_auth',
 				fxn: 'encrypt',
+				val: 'test',
+				err: false
+			},{
+				lib: 'jwt',
+				fxn: 'sign',
 				val: 'test',
 				err: false
 			}])
