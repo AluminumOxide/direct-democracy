@@ -21,8 +21,8 @@
 				}
 			}
 		},
-		"sign_in_verify": {
-			"$id": "schemas-sign_in_verify",
+		"sign_in_finish": {
+			"$id": "schemas-sign_in_finish",
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
@@ -55,19 +55,7 @@
 		},
 		"jwt": {
 			"$id": "schemas-jwt",
-			"type": "object",
-			"additionalProperties": false,
-			"properties": {
-				"profile_id": {
-					"type": "string"
-				},
-				"auth_token": {
-					"type": "string"
-				},
-				"auth_expiry": {
-					"type": "string"
-				}
-			}
+			"type": "string"
 		},
 		"sign_out": {
 			"$id": "schemas-sign_out",
@@ -77,8 +65,8 @@
 				"jwt": { "$ref": "schemas-jwt" }
 			}
 		},
-		"verify": {
-			"$id": "schemas-verify",
+		"sign_in_verify": {
+			"$id": "schemas-sign_in_verify",
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
@@ -90,10 +78,20 @@
 	},
 	"queries": {
 	},
+	"headers": {
+		"jwt": {
+			"$id": "headers-jwt",
+			"type": "string"
+		}
+	},
 	"bodies": {
 		"sign_in_init": {
 			"$id": "bodies-sign_in_init",
 			"$ref": "schemas-sign_in_init"
+		},
+		"sign_in_finish": {
+			"$id": "bodies-sign_in_finish",
+			"$ref": "schemas-sign_in_finish"
 		},
 		"sign_in_verify": {
 			"$id": "bodies-sign_in_verify",
@@ -106,10 +104,6 @@
 		"sign_out": {
 			"$id": "bodies-sign_out",
 			"$ref": "schemas-sign_out"
-		},
-		"verify": {
-			"$id": "bodies-verify",
-			"$ref": "schemas-verify"
 		},
 		"fill_bucket": {
                         "$id": "bodies-fill_bucket",
@@ -171,8 +165,8 @@
 				}
 			}
 		},
-		"sign_in_verify": {
-			"$id": "responses-sign_in_verify",
+		"sign_in_finish": {
+			"$id": "responses-sign_in_finish",
 			"description": "Successfully completed sign in",
 			"type": "object",
 			"additionalProperties": false,
@@ -184,10 +178,21 @@
 					"$ref": "schemas-jwt"
 				}
 			}
+		},
+		"sign_in_verify": {
+			"$id": "responses-sign_in_verify",
+			"description": "Sign in verified",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"profile_id": {
+					"type": "string"
+				}
+			}
 		}
 	},
 	"routes": {
-		"/signin": {
+		"/sign/in": {
 			"POST": {
 				"description": "Initiate sign in",
 				"operationId": "sign_in_init",
@@ -207,56 +212,36 @@
 				}
 			}
 		},
-		"/signin/verify": {
+		"/sign/in/finish": {
+			"POST": {
+				"description": "Finish sign in",
+				"operationId": "sign_in_finish",
+				"body": {
+					"$ref": "bodies-sign_in_finish"
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-sign_in_finish"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/sign/in/verify": {
 			"POST": {
 				"description": "Verify sign in",
 				"operationId": "sign_in_verify",
-				"body": {
-					"$ref": "bodies-sign_in_verify"
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
 				},
 				"responses": {
 					"200": {
 						"$ref": "responses-sign_in_verify"
-					},
-					"401": {
-						"$ref": "responses-401"
-					},
-					"500": {
-						"$ref": "responses-500"
-					}
-				}
-			}
-		},
-		"/signout": {
-			"POST": {
-				"description": "Sign out",
-				"operationId": "sign_out",
-				"body": {
-					"$ref": "bodies-sign_out"
-				},
-				"responses": {
-					"200": {
-						"$ref": "responses-200"
-					},
-					"401": {
-						"$ref": "responses-401"
-					},
-					"500": {
-						"$ref": "responses-500"
-					}
-				}
-			}
-		},
-		"/signup": {
-			"POST": {
-				"description": "Sign up",
-				"operationId": "sign_up",
-				"body": {
-					"$ref": "bodies-sign_up"
-				},
-				"responses": {
-					"200": {
-						"$ref": "responses-sign_up"
 					},
 					"400": {
 						"$ref": "responses-400"
@@ -267,16 +252,36 @@
 				}
 			}
 		},
-		"/verify": {
+		"/sign/out": {
 			"POST": {
-				"description": "Verify auth",
-				"operationId": "verify",
-				"body": {
-					"$ref": "bodies-verify"
+				"description": "Sign out",
+				"operationId": "sign_out",
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
 				},
 				"responses": {
 					"200": {
 						"$ref": "responses-200"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/sign/up": {
+			"POST": {
+				"description": "Sign up",
+				"operationId": "sign_up",
+				"body": {
+					"$ref": "bodies-sign_up"
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-sign_up"
 					},
 					"400": {
 						"$ref": "responses-400"

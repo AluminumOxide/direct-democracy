@@ -13,7 +13,8 @@ const {
 	get_dummy_lib,
 	reset_test_data,
 	integration_test_setup,
-	integration_test_query
+	integration_test_query,
+	integration_test_jwt
 } = require('@aluminumoxide/direct-democracy-lib-server').testing
 
 // errors
@@ -32,6 +33,10 @@ const sign_in_init_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/signin/init')(request, reply, db, log, lib)
 }
 
+const sign_in_finish_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/signin/finish')(request, reply, db, log, lib)
+}
+
 const sign_in_verify_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/signin/verify')(request, reply, db, log, lib)
 }
@@ -40,9 +45,6 @@ const sign_out_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/signout/signout')(request, reply, db, log, lib)
 }
 
-const verify_unit = async(request, reply, db, log, lib) => {
-	return await require('../handlers/verify/verify')(request, reply, db, log, lib)
-}
 
 // integration tests
 const fill_bucket_integration = async(bucket, tokens) => {
@@ -57,16 +59,16 @@ const sign_in_init_integration = async(profile_id, key) => {
 	return await api_profile_client.sign_in_init({ profile_id, key })
 }
 
-const sign_in_verify_integration = async(profile_id, key) => {
-	return await api_profile_client.sign_in_verify({ profile_id, key })
+const sign_in_finish_integration = async(profile_id, key) => {
+	return await api_profile_client.sign_in_finish({ profile_id, key })
 }
 
-const sign_out_integration = async(jwt) => {
-	return await api_profile_client.sign_out({ jwt })
+const sign_in_verify_integration = async(profile_id, auth_token, auth_expiry) => {
+	return await api_profile_client.sign_in_verify({ jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry })})
 }
 
-const verify_integration = async(profile_id, auth_token, auth_expiry) => {
-	return await api_profile_client.verify({ jwt: { profile_id, auth_token, auth_expiry }})
+const sign_out_integration = async(profile_id, auth_token, auth_expiry) => {
+	return await api_profile_client.sign_out({ jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry })})
 }
 
 
@@ -90,18 +92,19 @@ module.exports = {
 	get_dummy_api,
 	get_dummy_lib,
 	reset_test_data,
+	integration_test_jwt,
 	integration_test_setup,
 	integration_test_query,
 	fill_bucket_unit,
 	sign_out_unit,
 	sign_up_unit,
 	sign_in_init_unit,
+	sign_in_finish_unit,
 	sign_in_verify_unit,
-	verify_unit,
 	fill_bucket_integration,
 	sign_out_integration,
 	sign_up_integration,
 	sign_in_init_integration,
-	sign_in_verify_integration,
-	verify_integration
+	sign_in_finish_integration,
+	sign_in_verify_integration
 }

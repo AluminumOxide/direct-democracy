@@ -6,7 +6,12 @@ const sign_out = async function(request, reply, db, log, lib) {
 
 	try {
 		// TODO: verify jwt
-		const { profile_id, auth_token, auth_expiry } = jwt
+		const jwt_verified = await lib.jwt.verify(jwt)
+		if(!jwt_verified) {
+			log.warn(`Profile/Signout: Failure: Error: Invalid JWT`)
+			return reply.code(401).send(new Error(token_dne))
+		}
+		const { profile_id, auth_token, auth_expiry } = jwt_verified
 
 		// lookup profile
 		const check_query = await db('profile').where({
