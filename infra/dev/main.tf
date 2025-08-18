@@ -90,7 +90,7 @@ resource "docker_container" "api-external" {
 		"API_EXTERNAL_NAME=api-external",
 		"API_EXTERNAL_URL=0.0.0.0",
 		"API_EXTERNAL_PORT=3000",
-		"NODE_EXTRA_CA_CERTS=./ssl.pem",
+		"NODE_EXTRA_CA_CERTS=./certs/ssl.pem",
 		"TEST_CONNECTION_STRING=postgres://postgres:postgres@0.0.0.0:5432/postgres",
 	]
 	volumes {
@@ -125,7 +125,7 @@ resource "docker_container" "api-democracy" {
 		"DB_DEMOCRACY_USER=democracy",
 		"DB_DEMOCRACY_DB=democracy",
 		"DB_DEMOCRACY_PASSWORD=democracy",
-		"NODE_EXTRA_CA_CERTS=./ssl.pem",
+		"NODE_EXTRA_CA_CERTS=./certs/ssl.pem",
 		"TEST_CONNECTION_STRING=postgres://postgres:postgres@0.0.0.0:5432/postgres",
 	]
 	volumes {
@@ -160,7 +160,7 @@ resource "docker_container" "api-proposal" {
 		"DB_PROPOSAL_USER=proposal",
 		"DB_PROPOSAL_DB=proposal",
 		"DB_PROPOSAL_PASSWORD=proposal",
-		"NODE_EXTRA_CA_CERTS=./ssl.pem",
+		"NODE_EXTRA_CA_CERTS=./certs/ssl.pem",
 		"TEST_CONNECTION_STRING=postgres://postgres:postgres@0.0.0.0:5432/postgres",
 	]
 	volumes {
@@ -195,7 +195,7 @@ resource "docker_container" "api-membership" {
 		"DB_MEMBERSHIP_USER=membership",
 		"DB_MEMBERSHIP_DB=membership",
 		"DB_MEMBERSHIP_PASSWORD=membership",
-		"NODE_EXTRA_CA_CERTS=./ssl.pem",
+		"NODE_EXTRA_CA_CERTS=./certs/ssl.pem",
 		"TEST_CONNECTION_STRING=postgres://postgres:postgres@0.0.0.0:5432/postgres",
 	]
 	volumes {
@@ -230,7 +230,7 @@ resource "docker_container" "api-account" {
 		"DB_ACCOUNT_USER=account",
 		"DB_ACCOUNT_DB=account",
 		"DB_ACCOUNT_PASSWORD=account",
-		"NODE_EXTRA_CA_CERTS=./ssl.pem",
+		"NODE_EXTRA_CA_CERTS=./certs/ssl.pem",
 		"TEST_CONNECTION_STRING=postgres://postgres:postgres@0.0.0.0:5432/postgres",
 	]
 	volumes {
@@ -265,7 +265,7 @@ resource "docker_container" "api-profile" {
 		"DB_PROFILE_USER=profile",
 		"DB_PROFILE_DB=profile",
 		"DB_PROFILE_PASSWORD=profile",
-		"NODE_EXTRA_CA_CERTS=./ssl.pem",
+		"NODE_EXTRA_CA_CERTS=./certs/ssl.pem",
 		"TEST_CONNECTION_STRING=postgres://postgres:postgres@0.0.0.0:5432/postgres",
 	]
 	volumes {
@@ -300,7 +300,7 @@ resource "docker_container" "api-token" {
 		"API_TOKEN_NAME=api-token",
 		"API_TOKEN_URL=0.0.0.0",
 		"API_TOKEN_PORT=3006",
-		"NODE_EXTRA_CA_CERTS=./ssl.pem",
+		"NODE_EXTRA_CA_CERTS=./certs/ssl.pem",
 		"TEST_CONNECTION_STRING=postgres://postgres:postgres@0.0.0.0:5432/postgres",
 	]
 	volumes {

@@ -49,15 +49,17 @@ const sign_in_three = async function({ profile_id, answer }) {
 	return await profile_client.client_sign_in({ profile_id, answer })
 }
 
+/* Sign In Verify */
+const verify_jwt = async function({ jwt }) {
+	return await profile_client.sign_in_verify({ jwt })
+}
+
 /* Sign Out */
 const sign_out = async function({ jwt }) {
 	return await profile_client.sign_out({ jwt })
 }
 
-/* Verify */
-const verify_jwt = async function({ jwt }) {
-	return await profile_client.verify({ jwt })
-}
+
 
 module.exports = {
 	...server,

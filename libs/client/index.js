@@ -28,6 +28,20 @@ class ApiClient {
 			strictTuples: true,
 			strictRequired: true
 		})
+		this.schema.routes['/jwt/verify'] = {
+			'GET': {
+				description: 'Verify JWT issued by this service',
+				operationId: 'jwt_verify',
+				headers: {
+					'jwt': { 'type': 'string' }
+				},
+				responses: {
+					'200': { 'type': 'object' },
+					'401': { '$ref': 'responses-401' },
+					'500': { '$ref': 'responses-500' }
+				}
+			}
+		}
 	}
 
 	load (env) {

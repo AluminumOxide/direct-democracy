@@ -1,5 +1,6 @@
 const sinon = require('sinon')
 const uuid = require('uuid')
+const auth = require('@aluminumoxide/direct-democracy-lib-auth')
 
 const get_dummy_reply = function() {
 	return {
@@ -131,6 +132,16 @@ const integration_test_query = async function(srv, sql) {
 	}
 }
 
+const integration_test_jwt = async function(data, service) {
+	let keys
+	if(!!service) {
+		keys = await auth.jwt_read_keys(`./certs/api-${service}.jwt.public.der`,`./certs/api-${service}.jwt.private.der`) 
+	} else {
+		keys = await auth.jwt_read_keys(`./certs/jwt.public.der`,`./certs/jwt.private.der`)
+	}
+	return await auth.jwt_sign(keys.private, data)
+}
+
 // utils
 const get_uuid = function() {
 	return uuid.v4()
@@ -148,4 +159,4 @@ const get_first_timestamp = function() {
 	return '1970-01-01T00:00:00.000Z'
 }
 
-module.exports = { get_uuid, get_first_uuid, get_timestamp, get_first_timestamp, get_dummy_reply, get_dummy_log, get_dummy_lib, get_dummy_db, integration_test_setup, integration_test_query, sinon }
+module.exports = { get_uuid, get_first_uuid, get_timestamp, get_first_timestamp, get_dummy_reply, get_dummy_log, get_dummy_lib, get_dummy_db, integration_test_setup, integration_test_query, integration_test_jwt, sinon }

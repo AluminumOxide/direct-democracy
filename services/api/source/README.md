@@ -1,6 +1,18 @@
 # API Documentation
 
 ## Routes
+### GET /v1/jwt/verify
+
+*Verify JWT issued by this service*
+
+**Responses**
+
+- [200]
+Type: object
+
+- [401](#responses-401)
+- [500](#responses-500)
+
 ### GET /v1/democracy
 
 *List democracies*
@@ -125,17 +137,12 @@ Type: object
 
 Required:
 
-- profile_id
 - proposal_name
 - proposal_description
 - proposal_target
 - proposal_changes
 
 Properties:
-
-- **profile_id**
-
-	 - [schemas-profile_id](#schemas-profile_id)
 
 - **proposal_name**
 

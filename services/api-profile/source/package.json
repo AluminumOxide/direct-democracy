@@ -4,7 +4,7 @@
 	"description": "Profile API server",
 	"main": "index.js",
 	"dependencies": {
-		"@aluminumoxide/direct-democracy-lib-server": "^1.0.26"
+		"@aluminumoxide/direct-democracy-lib-server": "^1.0.29"
 	},
 	"scripts": {
 		"start": "node index.js",

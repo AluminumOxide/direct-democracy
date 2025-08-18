@@ -1,3 +1,4 @@
+const fs = require('node:fs')
 const { Buffer } = require('node:buffer')
 const { subtle, createCipheriv, createDecipheriv, createECDH, createHash, getRandomValues, randomBytes, randomFillSync, scryptSync } = require('node:crypto')
 
@@ -95,7 +96,7 @@ const jwt_sig = 'RSASSA-PKCS1-v1_5'
 const jwt_len = 2048
 const jwt_hash = hash_algo
 
-const jwt_keys = async function() {
+const jwt_new_keys = async function() {
 	const keys = await subtle.generateKey({
 		name: jwt_sig,
 		modulusLength: jwt_len,
@@ -103,6 +104,14 @@ const jwt_keys = async function() {
 		hash: jwt_hash
 	}, true, ['sign', 'verify'])
 	return { public: keys.publicKey, private: keys.privateKey }
+}
+
+const jwt_read_keys = async function(pblc_file, prvt_file) {
+	const sig = { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-512' }
+	return {
+		public: await subtle.importKey('spki', fs.readFileSync(pblc_file), sig, true, ['verify']),
+		private: await subtle.importKey('pkcs8', fs.readFileSync(prvt_file), sig, true, ['sign'])
+	}
 }
 
 const jwt_sign = async function(key, data) {
@@ -212,7 +221,8 @@ module.exports = {
 	hash_chain,
 	token_random,
 	conceal_token,
-	jwt_keys,
+	jwt_new_keys,
+	jwt_read_keys,
 	jwt_sign,
 	jwt_verify,
 	pke_generate_keys,
