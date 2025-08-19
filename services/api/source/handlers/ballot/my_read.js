@@ -1,6 +1,6 @@
 const { invalid_auth, internal_error } = require('../../errors.json')
 
-const ballot_read = async function(request, reply, db, log, lib) {
+const ballot_my_read = async function(request, reply, db, log, lib) {
 
 	const { ballot_id, jwt } = request
 	const { api_profile, api_proposal, api_membership } = lib
@@ -75,4 +75,4 @@ const ballot_read = async function(request, reply, db, log, lib) {
 	}
 }
 
-module.exports = ballot_read
+module.exports = ballot_my_read

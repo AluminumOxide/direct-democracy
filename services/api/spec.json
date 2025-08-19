@@ -1351,7 +1351,7 @@
 		"/democracy/:democracy_id/proposal": {
 			"GET": {
 				"description": "List proposals",
-				"operationId": "proposal_list_public",
+				"operationId": "proposal_list",
 				"param": {
 					"democracy_id": { "$ref": "params-democracy_id" }
 				},
@@ -1431,7 +1431,7 @@
 		"/democracy/:democracy_id/proposal/:proposal_id": {
 			"GET": {
 				"description": "Read a proposal",
-				"operationId": "proposal_read_public",
+				"operationId": "proposal_read",
 				"param": {
 					"democracy_id": { "$ref": "params-democracy_id" },
 					"proposal_id": { "$ref": "params-proposal_id" }
@@ -1455,7 +1455,7 @@
 		"/democracy/:democracy_id/proposal/:proposal_id/ballot": {
 			"GET": {
 				"description": "List proposal ballots",
-				"operationId": "ballot_list_public",
+				"operationId": "ballot_list",
 				"param": {
 					"democracy_id": { "$ref": "params-democracy_id" },
 					"proposal_id": { "$ref": "params-proposal_id" }
@@ -1479,7 +1479,7 @@
 		"/my/proposal": {
 			"GET": {
 				"description": "List proposals",
-				"operationId": "proposal_list",
+				"operationId": "proposal_my_list",
 				"headers": {
 					"jwt": { "$ref": "headers-jwt" }
 				},
@@ -1512,7 +1512,7 @@
 		"/my/proposal/:proposal_id": {
 			"GET": {
 				"description": "Read a proposal",
-				"operationId": "proposal_read",
+				"operationId": "proposal_my_read",
 				"headers": {
 					"jwt": { "$ref": "headers-jwt" }
 				},
@@ -1589,7 +1589,7 @@
 		"/my/ballot": {
 			"GET": {
 				"description": "List my ballots",
-				"operationId": "ballot_list",
+				"operationId": "ballot_my_list",
 				"headers": {
 					"jwt": { "$ref": "headers-jwt" }
 				},
@@ -1612,7 +1612,7 @@
 		"/my/ballot/:ballot_id": {
 			"GET": {
 				"description": "Get my ballot",
-				"operationId": "ballot_read",
+				"operationId": "ballot_my_read",
 				"headers": {
 					"jwt": { "$ref": "headers-jwt" }
 				},

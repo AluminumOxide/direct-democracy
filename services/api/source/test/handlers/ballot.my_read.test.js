@@ -5,8 +5,8 @@ const {
 	get_dummy_reply,
 	get_dummy_lib,
 	integration_test_setup,
-	ballot_read_unit: blt_read_u,
-	ballot_read_integration: blt_read_i
+	ballot_my_read_unit: blt_read_u,
+	ballot_my_read_integration: blt_read_i
 } = require('../helper')
 
 describe('Ballot Read', () => {

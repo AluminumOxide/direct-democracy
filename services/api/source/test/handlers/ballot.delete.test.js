@@ -6,7 +6,7 @@ const {
 	get_dummy_lib,
 	integration_test_setup,
 	ballot_delete_unit: blt_delete_u,
-	ballot_read_integration: blt_read_i,
+	ballot_my_read_integration: blt_read_i,
 	ballot_delete_integration: blt_delete_i
 } = require('../helper')
 
