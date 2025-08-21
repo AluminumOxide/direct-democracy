@@ -9,15 +9,15 @@ const {
 	proposal_list_integration: prop_list_i
 } = require('../helper')
 
-describe('Proposal List', () => {
+describe('Proposal List Public', () => {
 
 	describe('Integration Tests', () => {
 
 		const test_data = integration_test_setup()
 
 		test('Success', async() => {
-			const props = await prop_list_i({})
-			expect(props.length === test_data['proposal'].length)
+			const props = await prop_list_i(test_data.democracy.root.id)
+			expect(props.length).toBe(2)
 		})
 	})
 

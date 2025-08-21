@@ -1,23 +1,25 @@
-const auth = require('../../helpers/auth')
 
 const proposal_list = async function(request, reply, db, log, lib) {
 
- 	let { limit, last, sort, order, filter={} } = request
+ 	let { limit, last, sort, order, filter, democracy_id } = request
 	const { api_proposal } = lib
 
-	try {
-		// get democracy_ids and add to filter
-		const profile_id = await auth.get_profile_id(request, log)
-		const membership_ids = await auth.get_membership_ids(profile_id)
-		const democracy_ids = membership_ids.map((x) => x.democracy_id)
-		filter['democracy_id'] = { op: 'IN', val: democracy_ids }
+	// construct filter
+	if(!filter) {
+		filter = {}
+	}
+	filter["democracy_id"] = { "op": "=", "val": democracy_id }
 
+	// ignore any profile_id searches
+	delete filter['profile_id']
+
+	try {
 		// fetch from proposal service
-		const prop = await api_proposal.proposal_list({ limit, last, sort, order, filter })
+		const props = await api_proposal.proposal_list({ limit, last, sort, order, filter })
 
 		// return results
-		log.info(`Proposal/List: Success`)
-		return reply.code(200).send(prop)
+		log.info(`Proposal/List: Success: ${democracy_id}`)
+		return reply.code(200).send(props)
 
 	} catch(e) {
 

@@ -2,3 +2,7 @@
 node_modules
 .testdata.json
 coverage/
+*.pem
+*.crt
+*.key
+*.der

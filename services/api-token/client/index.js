@@ -23,15 +23,18 @@ const clean_token = async function(token) {
 	// step 4
 	await auth.pake_client_verify_proof(pake_pub, pake_sesh, proof_srv)
 	const signed_token = await auth.decrypt(encrypted_token, shared_secret)
-	// TODO: should we verify on the client that the token is unmodified?
-	//const cleaned_token = await auth.jwt_verify(key, signed_token)
-	const cleaned_token = signed_token
+	const cleaned_token = await client.jwt_verify({ jwt: signed_token })
+	return cleaned_token.token
+}
 
-	return cleaned_token
+const verify_token = async function(token) {
+	const verified_token = await client.jwt_verify({ jwt: token })
+	return verified_token.token
 }
 
 module.exports = { 
 	clean_token,
+	verify_token,
 	fill_buckets: client.fill_buckets,
 	step_one: client.step_one,
 	step_two: client.step_two,

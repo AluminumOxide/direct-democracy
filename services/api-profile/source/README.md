@@ -1,7 +1,19 @@
 # API Documentation
 
 ## Routes
-### POST /v1/signin
+### GET /v1/jwt/verify
+
+*Verify JWT issued by this service*
+
+**Responses**
+
+- [200]
+Type: object
+
+- [401](#responses-401)
+- [500](#responses-500)
+
+### POST /v1/sign/in
 
 *Initiate sign in*
 
@@ -15,27 +27,33 @@
 - [401](#responses-401)
 - [500](#responses-500)
 
-### POST /v1/signin/verify
+### POST /v1/sign/in/finish
 
-*Verify sign in*
+*Finish sign in*
 
 **Bodies**
 
- - [bodies-sign_in_verify](#bodies-sign_in_verify)
+ - [bodies-sign_in_finish](#bodies-sign_in_finish)
+
+**Responses**
+
+- [200](#responses-sign_in_finish)
+- [401](#responses-401)
+- [500](#responses-500)
+
+### POST /v1/sign/in/verify
+
+*Verify sign in*
 
 **Responses**
 
 - [200](#responses-sign_in_verify)
-- [401](#responses-401)
+- [400](#responses-400)
 - [500](#responses-500)
 
-### POST /v1/signout
+### POST /v1/sign/out
 
 *Sign out*
-
-**Bodies**
-
- - [bodies-sign_out](#bodies-sign_out)
 
 **Responses**
 
@@ -43,7 +61,7 @@
 - [401](#responses-401)
 - [500](#responses-500)
 
-### POST /v1/signup
+### POST /v1/sign/up
 
 *Sign up*
 
@@ -54,20 +72,6 @@
 **Responses**
 
 - [200](#responses-sign_up)
-- [400](#responses-400)
-- [500](#responses-500)
-
-### POST /v1/verify
-
-*Verify auth*
-
-**Bodies**
-
- - [bodies-verify](#bodies-verify)
-
-**Responses**
-
-- [200](#responses-200)
 - [400](#responses-400)
 - [500](#responses-500)
 
@@ -88,6 +92,9 @@
 
 ## Headers
 
+#### headers-jwt
+
+Type: string
 ## Params
 
 ## Queries
@@ -97,6 +104,9 @@
 #### bodies-sign_in_init
 
 Type: [schemas-sign_in_init](#schemas-sign_in_init)
+#### bodies-sign_in_finish
+
+Type: [schemas-sign_in_finish](#schemas-sign_in_finish)
 #### bodies-sign_in_verify
 
 Type: [schemas-sign_in_verify](#schemas-sign_in_verify)
@@ -106,9 +116,6 @@ Type: [schemas-sign_up](#schemas-sign_up)
 #### bodies-sign_out
 
 Type: [schemas-sign_out](#schemas-sign_out)
-#### bodies-verify
-
-Type: [schemas-verify](#schemas-verify)
 #### bodies-fill_bucket
 
 Type: object
@@ -199,7 +206,7 @@ Properties:
 
 	Type: string
 
-#### responses-sign_in_verify
+#### responses-sign_in_finish
 
 
 *Successfully completed sign in*
@@ -218,6 +225,22 @@ Properties:
 - **jwt**
 
 	Type: [schemas-jwt](#schemas-jwt)
+
+#### responses-sign_in_verify
+
+
+*Sign in verified*
+
+
+Type: object
+
+Additional Properties: false
+
+Properties:
+
+- **profile_id**
+
+	Type: string
 
 ## Data
 
@@ -240,7 +263,7 @@ Properties:
 
 	Type: string
 
-#### schemas-sign_in_verify
+#### schemas-sign_in_finish
 
 Type: object
 
@@ -282,24 +305,7 @@ Properties:
 
 #### schemas-jwt
 
-Type: object
-
-Additional Properties: false
-
-Properties:
-
-- **profile_id**
-
-	Type: string
-
-- **auth_token**
-
-	Type: string
-
-- **auth_expiry**
-
-	Type: string
-
+Type: string
 #### schemas-sign_out
 
 Type: object
@@ -312,7 +318,7 @@ Properties:
 
 	Type: [schemas-jwt](#schemas-jwt)
 
-#### schemas-verify
+#### schemas-sign_in_verify
 
 Type: object
 

@@ -1,6 +1,18 @@
 # API Documentation
 
 ## Routes
+### GET /v1/jwt/verify
+
+*Verify JWT issued by this service*
+
+**Responses**
+
+- [200]
+Type: object
+
+- [401](#responses-401)
+- [500](#responses-500)
+
 ### GET /v1/membership
 
 *List memberships*

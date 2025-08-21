@@ -15,6 +15,7 @@ You should have installed:
 ## Initialize
 If it's your first time running this:
 ```
+sudo ./init_build.sh
 terraform init
 ```
 

@@ -33,7 +33,7 @@ const client_sign_in = async function({ profile_id, answer }) {
 	const client_sesh = auth.pake_client_derive_proof(salt, profile_id, answer, private_key, key)
 
 	// send proof to server
-	const { proof, jwt } = await server.sign_in_verify({ profile_id, key: client_sesh.proof })
+	const { proof, jwt } = await server.sign_in_finish({ profile_id, key: client_sesh.proof })
 
 	// verify server proof
 	auth.pake_client_verify_proof(public_key, client_sesh, proof)

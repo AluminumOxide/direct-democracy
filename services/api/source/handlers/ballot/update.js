@@ -1,24 +1,49 @@
-const auth = require('../../helpers/auth')
-const { invalid_auth } = require('../../errors.json')
+const { invalid_auth, internal_error } = require('../../errors.json')
 
 const ballot_update = async function(request, reply, db, log, lib) {
 
-	const { ballot_id, ballot_approved, ballot_comments } = request
-	const { api_proposal } = lib
+	const { ballot_id, ballot_approved, ballot_comments, jwt } = request
+	const { api_profile, api_proposal, api_membership } = lib
 
 	try {
+		// validate jwt
+		const { profile_id } = await api_profile.sign_in_verify({ jwt })
+		if(!profile_id) {
+			// shouldn't happen
+			log.error(`Ballot/Update: Failure: ${jwt} Error: JWT verify`)
+			return reply.code(401).send(new Error(invalid_auth))
+		}
+
 		// get ballot
 		const ballot = await api_proposal.ballot_read({ ballot_id })
 
-		// get membership ids
-		const profile_id = await auth.get_profile_id(request, log)
-		const memberships = await auth.get_membership_ids(profile_id)
-		const membership_ids = memberships.map((x) => x.membership_id)
+		// get proposal
+		const proposal = await api_proposal.proposal_read({
+			proposal_id: ballot.proposal_id
+		})
+
+		// get membership
+		const membership = await api_membership.membership_list({
+			filter:{
+				democracy_id: { op: '=', val: proposal.democracy_id },
+				profile_id: { op: '=', val: profile_id }
+			}
+		})
 		
-		// check membership id
-		if(membership_ids.indexOf(ballot.membership_id) < 0) {
+		// check membership
+		if(membership.length === 0) {
 			log.warn(`Ballot/Update: Failure: Error: Invalid Auth`)
 			return reply.code(401).send(new Error(invalid_auth))
+		}
+		if(membership.length > 1) {
+			// shouldn't happen
+			log.error(`Ballot/Update: Failure: Error: Duplicate Membership`)
+			return reply.code(500).send(new Error(internal_error))
+		}
+		if(membership[0].membership_id !== ballot.membership_id) {
+			// shouldn't happen
+			log.error(`Ballot/Update: Failure: Error: Invalid Membership`)
+			return reply.code(500).send(new Error(internal_error))
 		}
 
 		// update ballot
@@ -35,6 +60,12 @@ const ballot_update = async function(request, reply, db, log, lib) {
 		return reply.code(200).send(new_ballot)
 
 	} catch(e) {
+
+		// handle invalid jwt
+		if(e.message === api_profile.errors.invalid_auth) {
+			log.warn(`Ballot/Update: Failure: ${jwt} Error: Invalid token`)
+			return reply.code(401).send(new Error(invalid_auth))
+		}
 
 		// handle invalid ballot_id
 		if(e.message === api_proposal.errors.ballot_dne) {

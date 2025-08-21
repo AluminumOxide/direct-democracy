@@ -1,7 +1,7 @@
 {    
 	"servers": {	
-		"local": "http://0.0.0.0:3000/v1",
-		"dev": "http://0.0.0.0:3000/v1"	
+		"local": "https://0.0.0.0:3000/v1",
+		"dev": "https://0.0.0.0:3000/v1"	
 	},
 	"schemas": {
 		"op": {
@@ -618,6 +618,17 @@
 					"$ref": "schemas-date_updated"
 				}
 			}
+		},
+		"jwt": {
+			"$id": "schemas-jwt",
+			"description": "jwt",
+			"type": "string"
+		}
+	},
+	"headers": {
+		"jwt": {
+			"$id": "headers-jwt",
+			"type": "string"
 		}
 	},
 	"params": {
@@ -1312,6 +1323,9 @@
 			"POST": {
 				"description": "Create a membership",
 				"operationId": "membership_create",
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
+				},
 				"param": {
 					"democracy_id": { "$ref": "params-democracy_id" }
 				},
@@ -1337,7 +1351,7 @@
 		"/democracy/:democracy_id/proposal": {
 			"GET": {
 				"description": "List proposals",
-				"operationId": "proposal_list_public",
+				"operationId": "proposal_list",
 				"param": {
 					"democracy_id": { "$ref": "params-democracy_id" }
 				},
@@ -1369,22 +1383,21 @@
 			"POST": {
 				"description": "Create a proposal",
 				"operationId": "proposal_create",
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
+				},
 				"param": {
 					"democracy_id": { "$ref": "params-democracy_id" }
 				},
 				"body": {
 					"type": "object",
 					"required": [
-						"profile_id",
 						"proposal_name",
 						"proposal_description",
 						"proposal_target",
 						"proposal_changes"
 					],
 					"properties": {
-						"profile_id": {
-							"$ref": "schemas-profile_id"
-						},
 						"proposal_name": {
 							"$ref": "schemas-proposal_name"
 						},
@@ -1418,7 +1431,7 @@
 		"/democracy/:democracy_id/proposal/:proposal_id": {
 			"GET": {
 				"description": "Read a proposal",
-				"operationId": "proposal_read_public",
+				"operationId": "proposal_read",
 				"param": {
 					"democracy_id": { "$ref": "params-democracy_id" },
 					"proposal_id": { "$ref": "params-proposal_id" }
@@ -1442,7 +1455,7 @@
 		"/democracy/:democracy_id/proposal/:proposal_id/ballot": {
 			"GET": {
 				"description": "List proposal ballots",
-				"operationId": "ballot_list_public",
+				"operationId": "ballot_list",
 				"param": {
 					"democracy_id": { "$ref": "params-democracy_id" },
 					"proposal_id": { "$ref": "params-proposal_id" }
@@ -1466,7 +1479,10 @@
 		"/my/proposal": {
 			"GET": {
 				"description": "List proposals",
-				"operationId": "proposal_list",
+				"operationId": "proposal_my_list",
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
+				},
 				"query": {
 					"type": "object",
 					"properties": {
@@ -1474,8 +1490,7 @@
 						"last": { "$ref": "queries-last" },
 						"order": { "$ref": "queries-order" },
 						"sort": { "$ref": "queries-proposal_sort" },
-						"filter": { "$ref": "queries-proposal_filter" },
-						"profile_id": { "$ref": "schemas-profile_id" }
+						"filter": { "$ref": "queries-proposal_filter" }
 					}
 				},
 				"response": {
@@ -1497,15 +1512,12 @@
 		"/my/proposal/:proposal_id": {
 			"GET": {
 				"description": "Read a proposal",
-				"operationId": "proposal_read",
+				"operationId": "proposal_my_read",
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
+				},
 				"param": {
 					"proposal_id": { "$ref": "params-proposal_id" }
-				},
-				"query": {
-					"type": "object",
-					"properties": {
-						"profile_id": { "$ref": "schemas-profile_id" }
-					}
 				},
 				"response": {
 					"200": {
@@ -1525,14 +1537,11 @@
 			"DELETE": {
 				"description": "Delete a proposal",
 				"operationId": "proposal_delete",
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
+				},
 				"param": {
 					"proposal_id": { "$ref": "params-proposal_id" }
-				},
-				"query": {
-					"type": "object",
-					"properties": {
-						"profile_id": { "$ref": "schemas-profile_id" }
-					}
 				},
 				"response": {
 					"204": {
@@ -1552,14 +1561,11 @@
 			"POST": {
 				"description": "Cast my ballot",
 				"operationId": "ballot_create",
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
+				},
 				"param": {
 					"proposal_id": { "$ref": "params-proposal_id" }
-				},
-				"query": {
-					"type": "object",
-					"properties": {
-						"profile_id": { "$ref": "schemas-profile_id" }
-					}
 				},
 				"body": {
 					"$ref": "bodies-ballot_create"
@@ -1583,12 +1589,9 @@
 		"/my/ballot": {
 			"GET": {
 				"description": "List my ballots",
-				"operationId": "ballot_list",
-				"query": {
-					"type": "object",
-					"properties": {
-						"profile_id": { "$ref": "schemas-profile_id" }
-					}
+				"operationId": "ballot_my_list",
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
 				},
 				"response": {
 					"200": {
@@ -1609,15 +1612,12 @@
 		"/my/ballot/:ballot_id": {
 			"GET": {
 				"description": "Get my ballot",
-				"operationId": "ballot_read",
+				"operationId": "ballot_my_read",
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
+				},
 				"param": {
 					"ballot_id": { "$ref": "params-ballot_id" }
-				},
-				"query": {
-					"type": "object",
-					"properties": {
-						"profile_id": { "$ref": "schemas-profile_id" }
-					}
 				},
 				"response": {
 					"200": {
@@ -1638,14 +1638,11 @@
 			"PATCH": {
 				"description": "Edit my ballot",
 				"operationId": "ballot_update",
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
+				},
 				"param": {
 					"ballot_id": { "$ref": "params-ballot_id" }
-				},
-				"query": {
-					"type": "object",
-					"properties": {
-						"profile_id": { "$ref": "schemas-profile_id" }
-					}
 				},
 				"body": {
 					"$ref": "bodies-ballot_update"
@@ -1668,14 +1665,11 @@
 			"DELETE": {
 				"description": "Delete my ballot",
 				"operationId": "ballot_delete",
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
+				},
 				"param": {
 					"ballot_id": { "$ref": "params-ballot_id" }
-				},
-				"query": {
-					"type": "object",
-					"properties": {
-						"profile_id": { "$ref": "schemas-profile_id" }
-					}
 				},
 				"response": {
 					"204": {
@@ -1697,6 +1691,9 @@
 			"GET": {
 				"description": "List memberships",
 				"operationId": "membership_list",
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
+				},
 				"query": {
 					"type": "object",
 					"properties": {
@@ -1704,8 +1701,7 @@
 				      		"last":   {"$ref": "queries-last"},
 				      		"order":  {"$ref": "queries-order"},
 				      		"sort":   {"$ref": "queries-membership_sort"},
-				      		"filter": {"$ref": "queries-membership_filter"},
-						"profile_id": { "$ref": "schemas-profile_id" }
+				      		"filter": {"$ref": "queries-membership_filter"}
 					}
 				},
 				"responses": {
@@ -1728,14 +1724,11 @@
 			"GET": {
 				"description": "Get a membership",
 				"operationId": "membership_read",
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
+				},
 				"param": {
 					"membership_id": { "$ref": "params-membership_id" }
-				},
-				"query": {
-					"type": "object",
-					"properties": {
-						"profile_id": { "$ref": "schemas-profile_id" }
-					}
 				},
 				"responses": {
 					"200": {
@@ -1755,14 +1748,11 @@
 			"DELETE": {
 				"description": "Delete a membership",
 				"operationId": "membership_delete",
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
+				},
 				"param": {
 					"membership_id": { "$ref": "params-membership_id" }
-				},
-				"query": {
-					"type": "object",
-					"properties": {
-						"profile_id": { "$ref": "schemas-profile_id" }
-					}
 				},
 				"responses": {
 					"204": {

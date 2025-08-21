@@ -1,5 +1,6 @@
 const { get_uuid,
 	get_random_token,
+	integration_test_jwt,
 	integration_test_setup } = require('./helper')
 const c = require('@aluminumoxide/direct-democracy-profile-api-client')
 
@@ -28,11 +29,11 @@ describe('End-to-End Tests', () => {
 		/* sign in */	
 
 		const { jwt } = await c.client_sign_in({ profile_id, answer })	
-		expect(jwt.profile_id).toBe(profile_id)
+		expect(jwt).toBeDefined()
 
-		/* verify jwt */
+		/* verify sign in */
 
-		await expect(c.verify({ jwt })).resolves
+		await expect(c.sign_in_verify({ jwt })).resolves
 
 		/* sign out */
 
@@ -40,6 +41,6 @@ describe('End-to-End Tests', () => {
 
 		/* should no longer verify */
 
-		await expect(c.verify({ jwt })).rejects.toThrow(c.errors.token_dne)
+		await expect(c.sign_in_verify({ jwt })).rejects.toThrow(c.errors.invalid_auth)
 	})
 })

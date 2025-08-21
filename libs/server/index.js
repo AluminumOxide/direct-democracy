@@ -4,12 +4,31 @@ const { add_defn, add_routes } = require('./spec')
 const { spawn } = require('child_process')
 const testing = require('./test')
 const { AutoDoc } = require('./docs')
+const fs = require('node:fs')
+const auth = require('@aluminumoxide/direct-democracy-lib-auth')
 
 const start = async function({ env, address, port, spec, version, handlers, db_user, db_password, db_name, db_port, db_address }) {
 
 	try {
-		// set up fastify
-		const fastify = require('fastify')({ logger: true, querystringParser: queryParser })
+		// set up fastify https
+		const fastify = require('fastify')({
+			logger: true,
+			http2: true,
+			https: {
+				allowHTTP1: true,
+				key: fs.readFileSync('./certs/ssl.key'),
+				cert: fs.readFileSync('./certs/ssl.crt')
+			},
+
+			querystringParser: queryParser
+		})
+
+		// set up jwts
+		fastify.jwt = {
+			keys: await auth.jwt_read_keys('./certs/jwt.public.der', './certs/jwt.private.der'),
+			sign: async function(data) { return await auth.jwt_sign(fastify.jwt.keys.private, data) },
+			verify: async function(data) { return await auth.jwt_verify(fastify.jwt.keys.public, data) }
+		}
 
 		// connect to db
 		await fastify.register(require('./fastify-knexjs'), {

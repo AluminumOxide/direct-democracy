@@ -5,6 +5,7 @@ const { errors,
 	get_dummy_db,
 	get_uuid,
 	integration_test_setup,
+	integration_test_jwt,
 	fill_bucket_integration: fill_bucket,
 	sign_up_unit: sign_up_u,
 	sign_up_integration: sign_up_i
@@ -17,8 +18,8 @@ describe('Sign Up', () => {
 		const test_data = integration_test_setup()
 
 		test('Success', async() => {
-			const p_token = 'profiletokennnnnnnnn'
-			const s_token = 'signuptokennnnnnnnnn'
+			const p_token = await integration_test_jwt({jwt:'profiletokennnnnnnnn'}, 'token')
+			const s_token = await integration_test_jwt({jwt:'signuptokennnnnnnnnn'}, 'token')
 			await fill_bucket('profile',[p_token])
 			await fill_bucket('signup',[s_token])
 			const { token } = await sign_up_i(

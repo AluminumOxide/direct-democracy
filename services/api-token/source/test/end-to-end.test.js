@@ -1,6 +1,7 @@
 const { errors,
 	integration_test_setup,
 	integration_test_query,
+	verify_token_integration: verify_token,
 	fill_buckets_integration: fill_i,
 	clean_token_integration: clean_token_i } = require('./helper')
 
@@ -25,7 +26,7 @@ describe('End-to-End Tests', () => {
 		const clean_token = await clean_token_i(dirty_token)
 
 		// make sure we got back a clean token
-		expect(clean_tokens.indexOf(clean_token) > -1)
+		expect(clean_tokens.indexOf(clean_token)).toBeGreaterThan(-1)
 
 	}, 50000)
 })

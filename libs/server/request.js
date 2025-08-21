@@ -1,7 +1,7 @@
 const querystring = require('querystring')
 
 const reqData = function(request) {
-	const data = { ...request.params, ...request.body, ...request.query }
+	const data = { ...request.params, ...request.body, ...request.query, ...request.headers }
 	return data
 }
 
