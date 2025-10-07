@@ -2,7 +2,7 @@ terraform {
 	required_providers {
 		docker = {
 			source = "kreuzwerker/docker"
-			version = "~> 2.13.0"
+			version = "3.6.2"
 		}
 	}
 }
@@ -69,6 +69,38 @@ resource "docker_container" "local-database" {
 	ports {
 		internal = 5432
 		external = 5432
+	}
+}
+
+resource "docker_image" "ui" {
+	depends_on = [ time_sleep.wait_5_seconds ]
+	name = "ui:latest"
+	keep_locally = false
+}
+
+resource "docker_container" "ui" {
+	depends_on = [ time_sleep.wait_5_seconds ]
+	image = "ui:latest"
+	name = "ui"
+	env = [
+		"ENV=local",
+		"DB_PORT=5432",
+		"DB_NAME=0.0.0.0",
+		"DB_NETWORK=db-network",
+		"API_EXTERNAL_NAME=api-external",
+		"API_EXTERNAL_URL=0.0.0.0",
+		"API_EXTERNAL_PORT=3000",
+		"NODE_EXTRA_CA_CERTS=./certs/ssl.pem",
+		"TEST_CONNECTION_STRING=postgres://postgres:postgres@0.0.0.0:5432/postgres",
+	]
+	volumes {
+		host_path = abspath("../../services/ui")
+		container_path = "/app"
+	}
+	network_mode = "host"
+	ports {
+		internal = 8081
+		external = 8081
 	}
 }
 

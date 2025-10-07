@@ -36,3 +36,7 @@ for s in ${SERVICES[@]}; do
 	done
 done
 
+docker cp devCA.pem ui:/app/certs/ssl.pem
+docker cp devCA.pem ui:/usr/local/share/ca-certificates/devCA.crt
+docker exec ui update-ca-certificates
+
