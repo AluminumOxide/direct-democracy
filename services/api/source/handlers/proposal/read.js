@@ -1,18 +1,17 @@
 
 const proposal_read = async function(request, reply, db, log, lib) {
 
-	const { democracy_id, proposal_id } = request
-	const { api_proposal } = lib
+	const { proposal_id } = request
+	const { api_proposal, api_democracy } = lib
 
 	try {
 		// fetch from proposal service
-		const prop = await api_proposal.proposal_read({ proposal_id })
+		let prop = await api_proposal.proposal_read({ proposal_id })
 
-		// handle invalid democracy_id
-		if(prop.democracy_id !== democracy_id) {
-			log.warn(`Proposal/Read: Failure: ${proposal_id} Error: Invalid democracy_id`)
-			return reply.code(400).send(new Error(api_proposal.errors.democracy_invalid))
-		}
+		// fetch the democracy name
+		const dem = await api_democracy.democracy_read({ democracy_id: prop.democracy_id })
+		// update proposal democracy name
+		prop.democracy_id = {id: dem.democracy_id, name: dem.democracy_name}
 
 		// return results
 		log.info(`Proposal/Read: Success: ${proposal_id}`)

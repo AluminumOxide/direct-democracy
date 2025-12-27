@@ -1,24 +1,32 @@
 
 const proposal_list = async function(request, reply, db, log, lib) {
 
- 	let { limit, last, sort, order, filter, democracy_id } = request
-	const { api_proposal } = lib
-
-	// construct filter
-	if(!filter) {
-		filter = {}
-	}
-	filter["democracy_id"] = { "op": "=", "val": democracy_id }
-
-	// ignore any profile_id searches
-	delete filter['profile_id']
-
+ 	let { limit, last, sort, order, filter } = request
+	const { api_proposal, api_democracy } = lib
 	try {
+
 		// fetch from proposal service
-		const props = await api_proposal.proposal_list({ limit, last, sort, order, filter })
+		let props = await api_proposal.proposal_list({ limit, last, sort, order, filter })
+
+		// fetch democracy names
+		let dems = (await api_democracy.democracy_list({
+			filter:{
+				democracy_id:{
+					op: 'IN',
+					val: Array.from(new Set(props.map(k => k.democracy_id)))
+				}
+			}
+		})).reduce((a,v) => Object.assign(a, {
+			[v.democracy_id]:{id:v.democracy_id,name:v.democracy_name}
+		}), {})
+
+		// update proposal democracy id/names
+		props.forEach((p,i) => {
+			props[i].democracy_id = dems[p.democracy_id]
+		})
 
 		// return results
-		log.info(`Proposal/List: Success: ${democracy_id}`)
+		log.info(`Proposal/List: Success`)
 		return reply.code(200).send(props)
 
 	} catch(e) {

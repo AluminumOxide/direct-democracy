@@ -1,7 +1,7 @@
 {  
 	"servers": {	
 		"local": "https://0.0.0.0:3001/v1",
-		"dev": "https://0.0.0.0:3001/v1"	
+		"dev":   "https://0.0.0.0:3001/v1"	
 	},
 	"schemas": {
 		"op": {
@@ -571,7 +571,55 @@
 							}
 						}
 					}]
-				}
+				},
+				"democracy_conduct": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op_string"
+						},
+						"val": {
+							"type": "string"
+						}
+					}
+				},
+				"democracy_content": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op_string"
+						},
+						"val": {
+							"type": "string"
+						}
+					}
+				},
+				"democracy_metas": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op_string"
+						},
+						"val": {
+							"type": "string"
+						}
+					}
+				},
+				"democracy_parent": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op_string"
+						},
+						"val": {
+							"type": "string"
+						}
+					}
+				}	
 			}		
 		}
 	},

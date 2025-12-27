@@ -18,15 +18,16 @@ describe('Ballot Delete', () => {
 
 		// success
 		test('Success', async () => {
-			let bltid = test_data['ballot']['rcf_dv_1']['id']
-			let propid = test_data['ballot']['rcf_dv_1']['proposal_id']
-			await expect(blt_read_i(bltid)).resolves.toBeInstanceOf(Object)
-			await blt_del_i(bltid, propid)
-			await expect(blt_read_i(bltid)).rejects.toThrow(new Error(errors.ballot_dne))
+			let blt = test_data['ballot']['rcf_dv_1']
+			let memid = blt.membership_id
+			let propid = blt.proposal_id
+			await expect(blt_read_i(propid, memid)).resolves.toBeInstanceOf(Object)
+			await blt_del_i(propid, memid)
+			await expect(blt_read_i(propid, memid)).rejects.toThrow(new Error(errors.ballot_dne))
 		})
 
 		// error: invalid ballot_id
-		test('Error: Invalid ballot id', async () => {
+		test('Error: Invalid membership id', async () => {
 			let propid = test_data['ballot']['rcf_dv_1']['proposal_id']
 			await expect(blt_del_i(propid, propid))
 				.rejects.toThrow(new Error(errors.ballot_dne))
@@ -34,16 +35,16 @@ describe('Ballot Delete', () => {
 
 		// error: invalid proposal_id
 		test('Error: Invalid proposal id', async () => {
-			let bltid = test_data['ballot']['rcf_dv_1']['id']
+			let bltid = test_data['ballot']['rcf_dv_1']['membership_id']
 			await expect(blt_del_i(bltid, bltid))
 				.rejects.toThrow(new Error(errors.ballot_dne))
 		})
 
 		// error: ballot not modifiable
 		test('Error: Ballot not modifiable', async () => {
-			let bltid = test_data['ballot']['rnf_au_1']['id']
+			let memid = test_data['ballot']['rnf_au_1']['membership_id']
 			let propid = test_data['ballot']['rnf_au_1']['proposal_id']
-			await expect(blt_del_i(bltid, propid))
+			await expect(blt_del_i(propid, memid))
 				.rejects.toThrow(new Error(errors.ballot_closed))
 		})
 	})
@@ -55,7 +56,7 @@ describe('Ballot Delete', () => {
 
 			// set up mocks
 			const dummy_req = {
-				ballot_id: '',
+				membership_id: '',
 				proposal_id: ''
 			}
 			const dummy_reply = get_dummy_reply()
@@ -80,13 +81,13 @@ describe('Ballot Delete', () => {
 			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(204)
-			expect(dummy_reply.send).toBeCalledWith()
+			expect(dummy_reply.code).toHaveBeenCalledWith(204)
+			expect(dummy_reply.send).toHaveBeenCalledWith()
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		// error: invalid ballot
@@ -94,7 +95,7 @@ describe('Ballot Delete', () => {
 
 			// set up mocks
 			const dummy_req = {
-				ballot_id: '',
+				membership_id: '',
 				proposal_id: ''
 			}
 			const dummy_reply = get_dummy_reply()
@@ -111,52 +112,13 @@ describe('Ballot Delete', () => {
 			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.ballot_dne))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.ballot_dne))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
-		})
-
-		// error: invalid proposal
-		test('Error: Invalid proposal', async () => {
-
-			// set up mocks
-			const dummy_req = {
-				ballot_id: '00000000-0000-0000-0000-000000000000',
-				proposal_id: '00000000-0000-0000-0000-000000000000'
-			}
-			const dummy_reply = get_dummy_reply()
-			const dummy_log = get_dummy_log()
-			const dummy_db = get_dummy_db([{
-				fxn: 'del',
-				args: [],
-				val: [],
-				err: false
-			}])
-			const dummy_lib = get_dummy_lib([{
-				lib: 'api_proposal',
-				fxn: 'ballot_read',
-				val: {
-					ballot_modifiable: true,
-					proposal_id: ''
-				},
-				err: false
-			}])
-
-			// call handler
-			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
-
-			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.ballot_dne))
-
-			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		// error: ballot lookup failure
@@ -164,7 +126,7 @@ describe('Ballot Delete', () => {
 
 			// set up mocks
 			const dummy_req = {
-				ballot_id: '',
+				membership_id: '',
 				proposal_id: ''
 			}
 			const dummy_reply = get_dummy_reply()
@@ -181,13 +143,13 @@ describe('Ballot Delete', () => {
 			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 
 		// error: ballot not modifiable
@@ -195,7 +157,7 @@ describe('Ballot Delete', () => {
 
 			// set up mocks
 			const dummy_req = {
-				ballot_id: '',
+				membership_id: '',
 				proposal_id: ''
 			}
 			const dummy_reply = get_dummy_reply()
@@ -215,13 +177,13 @@ describe('Ballot Delete', () => {
 			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.ballot_closed))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.ballot_closed))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		// error: db failure
@@ -229,7 +191,7 @@ describe('Ballot Delete', () => {
 
 			// set up mocks
 			const dummy_req = {
-				ballot_id: '',
+				membership_id: '',
 				proposal_id: ''
 			}
 			const dummy_reply = get_dummy_reply()
@@ -254,13 +216,13 @@ describe('Ballot Delete', () => {
 			await blt_del_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 	})
 })

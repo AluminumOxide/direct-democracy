@@ -1,5 +1,4 @@
 const sinon = require('sinon')
-const uuid = require('uuid')
 const auth = require('@aluminumoxide/direct-democracy-lib-auth')
 
 const get_dummy_reply = function() {
@@ -37,8 +36,11 @@ const get_dummy_db = function(mocks) {
 	mock_db_fxns.orderByRaw = sinon.stub().returns(mock_db_fxns)
 	mock_db_fxns.groupBy = sinon.stub().returns(mock_db_fxns)
 	mock_db_fxns.returning = sinon.stub().returns(mock_db_fxns)
+	mock_db_fxns.raw = sinon.stub().returns(mock_db_fxns)
+	mock_db_fxns.fromRaw = sinon.stub().returns(mock_db_fxns)
   	mock_db = sinon.fake(() => mock_db_fxns)
 	mock_db.raw = sinon.stub().returns(mock_db_fxns)
+	mock_db.fromRaw = sinon.stub().returns(mock_db_fxns)
 	mock_db.select = sinon.stub().returns(mock_db_fxns)
 	mock_db.insert = sinon.stub().returns(mock_db_fxns)
 	mock_db.pageQuery = sinon.stub().returns(mock_db_fxns)
@@ -144,7 +146,7 @@ const integration_test_jwt = async function(data, service) {
 
 // utils
 const get_uuid = function() {
-	return uuid.v4()
+	return auth.uuid_random()
 }
 
 const get_first_uuid = function() {

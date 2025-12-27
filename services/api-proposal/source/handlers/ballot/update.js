@@ -2,7 +2,7 @@ const { proposal_dne, ballot_dne, membership_dne, ballot_closed, voting_closed, 
 
 const ballot_update = async function(request, reply, db, log, lib) {
 
-	const { ballot_id, proposal_id, membership_id, ballot_approved, ballot_comments } = request
+	const { proposal_id, membership_id, ballot_approved, ballot_comments } = request
 	const { api_proposal } = lib
 
 	// TODO: get rid of proposal_id
@@ -26,27 +26,27 @@ const ballot_update = async function(request, reply, db, log, lib) {
 		return reply.code(400).send(new Error(voting_closed))
 	}
 
-	// check the ballot_id is valid
+	// check the membership_id is valid
 	let bllt_check
 	try {
-		bllt_check = await api_proposal.ballot_read({ proposal_id, ballot_id })
+		bllt_check = await api_proposal.ballot_read({ proposal_id, membership_id })
 	} catch (e) {
 		if(e.message === ballot_dne) {
-			log.warn(`Ballot/Update: Failure: ${ballot_id} Error: Ballot does not exist`)
+			log.warn(`Ballot/Update: Failure: ${membership_id} Error: Ballot does not exist`)
 			return reply.code(400).send(new Error(ballot_dne))
 		} else {
-			log.error(`Ballot/Update: Failure: ${ballot_id} Error: Ballot read ${e}`)
+			log.error(`Ballot/Update: Failure: ${membership_id} Error: Ballot read ${e}`)
 			return reply.code(500).send(new Error(internal_error))
 		}
 	}
 
 	// check the ballot is modifiable
 	if(!bllt_check.ballot_modifiable) {
-		log.warn(`Ballot/Update: Failure: ${ballot_id} Error: Ballot closed`)
+		log.warn(`Ballot/Update: Failure: ${membership_id} Error: Ballot closed`)
 		return reply.code(400).send(new Error(ballot_closed))
 	}
 
-	// check membership_id and ballot_id match
+	// check membership_id and membership_id match
 	if(bllt_check.membership_id !== membership_id) {
 		log.warn(`Ballot/Update: Failure: ${membership_id} Error: Membership does not exist`)
 		return reply.code(400).send(new Error(membership_dne))
@@ -61,19 +61,18 @@ const ballot_update = async function(request, reply, db, log, lib) {
 			comments: ballot_comments
 		})
 		.where({
-			id: ballot_id,
 			proposal_id: proposal_id,
 			membership_id: membership_id
 		})
 		.returning('*')
 
 		if(!rows || rows.length < 1) {
-			log.error(`Ballot/Update: Failure: ${ballot_id} Error: Failed to update`)
+			log.error(`Ballot/Update: Failure: ${membership_id} Error: Failed to update`)
 			return reply.code(500).send(new Error(internal_error))
 		}
 
 	} catch (e) {
-		log.error(`Ballot/Update: Failure: ${ballot_id} Error: ${e}`)
+		log.error(`Ballot/Update: Failure: ${membership_id} Error: ${e}`)
 		return reply.code(500).send(new Error(internal_error))
 	}
 
@@ -88,7 +87,7 @@ const ballot_update = async function(request, reply, db, log, lib) {
 		'date_created': rows[0].date_created,
 		'date_updated': rows[0].date_updated
 	}
-	log.info(`Ballot/Update: Success: ${ballot_id}`)
+	log.info(`Ballot/Update: Success: ${membership_id}`)
 	return reply.code(200).send(ballot)
 }
 

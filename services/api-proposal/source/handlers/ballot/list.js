@@ -5,24 +5,31 @@ const ballot_list = async function(request, reply, db, log, lib) {
 	let { limit, last, sort, order, filter={}, proposal_id } = request
 
 	if(!!proposal_id) {
-		filter['proposal_id'] = { op: '=', val: proposal_id }
+		filter['proposal_id_id'] = { op: '=', val: proposal_id }
+	}
+	if(!!filter['proposal_id']) {
+		filter['proposal_id_id'] = filter['proposal_id']
+		delete filter['proposal_id']
 	}
 
 	try {
 		// list ballots
 		const rows = await db
 			.pageQuery(limit, last, sort, order, filter,
-				db('ballot').select({ 
-					'ballot_id': 'id',
-					'membership_id': 'membership_id',
-					'proposal_id': 'proposal_id',
-					'ballot_approved': 'is_approved',
-					'ballot_comments': 'comments',
-					'ballot_modifiable': 'modifiable',
-					'ballot_verified': 'is_verified',
-					'date_created': 'date_created',
-					'date_updated': 'date_updated'
-				}))	
+				db.select({ 
+					'ballot_id': 'b.id',
+					'membership_id': 'b.membership_id',
+					'proposal_id_id': 'p.id',
+					'proposal_id': db.raw("json_build_object('id',p.id,'name',p.name)"),
+					'ballot_approved': 'b.is_approved',
+					'ballot_comments': 'b.comments',
+					'ballot_modifiable': 'b.modifiable',
+					'ballot_verified': 'b.is_verified',
+					'date_created': 'b.date_created',
+					'date_updated': 'b.date_updated'
+				})
+				.fromRaw('ballot b join proposal p on b.proposal_id = p.id')
+			)	
 
 		log.info('Ballot/List: Success')
 		return reply.code(200).send(rows)

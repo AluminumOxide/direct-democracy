@@ -19,7 +19,6 @@ const start = async function({ env, address, port, spec, version, handlers, db_u
 				key: fs.readFileSync('./certs/ssl.key'),
 				cert: fs.readFileSync('./certs/ssl.crt')
 			},
-
 			querystringParser: queryParser
 		})
 
@@ -28,6 +27,14 @@ const start = async function({ env, address, port, spec, version, handlers, db_u
 			keys: await auth.jwt_read_keys('./certs/jwt.public.der', './certs/jwt.private.der'),
 			sign: async function(data) { return await auth.jwt_sign(fastify.jwt.keys.private, data) },
 			verify: async function(data) { return await auth.jwt_verify(fastify.jwt.keys.public, data) }
+		}
+		
+		if(env === "dev") {
+			fastify.register(require('@fastify/cors'), (instance) => {
+			        return (req, callback) => {
+			                callback(null, { origin: true })
+			        }
+			})
 		}
 
 		// connect to db
@@ -73,16 +80,16 @@ const start = async function({ env, address, port, spec, version, handlers, db_u
 
 		// run tests if applicable
 		if(env === "dev") {
-				const s = spawn("jest",["--runInBand"])
-				s.stdout.on("data", data => {
-					console.log(`${data}`)
-				})
-				s.stderr.on("data", data => {
-					console.log(`${data}`)
-				})
-				s.on('error', (error) => {
-					console.log(`error running jest: ${error}`)
-				})
+			const s = spawn("jest",["--runInBand"])
+			s.stdout.on("data", data => {
+				console.log(`${data}`)
+			})
+			s.stderr.on("data", data => {
+				console.log(`${data}`)
+			})
+			s.on('error', (error) => {
+				console.log(`error running jest: ${error}`)
+			})
 		}
 
 	// handle errors

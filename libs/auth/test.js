@@ -1,5 +1,4 @@
 const auth = require('./index')
-const uuid = require('uuid')
 
 const run_test = async function () {
 
@@ -16,15 +15,15 @@ const answer = 'passpasasdfasdfasdfasdfasdfasdfasdfsaasdfasdfs'
 /* initialize servers */
 let N = 100
 let M = 12
-account.jwt_keys = await auth.jwt_keys()
-profile.jwt_keys = await auth.jwt_keys()
-token.jwt_keys = await auth.jwt_keys()
-token.account_tokens = [uuid.v4()]
+account.jwt_keys = await auth.jwt_new_keys()
+profile.jwt_keys = await auth.jwt_new_keys()
+token.jwt_keys = await auth.jwt_new_keys()
+token.account_tokens = [auth.uuid_random()]
 account.account_tokens = token.account_tokens
-token.profile_tokens = [uuid.v4()] 
+token.profile_tokens = [auth.uuid_random()] 
 profile.profile_tokens = token.profile_tokens
 token.db = {}
-token.email_tokens = [uuid.v4()]
+token.email_tokens = [auth.uuid_random()]
 let hashed = await auth.hash_chain(token.email_tokens[0], N)
 token.email_tokens[0] = token.email_tokens[0] + '/' + hashed.split('/')[1]
 let id = hashed.slice(0, M)
@@ -32,7 +31,7 @@ let pass = hashed.slice(M)
 token.db[id] = { bucket: 'email', zkpp: auth.pake_client_generate_zkpp(id, pass) }
 account.email_tokens = token.email_tokens
 delete token.email_tokens
-token.signup_tokens = [uuid.v4()]
+token.signup_tokens = [auth.uuid_random()]
 hashed = await auth.hash_chain(token.signup_tokens[0], N)
 token.signup_tokens[0] = token.signup_tokens[0] + '/' + hashed.split('/')[1]
 id = hashed.slice(0, M)
@@ -64,7 +63,7 @@ account.salt = client.account_salt
 account.encrypted_question = client.encrypted_question
 
 // account server calculations
-account.id = uuid.v4()
+account.id = auth.uuid_random()
 
 // send client email token
 client.email_token = account.email_tokens[0]
@@ -117,7 +116,7 @@ let clean_token = async function(dirty_token) {
 
 // client calculations
 client.profile_token = await clean_token(client.email_token)
-client.profile_id = uuid.v4()
+client.profile_id = auth.uuid_random()
 let { salt: salt1, zkpp: zkpp1 } = await auth.pake_client_generate_zkpp(client.profile_id, client.security_answer)
 client.profile_salt = salt1
 client.profile_zkpp = zkpp1

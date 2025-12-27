@@ -79,13 +79,13 @@ describe('Proposal Create', () => {
 			delete expected.target
 			delete expected.changes
 			delete expected.votable
-			expect(dummy_reply.code).toBeCalledWith(201)
-			expect(dummy_reply.send).toBeCalledWith(expected)
+			expect(dummy_reply.code).toHaveBeenCalledWith(201)
+			expect(dummy_reply.send).toHaveBeenCalledWith(expected)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		// error: invalid democracy for membership
@@ -114,13 +114,13 @@ describe('Proposal Create', () => {
 			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.democracy_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.democracy_invalid))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		// error: invalid membership
@@ -149,13 +149,13 @@ describe('Proposal Create', () => {
 			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.membership_dne))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_dne))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		// error: membership lookup failure
@@ -184,13 +184,13 @@ describe('Proposal Create', () => {
 			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 		
 		// error: invalid democracy
@@ -229,13 +229,13 @@ describe('Proposal Create', () => {
 			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.democracy_dne))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.democracy_dne))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
 		// error: democracy lookup failure
@@ -274,13 +274,13 @@ describe('Proposal Create', () => {
 			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 			
 		// error: invalid changes
@@ -319,14 +319,58 @@ describe('Proposal Create', () => {
 			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.changes_invalid))
-			expect(dummy_reply.code).toBeCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
+		test('Error: Invalid error changes', async() => {
+
+			// set up mocks		
+			const dummy_req = {
+				proposal_name: 'test',
+				proposal_description: 'test test test',
+				proposal_target: 'target',
+				proposal_changes: {},
+				democracy_id: '00000000-0000-0000-0000-000000000000',
+				membership_id: '00000000-0000-0000-0000-000000000000'
+			}
+			const dummy_reply = get_dummy_reply()
+			const dummy_log = get_dummy_log()
+			const dummy_db = get_dummy_db([])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
+				fxn: 'membership_read',
+				val: { democracy_id: dummy_req.democracy_id },
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read',
+				val: { 'democracy_target':{} },
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: false,
+				err: true
+			}], errors)
+
+			// call handler
+			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		// error: db insert failure
@@ -370,13 +414,13 @@ describe('Proposal Create', () => {
 			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 		
 		// error: db insert error
@@ -420,13 +464,13 @@ describe('Proposal Create', () => {
 			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 	})
 
@@ -441,7 +485,7 @@ describe('Proposal Create', () => {
 				membership_id: test_data['membership']['verified_child_1']['id'],
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
-				proposal_target: 'name',
+				proposal_target: 'democracy_name',
 				proposal_changes: {'_update':{'name':'qwer'}}
 			}
 			await expect(prop_create_i(test_prop)).resolves.toMatchObject(test_prop)
@@ -454,7 +498,7 @@ describe('Proposal Create', () => {
 				membership_id: test_data['membership']['verified_child_1']['id'],
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
-				proposal_target: 'description',
+				proposal_target: 'democracy_description',
 				proposal_changes: {'_update':{'name':'qwer'}}
 			}
 			await expect(prop_create_i(test_prop)).resolves.toMatchObject(test_prop)
@@ -467,7 +511,7 @@ describe('Proposal Create', () => {
 				membership_id: test_data['membership']['verified_child_1']['id'],
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
-				proposal_target: 'conduct',
+				proposal_target: 'democracy_conduct',
 				proposal_changes: {'_add':{'test':'testtesttest'}}
 			}
 			await expect(prop_create_i(test_prop)).resolves.toMatchObject(test_prop)
@@ -480,7 +524,7 @@ describe('Proposal Create', () => {
 				membership_id: test_data['membership']['verified_child_1']['id'],
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
-				proposal_target: 'content',
+				proposal_target: 'democracy_content',
 				proposal_changes: {'_delete':['c']}
 			}
 			await expect(prop_create_i(test_prop)).resolves.toMatchObject(test_prop)
@@ -493,7 +537,7 @@ describe('Proposal Create', () => {
 				membership_id: test_data['membership']['verified_child_1']['id'],
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
-				proposal_target: 'metas',
+				proposal_target: 'democracy_metas',
 				proposal_changes: {
 					'name':{ 'update':{ 
 						'_add':{ 'approval_number_minimum': 3 }, 
@@ -512,7 +556,7 @@ describe('Proposal Create', () => {
 				membership_id: test_data['democracy']['root_child']['id'],
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
-				proposal_target: 'name',
+				proposal_target: 'democracy_name',
 				proposal_changes: {'_update':{'name':'qwer'}}
 			}
 			await expect(prop_create_i(test_prop)).rejects.toThrow(new Error(errors.membership_dne))
@@ -525,7 +569,7 @@ describe('Proposal Create', () => {
 				membership_id: test_data['membership']['verified_child_1']['id'],
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
-				proposal_target: 'name',
+				proposal_target: 'democracy_name',
 				proposal_changes: {'_update':{'name':'qwer'}}
 			}
 			await expect(prop_create_i(test_prop)).rejects.toThrow(new Error(errors.democracy_invalid))
@@ -538,7 +582,7 @@ describe('Proposal Create', () => {
 				membership_id: test_data['membership']['verified_child_1']['id'],
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
-				proposal_target: 'asdf',
+				proposal_target: 'democracy_asdf',
 				proposal_changes: {'_update':{'name':'qwer'}}
 			}
 			await expect(prop_create_i(test_prop)).rejects.toThrow(new Error(errors.changes_invalid))
@@ -551,7 +595,7 @@ describe('Proposal Create', () => {
 				membership_id: test_data['membership']['verified_child_1']['id'],
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
-				proposal_target: 'name',
+				proposal_target: 'democracy_name',
 				proposal_changes: {'_add':{'name':'qwer'}}
 			}
 			await expect(prop_create_i(test_prop)).rejects.toThrow(new Error(errors.changes_invalid))

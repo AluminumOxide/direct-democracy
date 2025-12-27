@@ -41,13 +41,13 @@ describe('Democracy Read', () => {
 			await dem_read_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(200)
-			expect(dummy_reply.send).toBeCalledWith(dummy_req)
+			expect(dummy_reply.code).toHaveBeenCalledWith(200)
+			expect(dummy_reply.send).toHaveBeenCalledWith(dummy_req)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
 		test('Error: Democracy DNE', async() => {
@@ -67,13 +67,13 @@ describe('Democracy Read', () => {
 			await dem_read_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.democracy_dne))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.democracy_dne))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
 		test('Error: Internal error', async() => {
@@ -93,13 +93,13 @@ describe('Democracy Read', () => {
 			await dem_read_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 	})
 })

@@ -35,7 +35,12 @@ const proposal_create = async function(request, reply, db, log, lib) {
 	}
 
 	// check the proposed changes are valid
-	if(!lib_json.check_changes(proposal_changes, democracy['democracy_'+proposal_target])) {
+	try {
+		if(!lib_json.check_changes(proposal_changes, democracy[proposal_target])) {
+			log.warn(`Proposal/Create: Failure: ${membership_id} Invalid changes`)
+			return reply.code(400).send(new Error(changes_invalid))
+		}
+	} catch(e) {
 		log.warn(`Proposal/Create: Failure: ${membership_id} Invalid changes`)
 		return reply.code(400).send(new Error(changes_invalid))
 	}

@@ -18,7 +18,6 @@ describe('Ballot Update', () => {
 		// success
 		test('Success', async () => {
 			const test_blt = {
-				ballot_id: test_data['ballot'][ 'cmp_av_2']['id'],
 				proposal_id: test_data['ballot']['cmp_av_2']['proposal_id'],
 				membership_id: test_data['ballot'][ 'cmp_av_2']['membership_id'],
 				ballot_approved: false,
@@ -27,22 +26,9 @@ describe('Ballot Update', () => {
 			await expect(blt_update_i(test_blt)).resolves.toMatchObject(test_blt)
 		})
 
-		// error: invalid ballot id
-		test('Error: Invalid ballot id', async () => {
-			const test_blt = {
-				ballot_id: test_data['ballot'][ 'cmp_au_2']['membership_id'],
-				proposal_id: test_data['ballot']['cmp_au_2']['proposal_id'],
-				membership_id: test_data['ballot'][ 'cmp_au_2']['membership_id'],
-				ballot_approved: false,
-				ballot_comments: 'qwer'
-			}
-			await expect(blt_update_i(test_blt)).rejects.toThrow(new Error(errors.ballot_dne))
-		})
-
 		// error: invalid proposal id
 		test('Error: Invalid proposal id', async () => {
 			const test_blt = {
-				ballot_id: test_data['ballot'][ 'cmp_au_2']['id'],
 				proposal_id: test_data['ballot'][ 'cmp_au_2']['id'],
 				membership_id: test_data['ballot'][ 'cmp_au_2']['membership_id'],
 				ballot_approved: false,
@@ -54,19 +40,17 @@ describe('Ballot Update', () => {
 		// error: invalid membership id
 		test('Error: Invalid membership id', async () => {
 			const test_blt = {
-				ballot_id: test_data['ballot'][ 'cmp_au_2']['id'],
 				proposal_id: test_data['ballot']['cmp_au_2']['proposal_id'],
 				membership_id: test_data['ballot']['cmp_au_2']['proposal_id'],
 				ballot_approved: false,
 				ballot_comments: 'qwer'
 			}
-			await expect(blt_update_i(test_blt)).rejects.toThrow(new Error(errors.membership_dne))
+			await expect(blt_update_i(test_blt)).rejects.toThrow(new Error(errors.ballot_dne))
 		})
 
 		// error: invalid ballot approved
 		test('Error: Invalid ballot approved', async () => {
 			const test_blt = {
-				ballot_id: test_data['ballot'][ 'cmp_au_2']['id'],
 				proposal_id: test_data['ballot']['cmp_au_2']['proposal_id'],
 				membership_id: test_data['ballot'][ 'cmp_au_2']['membership_id'],
 				ballot_approved: 'qwer',
@@ -132,13 +116,13 @@ describe('Ballot Update', () => {
 			delete expected.is_approved
 			delete expected.comments
 			delete expected.modifiable
-			expect(dummy_reply.code).toBeCalledWith(200)
-			expect(dummy_reply.send).toBeCalledWith(expected)
+			expect(dummy_reply.code).toHaveBeenCalledWith(200)
+			expect(dummy_reply.send).toHaveBeenCalledWith(expected)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		// error: invalid proposal id
@@ -166,13 +150,13 @@ describe('Ballot Update', () => {
 			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.proposal_dne))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.proposal_dne))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		// error: proposal lookup failure
@@ -200,13 +184,13 @@ describe('Ballot Update', () => {
 			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 
 		// error: proposal is not votable
@@ -234,13 +218,13 @@ describe('Ballot Update', () => {
 			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.voting_closed))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.voting_closed))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		// error: invalid ballot id
@@ -274,13 +258,13 @@ describe('Ballot Update', () => {
 
 			// check reply
 
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.ballot_dne))
-			expect(dummy_reply.code).toBeCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.ballot_dne))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		// error: ballot lookup failure
@@ -313,13 +297,13 @@ describe('Ballot Update', () => {
 			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 
 		// error: ballot not modifiable
@@ -352,13 +336,13 @@ describe('Ballot Update', () => {
 			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.ballot_closed))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.ballot_closed))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		// error: invalid membership id
@@ -391,13 +375,13 @@ describe('Ballot Update', () => {
 			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.membership_dne))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_dne))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		// error: update failure
@@ -435,13 +419,13 @@ describe('Ballot Update', () => {
 			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 
 		// error: db failure
@@ -479,13 +463,13 @@ describe('Ballot Update', () => {
 			await blt_update_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 	})
 

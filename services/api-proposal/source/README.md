@@ -206,14 +206,14 @@ Properties:
 - [401](#responses-401)
 - [500](#responses-500)
 
-### GET /v1/proposal/:proposal_id/ballot/:ballot_id
+### GET /v1/proposal/:proposal_id/ballot/:membership_id
 
 *Read a ballot*
 
 **Params**
 
 - [proposal_id](#params-proposal_id)
-- [ballot_id](#params-ballot_id)
+- [membership_id](#params-membership_id)
 
 **Responses**
 
@@ -222,14 +222,14 @@ Properties:
 - [401](#responses-401)
 - [500](#responses-500)
 
-### POST /v1/proposal/:proposal_id/ballot/:ballot_id
+### POST /v1/proposal/:proposal_id/ballot/:membership_id
 
 *Edit a ballot*
 
 **Params**
 
 - [proposal_id](#params-proposal_id)
-- [ballot_id](#params-ballot_id)
+- [membership_id](#params-membership_id)
 
 **Bodies**
 
@@ -242,14 +242,14 @@ Properties:
 - [401](#responses-401)
 - [500](#responses-500)
 
-### DELETE /v1/proposal/:proposal_id/ballot/:ballot_id
+### DELETE /v1/proposal/:proposal_id/ballot/:membership_id
 
 *Delete a ballot*
 
 **Params**
 
 - [proposal_id](#params-proposal_id)
-- [ballot_id](#params-ballot_id)
+- [membership_id](#params-membership_id)
 
 **Responses**
 
@@ -266,6 +266,9 @@ Properties:
 #### params-proposal_id
 
 Type: [schemas-proposal_id](#schemas-proposal_id)
+#### params-membership_id
+
+Type: [schemas-membership_id](#schemas-membership_id)
 #### params-ballot_id
 
 Type: [schemas-ballot_id](#schemas-ballot_id)
@@ -622,6 +625,23 @@ Properties:
 
 
 
+- **proposal_changes**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_string](#schemas-op_string)
+
+	- **val**
+
+		Type: string
+
+
 #### queries-ballot_sort
 
 Type: string
@@ -676,6 +696,23 @@ Properties:
 
 		- Type: [schemas-membership_id](#schemas-membership_id)
 
+
+
+- **proposal_id**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_bool](#schemas-op_bool)
+
+	- **val**
+
+		Type: [schemas-uuid](#schemas-uuid)
 
 
 - **ballot_approved**
@@ -1363,14 +1400,9 @@ Type: object
 
 Required:
 
-- membership_id
 - ballot_approved
 
 Properties:
-
-- **membership_id**
-
-	Type: [schemas-membership_id](#schemas-membership_id)
 
 - **ballot_approved**
 

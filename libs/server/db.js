@@ -30,6 +30,9 @@ const pageQuery = async function(limit=100, last, sort='date_updated', order='AS
 		} else if(op === 'XBETWEEN') {
 			query.where(field, '>', val[0])
 			query.andWhere(field, '<', val[1])
+		} else if(op === '~') {
+			query.whereRaw("cast(? as text) LIKE ?", [field, '%'+val+'%'])
+			console.log("cast(? as text) LIKE ?", [field, '%'+val+'%'])
 		} else {
 			query.where(field, op, val)
 		}
@@ -38,7 +41,6 @@ const pageQuery = async function(limit=100, last, sort='date_updated', order='AS
 	if(last) {
 		query.andWhere(sort, order === 'ASC' ? '>' : '<', last)
 	}
-
 	return await query
 }
 

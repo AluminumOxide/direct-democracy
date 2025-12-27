@@ -69,13 +69,13 @@ describe('Ballot Create', () => {
 			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(201)
-			expect(dummy_reply.send).toBeCalledWith({ membership_id, proposal_id })
+			expect(dummy_reply.code).toHaveBeenCalledWith(201)
+			expect(dummy_reply.send).toHaveBeenCalledWith({ membership_id, proposal_id })
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
 		test('Error: Invalid JWT', async() => {
@@ -105,13 +105,13 @@ describe('Ballot Create', () => {
 			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(401)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.invalid_auth))
+			expect(dummy_reply.code).toHaveBeenCalledWith(401)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.invalid_auth))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		test('Error: No Profile', async() => {
@@ -141,13 +141,13 @@ describe('Ballot Create', () => {
 			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(401)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.invalid_auth))
+			expect(dummy_reply.code).toHaveBeenCalledWith(401)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.invalid_auth))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 
 		test('Error: No Membership', async() => {
@@ -177,13 +177,13 @@ describe('Ballot Create', () => {
 			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(401)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.invalid_auth))
+			expect(dummy_reply.code).toHaveBeenCalledWith(401)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.invalid_auth))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
 		test('Error: Multiple Membership', async() => {
@@ -213,13 +213,13 @@ describe('Ballot Create', () => {
 			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 
 		test('Error: Membership DNE', async() => {
@@ -254,13 +254,13 @@ describe('Ballot Create', () => {
 			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(401)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.invalid_auth))
+			expect(dummy_reply.code).toHaveBeenCalledWith(401)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.invalid_auth))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 			
 		test('Error: Invalid proposal', async() => {
@@ -295,13 +295,13 @@ describe('Ballot Create', () => {
 			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.proposal_dne))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.proposal_dne))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		test('Error: Voting closed', async() => {
@@ -336,13 +336,13 @@ describe('Ballot Create', () => {
 			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.voting_closed))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.voting_closed))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		test('Error: Internal error', async() => {
@@ -367,13 +367,13 @@ describe('Ballot Create', () => {
 			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 	}) 
 })

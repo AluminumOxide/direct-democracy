@@ -3,7 +3,6 @@ module.exports = {
 	democracy_read: require('./democracy/read'),
 	proposal_list: require('./proposal/list'),
 	proposal_read: require('./proposal/read'),
-	ballot_list: require('./ballot/list'),
 	membership_list: require('./membership/list'),
 	membership_create: require('./membership/create'),
 	membership_read: require('./membership/read'),

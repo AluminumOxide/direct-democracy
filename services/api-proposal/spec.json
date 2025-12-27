@@ -1,7 +1,7 @@
 { 
        "servers": {
 	       "local": "https://0.0.0.0:3002/v1",
-	       "dev": "https://0.0.0.0:3002/v1"
+	       "dev":   "https://0.0.0.0:3002/v1"
 	},   
 	"headers": {
 	},
@@ -9,6 +9,10 @@
 		"proposal_id": {
 			"$id": "params-proposal_id",
 			"$ref": "schemas-proposal_id"
+		},
+		"membership_id": {
+			"$id": "params-membership_id",
+			"$ref": "schemas-membership_id"
 		},
 		"ballot_id": {
 			"$id": "params-ballot_id",
@@ -274,6 +278,18 @@
 							}
 						}
 					}]
+				},
+				"proposal_changes": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op" : {
+							"$ref": "schemas-op_string"
+						},
+						"val": {
+							"type": "string"
+						}
+					}
 				}
 			}
 		},
@@ -317,6 +333,18 @@
 							}
 						}
 					}]
+				},
+				"proposal_id": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op_bool"
+						},
+						"val": {
+							"$ref": "schemas-uuid"
+						}
+					}
 				},
 				"ballot_approved": {
 					"type": "object",
@@ -844,13 +872,9 @@
 			"description": "Ballot - Update",
 			"type": "object",
 			"required": [
-				"membership_id",
 				"ballot_approved"
 			],
 			"properties": {
-				"membership_id": {
-					"$ref": "schemas-membership_id"
-				},
 				"ballot_approved": {
 					"$ref": "schemas-ballot_approved"
 				},
@@ -1067,13 +1091,13 @@
                                 }
                         }
 		},
-		"/proposal/:proposal_id/ballot/:ballot_id": {
+		"/proposal/:proposal_id/ballot/:membership_id": {
 			"GET": {
 				"description": "Read a ballot",
 				"operationId": "ballot_read",
 				"param": { 
 					"proposal_id": { "$ref": "params-proposal_id" },
-					"ballot_id": { "$ref": "params-ballot_id" }
+					"membership_id": { "$ref": "params-membership_id" }
 				},
 				"responses": {
 					"200": {
@@ -1095,7 +1119,7 @@
                                 "operationId": "ballot_update",
                                 "param": {
                                         "proposal_id": { "$ref": "params-proposal_id" },
-                                        "ballot_id": { "$ref": "params-ballot_id" }
+                                        "membership_id": { "$ref": "params-membership_id" }
                                 },
                                 "body": {
                                         "$ref": "bodies-ballot_update"
@@ -1120,7 +1144,7 @@
 				"operationId": "ballot_delete",
 				"param": { 
 					"proposal_id": { "$ref": "params-proposal_id" },
-					"ballot_id": { "$ref": "params-ballot_id" }
+					"membership_id": { "$ref": "params-membership_id" }
 				},
 				"responses": {
 					"204": {

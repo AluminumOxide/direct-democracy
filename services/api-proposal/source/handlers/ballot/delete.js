@@ -2,33 +2,27 @@ const { ballot_dne, internal_error, ballot_closed, membership_dne } = require('.
 
 const ballot_delete = async function(request, reply, db, log, lib) {
 
-	const { ballot_id, proposal_id } = request
+	const { membership_id, proposal_id } = request
 	const { api_proposal } = lib
 
-	// check the ballot_id and proposal_id are valid
+	// check the membership_id and proposal_id are valid
 	let ballot_check
 	try {
 		// TODO: Remove proposal_id
-		ballot_check = await api_proposal.ballot_read({ proposal_id, ballot_id })
+		ballot_check = await api_proposal.ballot_read({ proposal_id, membership_id })
 	} catch (e) {
 		if(e.message === ballot_dne) {
-			log.warn(`Ballot/Delete: Failure: ${ballot_id} Error: Ballot does not exist`)
+			log.warn(`Ballot/Delete: Failure: ${membership_id} Error: Ballot does not exist`)
 			return reply.code(400).send(new Error(ballot_dne))
 		} else {
-			log.error(`Ballot/Delete: Failure: ${ballot_id} Error: Ballot read ${e}`)
+			log.error(`Ballot/Delete: Failure: ${membership_id} Error: Ballot read ${e}`)
 			return reply.code(500).send(new Error(internal_error))
 		}
 	}
 
-	// check the proposal id is correct
-	if(ballot_check.proposal_id !== proposal_id) {
-		log.warn(`Ballot/Delete: Failure: ${ballot_id} Error: Invalid proposal id`)
-		return reply.code(400).send(new Error(ballot_dne))
-	}
-
 	// check the ballot is modifiable
 	if(!ballot_check.ballot_modifiable) {
-		log.warn(`Ballot/Delete: Failure: ${ballot_id} Error: Ballot closed`)
+		log.warn(`Ballot/Delete: Failure: ${membership_id} Error: Ballot closed`)
 		return reply.code(400).send(new Error(ballot_closed))
 	}
 
@@ -36,17 +30,17 @@ const ballot_delete = async function(request, reply, db, log, lib) {
 	try {
 		await db('ballot')
 		.where({
-			'id': ballot_id,
+			'membership_id': membership_id,
 			'proposal_id': proposal_id
 		})
 		.del()
 
 	} catch (e) {
-		log.error(`Ballot/Delete: Failure: ${ballot_id} Error: ${e}`)
+		log.error(`Ballot/Delete: Failure: ${membership_id} Error: ${e}`)
 		return reply.code(500).send(new Error(internal_error))
 	}
 
-	log.info(`Ballot/Delete: Success: ${ballot_id}`)
+	log.info(`Ballot/Delete: Success: ${membership_id}`)
 	return reply.code(204).send()
 }
 

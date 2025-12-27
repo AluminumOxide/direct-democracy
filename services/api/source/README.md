@@ -85,44 +85,6 @@ Properties:
 - [401](#responses-401)
 - [500](#responses-500)
 
-### GET /v1/democracy/:democracy_id/proposal
-
-*List proposals*
-
-**Queries**
-
-Type: object
-
-Properties:
-
-- **limit**
-
-	 - [queries-limit](#queries-limit)
-
-- **last**
-
-	 - [queries-last](#queries-last)
-
-- **order**
-
-	 - [queries-order](#queries-order)
-
-- **sort**
-
-	 - [queries-proposal_sort](#queries-proposal_sort)
-
-- **filter**
-
-	 - [queries-proposal_filter](#queries-proposal_filter)
-
-
-**Params**
-
-- [democracy_id](#params-democracy_id)
-
-**Responses**
-undefined
-
 ### POST /v1/democracy/:democracy_id/proposal
 
 *Create a proposal*
@@ -164,25 +126,46 @@ Properties:
 **Responses**
 undefined
 
-### GET /v1/democracy/:democracy_id/proposal/:proposal_id
+### GET /v1/proposal
+
+*List proposals*
+
+**Queries**
+
+Type: object
+
+Properties:
+
+- **limit**
+
+	 - [queries-limit](#queries-limit)
+
+- **last**
+
+	 - [queries-last](#queries-last)
+
+- **order**
+
+	 - [queries-order](#queries-order)
+
+- **sort**
+
+	 - [queries-proposal_sort](#queries-proposal_sort)
+
+- **filter**
+
+	 - [queries-proposal_filter](#queries-proposal_filter)
+
+
+**Responses**
+undefined
+
+### GET /v1/proposal/:proposal_id
 
 *Read a proposal*
 
 **Params**
 
-- [democracy_id](#params-democracy_id)
-- [proposal_id](#params-proposal_id)
-
-**Responses**
-undefined
-
-### GET /v1/democracy/:democracy_id/proposal/:proposal_id/ballot
-
-*List proposal ballots*
-
-**Params**
-
-- [democracy_id](#params-democracy_id)
 - [proposal_id](#params-proposal_id)
 
 **Responses**
@@ -263,27 +246,54 @@ undefined
 
 *List my ballots*
 
+**Queries**
+
+Type: object
+
+Properties:
+
+- **limit**
+
+	 - [queries-limit](#queries-limit)
+
+- **last**
+
+	 - [queries-last](#queries-last)
+
+- **order**
+
+	 - [queries-order](#queries-order)
+
+- **sort**
+
+	 - [queries-ballot_sort](#queries-ballot_sort)
+
+- **filter**
+
+	 - [queries-ballot_filter](#queries-ballot_filter)
+
+
 **Responses**
 undefined
 
-### GET /v1/my/ballot/:ballot_id
+### GET /v1/my/ballot/:proposal_id
 
 *Get my ballot*
 
 **Params**
 
-- [ballot_id](#params-ballot_id)
+- [proposal_id](#params-proposal_id)
 
 **Responses**
 undefined
 
-### PATCH /v1/my/ballot/:ballot_id
+### PATCH /v1/my/ballot/:proposal_id
 
 *Edit my ballot*
 
 **Params**
 
-- [ballot_id](#params-ballot_id)
+- [proposal_id](#params-proposal_id)
 
 **Bodies**
 
@@ -292,13 +302,13 @@ undefined
 **Responses**
 undefined
 
-### DELETE /v1/my/ballot/:ballot_id
+### DELETE /v1/my/ballot/:proposal_id
 
 *Delete my ballot*
 
 **Params**
 
-- [ballot_id](#params-ballot_id)
+- [proposal_id](#params-proposal_id)
 
 **Responses**
 undefined
@@ -418,6 +428,11 @@ Type: string
 Enum:
 
 - proposal_name
+- proposal_description
+- democracy_id
+- proposal_target
+- proposal_votable
+- proposal_passed
 - date_created
 - date_updated
 #### queries-proposal_filter
@@ -442,7 +457,17 @@ Properties:
 
 	- **val**
 
-		Type: [schemas-democracy_id](#schemas-democracy_id)
+
+		One Of:
+
+		- Type: [schemas-democracy_id](#schemas-democracy_id)
+
+		- Type: array
+
+			Items:
+
+			- Type: [schemas-democracy_id](#schemas-democracy_id)
+
 
 
 - **membership_id**
@@ -566,6 +591,29 @@ Properties:
 		Enum:
 
 		- =
+		- !=
+
+	- **val**
+
+		Type: boolean
+
+
+- **proposal_passed**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: string
+
+		Enum:
+
+		- =
+		- !=
 
 	- **val**
 
@@ -606,21 +654,7 @@ Properties:
 		Type: [schemas-date_updated](#schemas-date_updated)
 
 
-#### queries-ballot_sort
-
-Type: string
-
-Enum:
-
-- date_created
-- date_updated
-#### queries-ballot_filter
-
-Type: object
-
-Properties:
-
-- **membership_id**
+- **proposal_changes**
 
 	Type: object
 
@@ -634,8 +668,22 @@ Properties:
 
 	- **val**
 
-		Type: [schemas-membership_id](#schemas-membership_id)
+		Type: string
 
+
+#### queries-ballot_sort
+
+Type: string
+
+Enum:
+
+- date_created
+- date_updated
+#### queries-ballot_filter
+
+Type: object
+
+Properties:
 
 - **ballot_approved**
 
@@ -963,7 +1011,8 @@ Type: string
 Enum:
 
 - democracy_name
-- democracy_population
+- democracy_population_verified
+- democracy_population_unverified
 - date_created
 - date_updated
 #### queries-democracy_filter
@@ -976,7 +1025,10 @@ Properties:
 
 - **democracy_id**
 
-	Type: object
+
+	One Of:
+
+	- Type: object
 
 	Additional Properties: false
 
@@ -991,6 +1043,26 @@ Properties:
 		Type: [schemas-democracy_id](#schemas-democracy_id)
 
 
+	- Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op](#schemas-op)
+
+	- **val**
+
+		Type: array
+
+		Items:
+
+		- Type: [schemas-democracy_id](#schemas-democracy_id)
+
+
+
 - **democracy_name**
 
 	Type: object
@@ -1001,7 +1073,7 @@ Properties:
 
 	- **op**
 
-		Type: [schemas-op](#schemas-op)
+		Type: [schemas-op-search](#schemas-op-search)
 
 	- **val**
 
@@ -1018,18 +1090,14 @@ Properties:
 
 	- **op**
 
-		Type: string
-
-		Enum:
-
-		- ~
+		Type: [schemas-op-search](#schemas-op-search)
 
 	- **val**
 
 		Type: [schemas-democracy_description](#schemas-democracy_description)
 
 
-- **democracy_population**
+- **democracy_population_verified**
 
 	Type: object
 
@@ -1039,7 +1107,24 @@ Properties:
 
 	- **op**
 
-		Type: [schemas-op](#schemas-op)
+		Type: [schemas-op-number](#schemas-op-number)
+
+	- **val**
+
+		Type: [schemas-democracy_population](#schemas-democracy_population)
+
+
+- **democracy_population_unverified**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op-number](#schemas-op-number)
 
 	- **val**
 
@@ -1056,7 +1141,7 @@ Properties:
 
 	- **op**
 
-		Type: [schemas-op](#schemas-op)
+		Type: [schemas-op-date](#schemas-op-date)
 
 	- **val**
 
@@ -1073,11 +1158,79 @@ Properties:
 
 	- **op**
 
-		Type: [schemas-op](#schemas-op)
+		Type: [schemas-op-date](#schemas-op-date)
 
 	- **val**
 
 		Type: [schemas-date_updated](#schemas-date_updated)
+
+
+- **democracy_conduct**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op-search](#schemas-op-search)
+
+	- **val**
+
+		Type: string
+
+
+- **democracy_content**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op-search](#schemas-op-search)
+
+	- **val**
+
+		Type: string
+
+
+- **democracy_metas**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op-search](#schemas-op-search)
+
+	- **val**
+
+		Type: string
+
+
+- **democracy_parent**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op-uuid](#schemas-op-uuid)
+
+	- **val**
+
+		Type: [schemas-uuid](#schemas-uuid)
 
 
 ## Bodies
@@ -1234,6 +1387,7 @@ Type: string
 
 Enum:
 
+- ~
 - =
 - !=
 - \>=
@@ -1244,6 +1398,45 @@ Enum:
 - NOT IN
 - BETWEEN
 - XBETWEEN
+#### schemas-op-search
+
+Type: string
+
+Enum:
+
+- ~
+#### schemas-op-date
+
+Type: string
+
+Enum:
+
+- =
+- !=
+- \>=
+- \>
+- <
+- <=
+#### schemas-op-number
+
+Type: string
+
+Enum:
+
+- =
+- !=
+- \>=
+- \>
+- <
+- <=
+#### schemas-op-uuid
+
+Type: string
+
+Enum:
+
+- =
+- !=
 #### schemas-uuid
 
 Type: string

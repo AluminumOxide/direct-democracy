@@ -1,0 +1,26 @@
+{
+  "version": "0.0.6",
+  "name": "@aluminumoxide/direct-democracy-authorizer",
+  "description": "Temporary client-side authorizer",
+  "homepage": "https://github.com/aluminumoxide/direct-democracy#readme",
+  "dependencies": {
+    "@aluminumoxide/direct-democracy-account-api-client": "^1.0.6",
+    "@aluminumoxide/direct-democracy-profile-api-client": "^1.0.5",
+    "@aluminumoxide/direct-democracy-token-api-client": "^1.0.11"
+  },
+  "main": "index.js",
+  "bin": {
+	  "direct-democracy-authorizer": "index.js"
+  },
+  "files": [
+	  "signin.js",
+	  "signup.js"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aluminumoxide/direct-democracy.git"
+  }
+}

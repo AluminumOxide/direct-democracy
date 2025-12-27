@@ -150,14 +150,14 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith("")
-			expect(dummy_reply.code).toBeCalledWith(200)
+			expect(dummy_reply.send).toHaveBeenCalledWith("")
+			expect(dummy_reply.code).toHaveBeenCalledWith(200)
 
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(2)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(2)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		test('Success: Proposal not passed', async () => {
@@ -235,13 +235,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith()
-			expect(dummy_reply.code).toBeCalledWith(304)
+			expect(dummy_reply.send).toHaveBeenCalledWith()
+			expect(dummy_reply.code).toHaveBeenCalledWith(304)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		test('Success: Proposal closed', async () => {
@@ -323,13 +323,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith("")
-			expect(dummy_reply.code).toBeCalledWith(204)
+			expect(dummy_reply.send).toHaveBeenCalledWith("")
+			expect(dummy_reply.code).toHaveBeenCalledWith(204)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(2)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(2)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 	
 		test('Success: No democracy rules', async () => {
@@ -410,13 +410,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith("")
-			expect(dummy_reply.code).toBeCalledWith(200)
+			expect(dummy_reply.send).toHaveBeenCalledWith("")
+			expect(dummy_reply.code).toHaveBeenCalledWith(200)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(2)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(2)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		test('Error: Proposal DNE', async () => {
@@ -447,13 +447,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.proposal_dne))
-			expect(dummy_reply.code).toBeCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.proposal_dne))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		test('Error: Proposal API error', async () => {
@@ -479,13 +479,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
-			expect(dummy_reply.code).toBeCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 
 		test('Error: Proposal not votable', async () => {
@@ -513,13 +513,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.voting_closed))
-			expect(dummy_reply.code).toBeCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.voting_closed))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
 		test('Error: Democracy DNE', async () => {
@@ -558,13 +558,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.democracy_dne))
-			expect(dummy_reply.code).toBeCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.democracy_dne))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
 		test('Error: Democracy API error', async () => {
@@ -603,13 +603,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
-			expect(dummy_reply.code).toBeCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 		
 		test('Error: Root lookup failure', async () => {
@@ -648,13 +648,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
-			expect(dummy_reply.code).toBeCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 		
 		test('Error: No proposal target', async () => {
@@ -698,13 +698,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.target_invalid))
-			expect(dummy_reply.code).toBeCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.target_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		test('Error: Invalid proposal target', async () => {
@@ -749,13 +749,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.target_invalid))
-			expect(dummy_reply.code).toBeCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.target_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
 		test('Error: Missing changes', async () => {
@@ -800,13 +800,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.changes_dne))
-			expect(dummy_reply.code).toBeCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_dne))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		test('Error: Invalid changes', async () => {
@@ -852,13 +852,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.changes_dne))
-			expect(dummy_reply.code).toBeCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_dne))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 	
 		test('Error: Empty changes', async () => {
@@ -904,13 +904,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.changes_dne))
-			expect(dummy_reply.code).toBeCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_dne))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
 		test('Error: Missing algos', async () => {
@@ -980,13 +980,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
-			expect(dummy_reply.code).toBeCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 		
 		test('Error: Missing proposal votes', async () => {
@@ -1061,13 +1061,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
-			expect(dummy_reply.code).toBeCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 		
 		test('Error: Invalid proposal votes', async () => {
@@ -1144,13 +1144,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
-			expect(dummy_reply.code).toBeCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 		
 		test('Error: Missing proposal date', async () => {
@@ -1228,13 +1228,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
-			expect(dummy_reply.code).toBeCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 		
 		test('Error: Population 0', async () => {
@@ -1313,13 +1313,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.democracy_pop))
-			expect(dummy_reply.code).toBeCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.democracy_pop))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 	
 		test('Error: DB update', async () => {
@@ -1411,13 +1411,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
-			expect(dummy_reply.code).toBeCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 
 		test('Error: DB error', async () => {
@@ -1509,13 +1509,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
-			expect(dummy_reply.code).toBeCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 
 		test('Error: Invalid changes check', async () => {
@@ -1594,13 +1594,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.changes_invalid))
-			expect(dummy_reply.code).toBeCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
 		test('Error: Invalid changes apply', async () => {
@@ -1679,13 +1679,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.changes_invalid))
-			expect(dummy_reply.code).toBeCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		test('Error: Missing algo', async () => {
@@ -1763,13 +1763,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.algo_missing))
-			expect(dummy_reply.code).toBeCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.algo_missing))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 		
 		test('Error: Proposal did not close', async () => {
@@ -1852,13 +1852,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
-			expect(dummy_reply.code).toBeCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 		
 		test('Error: Changes invalid error should not happen', async () => {
@@ -1950,13 +1950,13 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.changes_invalid))
-			expect(dummy_reply.code).toBeCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
 		test('Error: JSON changes error', async () => {
@@ -2046,13 +2046,13 @@ describe('Apply', () =>  {
 			sinon.restore()
 
 			// check reply
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
-			expect(dummy_reply.code).toBeCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 
 		})
 	})

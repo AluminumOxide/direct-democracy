@@ -24,7 +24,7 @@ const ballot_my_list = async function(request, reply, db, log, lib) {
 
 		// add membership ids to filter
 		filter['membership_id'] = { op: 'IN', val: membership_ids }
-
+		
 		// fetch from proposal service
 		const ballots = await api_proposal.ballot_list({ limit, last, sort, order, filter })
 

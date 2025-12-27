@@ -61,8 +61,8 @@ const ballot_list_integration = async(args) => {
         return await api_proposal_client.ballot_list(args)
 }
 
-const ballot_read_integration = async (ballot_id) => {
-	return await api_proposal_client.ballot_read({ ballot_id })
+const ballot_read_integration = async (proposal_id, membership_id) => {
+	return await api_proposal_client.ballot_read({ proposal_id, membership_id })
 }
 
 const ballot_create_integration = async ({proposal_id, membership_id, ballot_approved, ballot_comments}) => {
@@ -74,9 +74,8 @@ const ballot_create_integration = async ({proposal_id, membership_id, ballot_app
        })
 }
 
-const ballot_update_integration = async ({ ballot_id, proposal_id, membership_id, ballot_approved, ballot_comments }) => {
+const ballot_update_integration = async ({ proposal_id, membership_id, ballot_approved, ballot_comments }) => {
 	return await api_proposal_client.ballot_update({
-		ballot_id,
 		proposal_id,
 		membership_id,
 		ballot_approved,
@@ -84,8 +83,8 @@ const ballot_update_integration = async ({ ballot_id, proposal_id, membership_id
 	})
 }
 
-const ballot_delete_integration = async (ballot_id, proposal_id) => {
-	return await api_proposal_client.ballot_delete({ ballot_id, proposal_id })
+const ballot_delete_integration = async (proposal_id, membership_id) => {
+	return await api_proposal_client.ballot_delete({ proposal_id, membership_id })
 }
 
 const ballot_verified_integration = async (time_start, time_end) => {

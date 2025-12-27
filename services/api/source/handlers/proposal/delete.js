@@ -35,6 +35,7 @@ const proposal_delete = async function(request, reply, db, log, lib) {
 			log.error(`Proposal/Create: Failure: Error: Duplicate Membership`)
 			return reply.code(500).send(new Error(api_proposal.errors.internal_error))
 		}
+		
 		const membership_id = membership[0].membership_id
 		if(prop.membership_id !== membership_id) {
 		        log.warn(`Proposal/Delete: Failure: ${proposal_id},${membership_id} Error: Invalid membership`)

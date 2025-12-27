@@ -4,7 +4,6 @@ const democracy_list = async function(request, reply, db, log, lib) {
 
 	const { limit, last, sort, order, filter } = request
 	const { api_democracy } = lib
-
 	try {
 		// fetch from democracy service
 		const dems = await api_democracy.democracy_list({ limit, last, sort, order, filter })
