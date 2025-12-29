@@ -71,10 +71,6 @@ const ballot_my_list_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/ballot/my_list')(request, reply, db, log, lib)
 }
 
-const ballot_list_unit = async(request, reply, db, log, lib) => {
-	return await require('../handlers/ballot/list')(request, reply, db, log, lib)
-}
-
 const ballot_create_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/ballot/create')(request, reply, db, log, lib)
 }
@@ -122,8 +118,8 @@ const proposal_my_list_integration = async(args) => {
 	return await api_external_client.proposal_my_list(prop)
 }
 
-const proposal_list_integration = async(democracy_id) => {
-	return await api_external_client.proposal_list({ democracy_id })
+const proposal_list_integration = async() => {
+	return await api_external_client.proposal_list({ })
 }
 
 const proposal_create_integration = async(args) => {
@@ -136,8 +132,8 @@ const proposal_my_read_integration = async(proposal_id, profile_id, auth_token, 
 	return await api_external_client.proposal_my_read({ proposal_id, jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile') })
 }
 
-const proposal_read_integration = async(proposal_id, democracy_id) => {
-	return await api_external_client.proposal_read({ proposal_id, democracy_id })
+const proposal_read_integration = async(proposal_id) => {
+	return await api_external_client.proposal_read({ proposal_id })
 }
 
 const proposal_delete_integration = async(proposal_id, profile_id, auth_token, auth_expiry) => {
@@ -148,24 +144,20 @@ const ballot_my_list_integration = async(profile_id, auth_token, auth_expiry) =>
 	return await api_external_client.ballot_my_list({ jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile') })
 }
 
-const ballot_list_integration = async(args) => {
-	return await api_external_client.ballot_list(args)
-}
-
 const ballot_create_integration = async({ proposal_id, ballot_approved, ballot_comments, profile_id, auth_token, auth_expiry }) => {
 	return await api_external_client.ballot_create({ proposal_id, ballot_approved, ballot_comments, jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile') })
 }
 
-const ballot_my_read_integration = async(ballot_id, profile_id, auth_token, auth_expiry) => {
-	return await api_external_client.ballot_my_read({ ballot_id, jwt: await integration_test_jwt({profile_id, auth_token, auth_expiry}, 'profile')})
+const ballot_my_read_integration = async(proposal_id, profile_id, auth_token, auth_expiry) => {
+	return await api_external_client.ballot_my_read({ proposal_id, jwt: await integration_test_jwt({profile_id, auth_token, auth_expiry}, 'profile')})
 }
 
-const ballot_update_integration = async(ballot_id, ballot_approved, ballot_comments, profile_id, auth_token, auth_expiry) => {
-	return await api_external_client.ballot_update({ ballot_id, ballot_approved, ballot_comments, jwt: await integration_test_jwt({profile_id, auth_token, auth_expiry}, 'profile')})
+const ballot_update_integration = async(proposal_id, ballot_approved, ballot_comments, profile_id, auth_token, auth_expiry) => {
+	return await api_external_client.ballot_update({ proposal_id, ballot_approved, ballot_comments, jwt: await integration_test_jwt({profile_id, auth_token, auth_expiry}, 'profile')})
 }
 
-const ballot_delete_integration = async(ballot_id, profile_id, auth_token, auth_expiry) => {
-	return await api_external_client.ballot_delete({ ballot_id, jwt: await integration_test_jwt({profile_id, auth_token, auth_expiry}, 'profile')})
+const ballot_delete_integration = async(proposal_id, profile_id, auth_token, auth_expiry) => {
+	return await api_external_client.ballot_delete({ proposal_id, jwt: await integration_test_jwt({profile_id, auth_token, auth_expiry}, 'profile')})
 }
 
 module.exports = {
@@ -194,7 +186,6 @@ module.exports = {
 	proposal_read_unit,
 	proposal_delete_unit,
 	ballot_my_list_unit,
-	ballot_list_unit,
 	ballot_create_unit,
 	ballot_my_read_unit,
 	ballot_update_unit,
@@ -212,7 +203,6 @@ module.exports = {
 	proposal_read_integration,
 	proposal_delete_integration,
 	ballot_my_list_integration,
-	ballot_list_integration,
 	ballot_create_integration,
 	ballot_my_read_integration,
 	ballot_update_integration,

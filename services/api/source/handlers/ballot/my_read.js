@@ -2,7 +2,7 @@ const { invalid_auth, internal_error } = require('../../errors.json')
 
 const ballot_my_read = async function(request, reply, db, log, lib) {
 
-	const { ballot_id, jwt } = request
+	const { proposal_id, jwt } = request
 	const { api_profile, api_proposal, api_membership } = lib
 
 	try {
@@ -14,13 +14,8 @@ const ballot_my_read = async function(request, reply, db, log, lib) {
 			return reply.code(401).send(new Error(invalid_auth))
 		}
 
-		// fetch ballot
-		const ballot = await api_proposal.ballot_read({ ballot_id })
-
 		// get proposal
-		const proposal = await api_proposal.proposal_read({
-			proposal_id: ballot.proposal_id
-		})
+		const proposal = await api_proposal.proposal_read({ proposal_id })
 
 		// get membership
 		const membership = await api_membership.membership_list({
@@ -40,13 +35,13 @@ const ballot_my_read = async function(request, reply, db, log, lib) {
 			log.error(`Ballot/Read: Failure: Error: Duplicate Membership`)
 			return reply.code(500).send(new Error(internal_error))
 		}
-		if(membership[0].membership_id !== ballot.membership_id) {
-			log.warn(`Ballot/Read: Failure: Error: Invalid auth`)
-			return reply.code(401).send(new Error(invalid_auth))
-		}
+		const membership_id = membership[0].membership_id
+
+		// fetch ballot
+		const ballot = await api_proposal.ballot_read({ proposal_id, membership_id })
 
 		// return results
-		log.info(`Ballot/Read: Success: ${ballot.ballot_id}`)
+		log.info(`Ballot/Read: Success: ${ballot.proposal_id}`)
 		return reply.code(200).send(ballot)
 
 	} catch(e) {
@@ -57,9 +52,9 @@ const ballot_my_read = async function(request, reply, db, log, lib) {
 			return reply.code(401).send(new Error(invalid_auth))
 		}
 
-		// handle invalid ballot_id
+		// handle invalid proposal_id
 		if(e.message === api_proposal.errors.ballot_dne) {
-			log.warn(`Ballot/Read: Failure: Error: Invalid ballot_id`)
+			log.warn(`Ballot/Read: Failure: Error: Invalid proposal_id`)
 			return reply.code(400).send(new Error(api_proposal.errors.ballot_dne))
 		}
 

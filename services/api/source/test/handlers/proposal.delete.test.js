@@ -20,9 +20,9 @@ describe('Proposal Delete', () => {
 		test('Success', async() => {
 			const prop = test_data.proposal.gchild_content_close
 			const prof = test_data.profile.profile
-			await expect(prop_read_i(prop.id, prop.democracy_id)).resolves.toBeInstanceOf(Object)
+			await expect(prop_read_i(prop.id)).resolves.toBeInstanceOf(Object)
 			await prop_delete_i(prop.id, prof.id, prof.auth_token, prof.auth_expiry)
-			await expect(prop_read_i(prop.id, prop.democracy_id)).rejects.toThrow(new Error(errors.proposal_dne))
+			await expect(prop_read_i(prop.id)).rejects.toThrow(new Error(errors.proposal_dne))
 		})
 	})
 	
@@ -66,13 +66,13 @@ describe('Proposal Delete', () => {
 			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(204)
-			expect(dummy_reply.send).toBeCalledWith()
+			expect(dummy_reply.code).toHaveBeenCalledWith(204)
+			expect(dummy_reply.send).toHaveBeenCalledWith()
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
 		test('Error: Invalid JWT', async() => {
@@ -107,13 +107,13 @@ describe('Proposal Delete', () => {
 			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(401)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.invalid_auth))
+			expect(dummy_reply.code).toHaveBeenCalledWith(401)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.invalid_auth))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
 		test('Error: Invalid Profile', async() => {
@@ -148,13 +148,13 @@ describe('Proposal Delete', () => {
 			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(401)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.invalid_auth))
+			expect(dummy_reply.code).toHaveBeenCalledWith(401)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.invalid_auth))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 
 		test('Error: Proposal DNE', async() => {
@@ -179,13 +179,13 @@ describe('Proposal Delete', () => {
 			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.proposal_dne))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.proposal_dne))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
 		test('Error: No membership', async() => {
@@ -215,13 +215,13 @@ describe('Proposal Delete', () => {
 			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(401)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.invalid_auth))
+			expect(dummy_reply.code).toHaveBeenCalledWith(401)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.invalid_auth))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
 		test('Error: Duplicate membership', async() => {
@@ -251,13 +251,13 @@ describe('Proposal Delete', () => {
 			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 
 		test('Error: Invalid membership', async() => {
@@ -287,13 +287,13 @@ describe('Proposal Delete', () => {
 			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.membership_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_invalid))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
 		test('Error: Internal error', async() => {
@@ -318,13 +318,13 @@ describe('Proposal Delete', () => {
 			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 	})
 })

@@ -3,11 +3,11 @@ const { internal_error, democracy_dne } = require('../../errors.json')
 const democracy_read = async function(request, reply, db, log, lib) {
 	const { democracy_id } = request
 	try {
-		const rows = await db('democracy')
+		const rows = await db
 		.select({
 			democracy_id: 'democracy.id',
-			democracy_parent: 'democracy.parent_id',
-			democracy_children: db('democracy').select(db.raw('array_agg(democracy.id)')).where('democracy.parent_id', democracy_id).groupBy('democracy.parent_id'),
+			democracy_parent: db.raw("json_build_object('id',b.id,'name',b.name)"),
+			democracy_children: db('democracy').select(db.raw("array_agg(json_build_object('id',democracy.id,'name',democracy.name))")).where('democracy.parent_id', democracy_id).groupBy('democracy.parent_id'),
 			democracy_name: 'democracy.name',
 			democracy_description: 'democracy.description',
 			democracy_population_verified: 'democracy.population_verified',
@@ -18,6 +18,7 @@ const democracy_read = async function(request, reply, db, log, lib) {
 			date_created: 'democracy.date_created',
 			date_updated: 'democracy.date_updated'
 		})
+		.fromRaw('democracy left outer join democracy b on democracy.parent_id = b.id')
 		.where('democracy.id', democracy_id)
 
 		if(!rows || rows.length < 1) {

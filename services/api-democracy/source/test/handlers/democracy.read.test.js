@@ -32,13 +32,13 @@ describe('Democracy Read', () => {
 			await dem_read_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(200)
-			expect(dummy_reply.send).toBeCalledWith(dummy_req)
+			expect(dummy_reply.code).toHaveBeenCalledWith(200)
+			expect(dummy_reply.send).toHaveBeenCalledWith(dummy_req)
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 
 		})
 
@@ -61,13 +61,13 @@ describe('Democracy Read', () => {
 			await dem_read_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(400)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.democracy_dne))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.democracy_dne))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(1)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		// error: db
@@ -88,13 +88,13 @@ describe('Democracy Read', () => {
 			await dem_read_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 	})
 
@@ -112,8 +112,8 @@ describe('Democracy Read', () => {
 			expect(actual.democracy_conduct).toEqual(expected.conduct)
 			expect(actual.democracy_content).toEqual(expected.content)
 			expect(actual.democracy_metas).toEqual(expected.metas)
-			expect(actual.democracy_parent).toBeNull()
-			expect(actual.democracy_children).toEqual([test_data['democracy']['root_child']['id']])
+			expect(actual.democracy_parent.id).toBeNull()
+			expect(actual.democracy_children).toEqual([{'id':test_data['democracy']['root_child']['id'],'name':test_data['democracy']['root_child']['name']}])
 			expect(Object.keys(actual)).toEqual(expect.arrayContaining(['democracy_population_verified','democracy_population_unverified','date_created','date_updated']))
 		})
 
@@ -127,8 +127,8 @@ describe('Democracy Read', () => {
 			expect(actual.democracy_conduct).toEqual(expected.conduct)
 			expect(actual.democracy_content).toEqual(expected.content)
 			expect(actual.democracy_metas).toEqual(expected.metas)
-			expect(actual.democracy_parent).toBe(expected.parent_id)
-			expect(actual.democracy_children).toEqual([test_data['democracy']['not_root_child']['id']])
+			expect(actual.democracy_parent.id).toBe(expected.parent_id)
+			expect(actual.democracy_children).toEqual([{'id':test_data['democracy']['not_root_child']['id'],'name':test_data['democracy']['not_root_child']['name']}])
 			expect(Object.keys(actual)).toEqual(expect.arrayContaining(['democracy_population_verified','democracy_population_unverified','date_created','date_updated']))
 		})
 
@@ -142,7 +142,7 @@ describe('Democracy Read', () => {
 			expect(actual.democracy_conduct).toEqual(expected.conduct)
 			expect(actual.democracy_content).toEqual(expected.content)
 			expect(actual.democracy_metas).toEqual(expected.metas)
-			expect(actual.democracy_parent).toBe(expected.parent_id)
+			expect(actual.democracy_parent.id).toBe(expected.parent_id)
 			expect(actual.democracy_children).toBeNull()
 			expect(Object.keys(actual)).toEqual(expect.arrayContaining(['democracy_population_verified','democracy_population_unverified','date_created','date_updated']))
 		})

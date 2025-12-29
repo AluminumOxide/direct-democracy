@@ -408,6 +408,74 @@ Properties:
 
 
 
+- **democracy_conduct**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_string](#schemas-op_string)
+
+	- **val**
+
+		Type: string
+
+
+- **democracy_content**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_string](#schemas-op_string)
+
+	- **val**
+
+		Type: string
+
+
+- **democracy_metas**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_string](#schemas-op_string)
+
+	- **val**
+
+		Type: string
+
+
+- **democracy_parent**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_string](#schemas-op_string)
+
+	- **val**
+
+		Type: string
+
+
 ## Bodies
 
 ## Responses

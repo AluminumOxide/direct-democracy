@@ -1,6 +1,9 @@
 const fs = require('node:fs')
 const { Buffer } = require('node:buffer')
-const { subtle, createCipheriv, createDecipheriv, createECDH, createHash, getRandomValues, randomBytes, randomFillSync, scryptSync } = require('node:crypto')
+const { subtle, createCipheriv, createDecipheriv, createECDH, createHash, getRandomValues, randomBytes, randomFillSync, randomUUID, scryptSync } = require('node:crypto')
+
+/* uuid */
+const uuid_random = randomUUID
 
 /* key conversions */
 
@@ -215,6 +218,7 @@ const pake_client_verify_proof = function(client_public, client_sesh, server_pro
 }
 
 module.exports = {
+	uuid_random,
 	key_password,
 	encrypt,
 	decrypt,

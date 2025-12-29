@@ -18,7 +18,7 @@ describe('List', () => {
 		test('Success', async() => {
 
 			// set up mocks
-			const dummy_req = { proposal_id: get_uuid() }
+			const dummy_req = { proposal_id: get_uuid(), filter: {proposal_id: get_uuid()} }
 			const dummy_log = get_dummy_log()
 			const dummy_lib = get_dummy_lib([])
 			const dummy_reply = get_dummy_reply()
@@ -33,13 +33,13 @@ describe('List', () => {
 			await blt_list_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 			
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(200)
-			expect(dummy_reply.send).toBeCalledWith([])
+			expect(dummy_reply.code).toHaveBeenCalledWith(200)
+			expect(dummy_reply.send).toHaveBeenCalledWith([])
 			
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(1)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
                 // error: db
@@ -60,13 +60,13 @@ describe('List', () => {
 			await blt_list_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 			
 			// check reply
-			expect(dummy_reply.code).toBeCalledWith(500)
-			expect(dummy_reply.send).toBeCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
 			
 			// check log
-			expect(dummy_log.info).toBeCalledTimes(0)
-			expect(dummy_log.warn).toBeCalledTimes(0)
-			expect(dummy_log.error).toBeCalledTimes(1)
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
                 })
 	})
 

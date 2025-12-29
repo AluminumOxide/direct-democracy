@@ -65,3 +65,4 @@ docker build -t api-profile -f ../../services/api-profile/Dockerfile --build-arg
 
 docker build -t api-token -f ../../services/api-token/Dockerfile --build-arg API_PORT=3006 ../../services/api-token
 
+docker build -t ui -f ../../services/ui/Dockerfile ../../services/ui/

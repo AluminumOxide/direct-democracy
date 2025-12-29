@@ -3,7 +3,7 @@ const { invalid_auth } = require('../../errors')
 const membership_list = async function(request, reply, db, log, lib) {
 
 	let { limit, last, sort, order, filter={}, jwt } = request
-	const { api_profile, api_membership } = lib
+	const { api_profile, api_membership, api_democracy } = lib
 
 	try {
 		// get profile_id
@@ -19,6 +19,23 @@ const membership_list = async function(request, reply, db, log, lib) {
 
 		// fetch from membership service
 		const mems = await api_membership.membership_list({ limit, last, sort, order, filter })
+
+		// fetch democracy names
+		const dems = (await api_democracy.democracy_list({
+			filter: {
+				democracy_id:{
+					op: 'IN',
+					val: Array.from(new Set(mems.map(k => k.democracy_id)))
+				}
+			}
+		})).reduce((a,v) => Object.assign(a, {
+			[v.democracy_id]:{id:v.democracy_id,name:v.democracy_name}
+		}), {})
+
+		// update membership democracy id/names
+		mems.forEach((m,i) => {
+			mems[i].democracy_id = dems[m.democracy_id]
+		})
 
 		// return results
 		log.info(`Membership/List: Success: ${profile_id}`)

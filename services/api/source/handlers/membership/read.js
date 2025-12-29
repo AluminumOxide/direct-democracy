@@ -3,7 +3,7 @@ const { invalid_auth } = require('../../errors.json')
 const membership_read = async function(request, reply, db, log, lib) {
 
 	let { membership_id, jwt } = request
-	const { api_profile, api_membership } = lib
+	const { api_profile, api_membership, api_democracy } = lib
 
 	try {
 		// get auth info
@@ -15,13 +15,19 @@ const membership_read = async function(request, reply, db, log, lib) {
 		}
 
 		// fetch from membership service
-		const mem = await api_membership.membership_read({ membership_id })
+		let mem = await api_membership.membership_read({ membership_id })
 
 		// handle invalid profile_id
 		if(mem.profile_id !== profile_id) {
 			log.warn(`Membership/Read: Failure: ${membership_id} Error: Invalid auth`)
 			return reply.code(401).send(new Error(invalid_auth))
 		}
+
+		// fetch the democracy name
+		const dem = await api_democracy.democracy_read({ democracy_id: mem.democracy_id})
+
+		// update the membership democracy name
+		mem.democracy_id = {id: dem.democracy_id, name: dem.democracy_name}
 
 		// return results
 		log.info(`Membership/Read: Success: ${membership_id}`)
