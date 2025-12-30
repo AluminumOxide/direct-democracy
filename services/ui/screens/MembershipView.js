@@ -17,6 +17,14 @@ export default function MembershipViewScreen({ route }) {
 	}
 	const membershipId = authState.memberships[democracyId]
 
+	let actions = []
+	if(democracyId != authState.root) {
+		actions.push({
+			title: 'Leave Democracy',
+			press: () => navigation.navigate('MembershipDelete', { id: democracyId })
+		})
+	}
+
 	const handleData = async function() {
 		return await api.membership_read({
 			membership_id: membershipId,
@@ -28,10 +36,7 @@ export default function MembershipViewScreen({ route }) {
 		nameField: 'democracy_id',
 		shortFields: ['democracy_id','is_verified','date_created','date_updated'],
 		longFields: [],
-		actions: [{
-			title: 'Leave Democracy',
-			press: () => navigation.navigate('MembershipDelete', { id: democracyId })
-		}],
+		actions,
 		colDefns: config.defn.membership,
 		getData: handleData
 	})

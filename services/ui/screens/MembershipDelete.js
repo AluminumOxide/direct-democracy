@@ -9,7 +9,7 @@ export default function MembershipDeleteScreen({ route }) {
 	const democracyId = route.params.id;
 	const navigation = useNavigation();
 
-	const { authState } = useContext(AuthContext)
+	const { authState, setAuthState } = useContext(AuthContext)
 	if(!authState.state) {
 		return navigation.navigate('SignIn')
 	}
@@ -19,6 +19,11 @@ export default function MembershipDeleteScreen({ route }) {
 		await api.membership_delete({
 			jwt: authState.jwt,
 			membership_id: membershipId
+		})
+		const { [democracyId]: oldMem, ...mems } = authState.memberships
+		setAuthState({
+			...authState,
+			memberships: mems
 		})
 		return {}
 	}

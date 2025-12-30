@@ -66,6 +66,17 @@ Properties:
 - [401](#responses-401)
 - [500](#responses-500)
 
+### GET /v1/democracy/root
+
+*Get a democracy*
+
+**Responses**
+
+- [200](#responses-democracy_root)
+- [400](#responses-400)
+- [401](#responses-401)
+- [500](#responses-500)
+
 ### POST /v1/democracy/:democracy_id/membership
 
 *Create a membership*
@@ -2185,6 +2196,64 @@ Properties:
 - **democracy_children**
 
 	Type: [schemas-democracy_children](#schemas-democracy_children)
+
+- **democracy_population**
+
+	Type: [schemas-democracy_population](#schemas-democracy_population)
+
+- **democracy_conduct**
+
+	Type: [schemas-democracy_conduct](#schemas-democracy_conduct)
+
+- **democracy_content**
+
+	Type: [schemas-democracy_content](#schemas-democracy_content)
+
+- **democracy_meta**
+
+	Type: [schemas-democracy_meta](#schemas-democracy_meta)
+
+- **date_created**
+
+	Type: [schemas-date_created](#schemas-date_created)
+
+- **date_updated**
+
+	Type: [schemas-date_updated](#schemas-date_updated)
+
+#### schemas-democracy_root
+
+
+*Democracy - Root*
+
+
+Type: object
+
+Required:
+
+- democracy_id
+- democracy_name
+- democracy_description
+- democracy_population
+- democracy_conduct
+- democracy_content
+- democracy_meta
+- date_created
+- date_updated
+
+Properties:
+
+- **democracy_id**
+
+	Type: [schemas-democracy_id](#schemas-democracy_id)
+
+- **democracy_name**
+
+	Type: [schemas-democracy_name](#schemas-democracy_name)
+
+- **democracy_description**
+
+	Type: [schemas-democracy_description](#schemas-democracy_description)
 
 - **democracy_population**
 
