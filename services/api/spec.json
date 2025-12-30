@@ -607,6 +607,51 @@
 				}
 			}
 		},
+		"democracy_root": {
+			"$id": "schemas-democracy_root",
+			"description": "Democracy - Root",
+			"type": "object",
+			"required": [
+				"democracy_id",
+				"democracy_name",
+				"democracy_description",
+				"democracy_population",
+				"democracy_conduct",
+				"democracy_content",
+				"democracy_meta",
+				"date_created",
+				"date_updated"
+			],
+			"properties": {
+				"democracy_id": {
+					"$ref": "schemas-democracy_id"
+				},
+				"democracy_name": {
+					"$ref": "schemas-democracy_name"
+				},
+				"democracy_description": {
+					"$ref": "schemas-democracy_description"
+				},
+				"democracy_population": {
+					"$ref": "schemas-democracy_population"
+				},
+				"democracy_conduct": {
+					"$ref": "schemas-democracy_conduct"
+				},
+				"democracy_content": {
+					"$ref": "schemas-democracy_content"
+				},
+				"democracy_meta": {
+					"$ref": "schemas-democracy_meta"
+				},
+				"date_created": {
+					"$ref": "schemas-date_created"
+				},
+				"date_updated": {
+					"$ref": "schemas-date_updated"
+				}
+			}
+		},
 		"democracy_list": {
 			"$id": "schemas-democracy_list",
 			"description": "Democracy - List",
@@ -1426,6 +1471,26 @@
 				"responses": {
 					"200": {
 						"$ref": "responses-democracy_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/democracy/root": {
+			"GET": {
+				"description": "Get a democracy",
+				"operationId": "democracy_root",
+				"responses": {
+					"200": {
+						"$ref": "responses-democracy_root"
 					},
 					"400": {
 						"$ref": "responses-400"

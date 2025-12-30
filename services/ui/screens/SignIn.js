@@ -17,15 +17,17 @@ export default function SignInScreen() {
 		const { profile_id: profile } = await api.verify_jwt({ jwt })
 
 		const mems = await api.membership_list({ jwt })
+		const root = await api.democracy_root()
 
 		let memberships = {}
 		mems.map((m) => memberships[m.democracy_id.id] = m.membership_id)
 
 		setAuthState({
-                                state: true,
-                                jwt,
-                                profile,
-                                memberships
+			state: true,
+			jwt,
+			profile,
+			root: root.democracy_id,
+			memberships
 		});
 
 		return navigation.navigate('Account')

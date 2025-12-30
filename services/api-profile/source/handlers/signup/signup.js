@@ -2,6 +2,7 @@ const { token_dne, id_dupe, internal_error } = require('../../errors.json')
 
 const sign_up = async function(request, reply, db, log, lib) {
 
+	const { api_democracy, api_membership } = lib
 	const { profile_id, zkpp, salt, profile_token } = request
 
 	try {
@@ -52,6 +53,13 @@ const sign_up = async function(request, reply, db, log, lib) {
 			log.error(`Profile/Signup: Failure: ${profile_id} Error: Profile insertion`)
 			return reply.code(500).send(new Error(internal_error))
 		}
+
+		// add the profile to the root democracy
+		const root_dem = await api_democracy.democracy_root()
+		const root_mem = await api_membership.membership_create({
+			democracy_id: root_dem.democracy_id,
+			profile_id
+		})
 
 		// return signup token
 		log.info(`Profile/Signup: Success: ${profile_id}`)

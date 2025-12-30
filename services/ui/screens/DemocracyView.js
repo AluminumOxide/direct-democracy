@@ -22,15 +22,19 @@ export default function DemocracyViewScreen({ route }) {
 				title:'Create a Proposal',
 				press: () => navigation.navigate('ProposalCreate', { democracy: democracyId })
 			})
-			actions.push({
-				title:'Leave Democracy',
-				press: () => navigation.navigate('MembershipDelete', { id: democracyId })
-			})
+			if(democracyId != authState.root) {
+				actions.push({
+					title:'Leave Democracy',
+					press: () => navigation.navigate('MembershipDelete', { id: democracyId })
+				})
+			}
 		} else {
-			actions.push({
-				title:'Join Democracy',
-				press: () => navigation.navigate('MembershipCreate', { id: democracyId })
-			})
+			if(democracyId != authState.root) {
+				actions.push({
+					title:'Join Democracy',
+					press: () => navigation.navigate('MembershipCreate', { id: democracyId })
+				})
+			}
 		}
 	}
 

@@ -9,16 +9,23 @@ export default function MembershipCreateScreen({ route }) {
 	const democracyId = route.params.id;
 	const navigation = useNavigation();
 
-	const { authState } = useContext(AuthContext)
+	const { authState, setAuthState } = useContext(AuthContext)
 	if(!authState.state) {
 		return navigation.navigate('SignIn')
 	}
 
 	const handleProceed = async function() {
-		return await api.membership_create({
+		const mem = await api.membership_create({
 			jwt: authState.jwt,
 			profile_id: authState.profile, 
 			democracy_id: democracyId
+		})
+		setAuthState({
+			...authState,
+			memberships: {
+				...authState.memberships,
+				[mem.democracy_id]: mem.membership_id
+			}
 		})
 	}
 

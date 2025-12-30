@@ -59,7 +59,17 @@ describe('Sign Up', () => {
 			const dummy_req = { profile_id: 'test', zkpp: 'test', salt: 'test', profile_token: 'test' }
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
-			const dummy_lib = get_dummy_lib([])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_democracy',
+				fxn: 'democracy_root',
+				err: false,
+				val: { democracy_id: 'test' }
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_create',
+				err: false,
+				val: {}
+			}])
 			const dummy_db = get_dummy_db([{
 				fxn: 'where',
 				args: [{ id: 'test' }],

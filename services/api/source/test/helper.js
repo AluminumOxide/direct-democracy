@@ -27,6 +27,10 @@ const democracy_read_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/democracy/read')(request, reply, db, log, lib)
 }
 
+const democracy_root_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/democracy/root')(request, reply, db, log, lib)
+}
+
 const membership_list_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/membership/list')(request, reply, db, log, lib)
 }
@@ -90,6 +94,10 @@ const ballot_delete_unit = async(request, reply, db, log, lib) => {
 // integration tests
 const democracy_list_integration = async() => {
 	return await api_external_client.democracy_list({})
+}
+
+const democracy_root_integration = async() => {
+	return await api_external_client.democracy_root()
 }
 
 const democracy_read_integration = async(democracy_id) => {
@@ -175,6 +183,7 @@ module.exports = {
 	integration_test_query,
 	democracy_list_unit,
 	democracy_read_unit,
+	democracy_root_unit,
 	membership_list_unit,
 	membership_create_unit,
 	membership_read_unit,
@@ -192,6 +201,7 @@ module.exports = {
 	ballot_delete_unit,
 	democracy_list_integration,
 	democracy_read_integration,
+	democracy_root_integration,
 	membership_list_integration,
 	membership_create_integration,
 	membership_read_integration,
