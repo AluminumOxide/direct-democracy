@@ -59,7 +59,7 @@ const apply_proposal = async function(request, reply, db, log, lib) {
 
 		// proposal target
 		const target = proposal.proposal_target
-		if(!(['name','description','conduct','content','metas']).includes(target)) {
+		if(!(['democracy_name','democracy_description','democracy_conduct','democracy_content','democracy_metas']).includes(target)) {
 			log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal has invalid target`)
 			// close proposal and return applicable error
 			return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.target_invalid)
@@ -74,7 +74,7 @@ const apply_proposal = async function(request, reply, db, log, lib) {
 		}
 
 		// targeted contents
-		const contents = democracy['democracy_'+target]
+		const contents = democracy[target]
 		if(!lib_json.check_changes(changes, contents)) {
 			log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal changes do not map to democracy contents`)
 			// close proposal and return applicable error

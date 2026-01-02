@@ -34,8 +34,8 @@ describe('Apply', () =>  {
 
 			// check that proposal was applied
 			expect(dem2.democracy_metas).toMatchObject(dem1.democracy_metas)
-			expect(dem1.democracy_metas.name.update.approval_number_minimum).toBeUndefined()
-			expect(dem2.democracy_metas.name.update.approval_number_minimum).toBe(1)
+			expect(dem1.democracy_metas.democracy_name.update.approval_number_minimum).toBeUndefined()
+			expect(dem2.democracy_metas.democracy_name.update.approval_number_minimum).toBe(1)
 			expect(prop1.votable).toBeTruthy()
 			expect(prop2.proposal_votable).toBeFalsy()
 			expect(prop1.passed).toBeNull()
@@ -79,7 +79,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'content',
+					proposal_target: 'democracy_content',
 					proposal_changes: {
 						a: {
 							_add: { b: 2 }
@@ -109,7 +109,7 @@ describe('Apply', () =>  {
 						}
 					},
 					democracy_metas: {
-						content: {
+						democracy_content: {
 							add: {
 								approval_percent_minimum: 0
 							},
@@ -178,10 +178,10 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'name',
+					proposal_target: 'democracy_name',
 					proposal_changes: {
 						_update: {
-							'name': 'test'
+							'democracy_name': 'test'
 						}
 					},
 					proposal_votes: {
@@ -204,7 +204,7 @@ describe('Apply', () =>  {
 				val: {
 					democracy_name: 'name',
 					democracy_metas: {
-						name: {
+						democracy_name: {
 							update: {
 								approval_percent_minimum: 100
 							}
@@ -257,7 +257,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'content',
+					proposal_target: 'democracy_content',
 					proposal_changes: {
 						a: {
 							_add: { b: 2 }
@@ -287,7 +287,7 @@ describe('Apply', () =>  {
 						}
 					},
 					democracy_metas: {
-						content: {
+						democracy_content: {
 							close: {
 								lifetime_maximum_days: 0
 							}
@@ -350,7 +350,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'content',
+					proposal_target: 'democracy_content',
 					proposal_changes: {
 						a: {
 							_add: { b: 2 }
@@ -771,7 +771,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'name'
+					proposal_target: 'democracy_name'
 				},
 				err: false
 			},{
@@ -822,7 +822,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'name',
+					proposal_target: 'democracy_name',
 					proposal_changes: 'bad'
 				},
 				err: false
@@ -874,7 +874,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'name',
+					proposal_target: 'democracy_name',
 					proposal_changes: {}
 				},
 				err: false
@@ -926,7 +926,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'content',
+					proposal_target: 'democracy_content',
 					proposal_changes: {
 						a: {
 							_add: { b: 2 }
@@ -1002,7 +1002,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'content',
+					proposal_target: 'democracy_content',
 					proposal_changes: {
 						a: {
 							_add: { b: 2 }
@@ -1083,7 +1083,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'content',
+					proposal_target: 'democracy_content',
 					proposal_changes: {
 						a: {
 							_add: { b: 2 }
@@ -1166,7 +1166,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'content',
+					proposal_target: 'democracy_content',
 					proposal_changes: {
 						a: {
 							_add: { b: 2 }
@@ -1250,7 +1250,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'content',
+					proposal_target: 'democracy_content',
 					proposal_changes: {
 						a: {
 							_add: { b: 2 }
@@ -1340,7 +1340,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'content',
+					proposal_target: 'democracy_content',
 					proposal_changes: {
 						a: {
 							_add: { b: 2 }
@@ -1438,7 +1438,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'content',
+					proposal_target: 'democracy_content',
 					proposal_changes: {
 						a: {
 							_add: { b: 2 }
@@ -1536,7 +1536,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'content',
+					proposal_target: 'democracy_content',
 					proposal_changes: {
 						a: {
 							_add: { b: 2 }
@@ -1621,7 +1621,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'content',
+					proposal_target: 'democracy_content',
 					proposal_changes: {
 						a: {
 							_add: { b: 2 }
@@ -1706,10 +1706,10 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'name',
+					proposal_target: 'democracy_name',
 					proposal_changes: {
 						_update: {
-							'name': 'test'
+							'democracy_name': 'test'
 						}
 					},
 					proposal_votes: {
@@ -1732,7 +1732,7 @@ describe('Apply', () =>  {
 				val: {
 					democracy_name: 'name',
 					democracy_metas: {
-						name: {
+						democracy_name: {
 							update: {
 								bad_algo: 100
 							}
@@ -1790,7 +1790,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'name',
+					proposal_target: 'democracy_name',
 					proposal_changes: {
 						_update: {
 							'name': 'test'
@@ -1879,7 +1879,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'content',
+					proposal_target: 'democracy_content',
 					proposal_changes: {
 						a: {
 							_add: { b: 2 }
@@ -1972,7 +1972,7 @@ describe('Apply', () =>  {
 				val: {
 					proposal_votable: true,
 					democracy_id: '',
-					proposal_target: 'content',
+					proposal_target: 'democracy_content',
 					proposal_changes: {
 						a: {
 							_add: { b: 2 }

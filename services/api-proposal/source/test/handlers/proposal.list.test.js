@@ -221,7 +221,7 @@ describe('Proposal List', () => {
 				filter: {
 					proposal_target: {
 						op: '!=',
-						val: 'name'
+						val: 'democracy_name'
 					}
 				}
 			})

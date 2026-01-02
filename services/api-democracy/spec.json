@@ -122,7 +122,7 @@
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
-				"name": {
+				"democracy_name": {
 					"type": "object",
 					"description": "Conditions to update democracy name",
 					"additionalProperties": false,
@@ -130,7 +130,7 @@
 						"update": { "$ref": "schemas-democracy_meta_cond" }
 					}
 				},
-				"description": {
+				"democracy_description": {
 					"type": "object",
 					"description": "Conditions to update democracy description",
 					"additionalProperties": false,
@@ -138,7 +138,7 @@
 						"update": { "$ref": "schemas-democracy_meta_cond" }
 					}
 				},
-				"democracies": {
+				"democracy_children": {
 					"type": "object",
 					"description": "Conditions to add or remove child democracies",
 					"additionalProperties": false,
@@ -155,11 +155,11 @@
 					"description": "Conditions to add, remove or update timeouts",
 					"$ref": "schemas-democracy_meta_leaf"
 				},
-				"conduct": {
+				"democracy_conduct": {
 					"description": "Conditions to add, remove or update rules of conduct",
 					"$ref": "schemas-democracy_meta_leaf"
 				},
-				"content": {
+				"democracy_content": {
 					"type": "object",
 					"description": "Conditions to add, remove or update content",
 					"allOf": [
@@ -167,7 +167,7 @@
 						{ "$ref": "schemas-democracy_meta_branch" }
 					]
 				},
-				"meta": {
+				"democracy_metas": {
 					"description": "Conditions to add, remove or update meta rules",
 					"$ref": "schemas-democracy_meta_leaf"
 				}

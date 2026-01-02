@@ -1087,6 +1087,15 @@ Type: string
 
 
 Type: string
+
+Enum:
+
+- democracy_name
+- democracy_description
+- democracy_content
+- democracy_conduct
+- democracy_metas
+- democracy_children
 #### schemas-proposal_votable
 
 
