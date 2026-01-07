@@ -199,7 +199,7 @@ describe('Proposal List', () => {
 					}
 				}
 			})
-			expect(props.length).toBe(3)
+			expect(props.length).toBe(4)
 		})
 
 		// filter by proposal_description contains
@@ -225,7 +225,7 @@ describe('Proposal List', () => {
 					}
 				}
 			})
-			expect(props.length).toBe(4)
+			expect(props.length).toBe(5)
 		})
 
 		// filter by proposal_votable equals
@@ -238,7 +238,7 @@ describe('Proposal List', () => {
 					}
 				}
 			})
-			expect(props.length).toBe(3)
+			expect(props.length).toBe(4)
 		})
 
 		// filter by proposal_passed not equal
@@ -277,7 +277,7 @@ describe('Proposal List', () => {
 					}
 				}
 			})
-			expect(props.length).toBe(5)
+			expect(props.length).toBe(6)
 		})
 
 		// TODO error: invalid filter field

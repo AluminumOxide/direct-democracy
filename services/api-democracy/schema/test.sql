@@ -1,1 +1,3 @@
+DELETE FROM democracy;
+
 INSERT INTO democracy (id, democracy_name, democracy_description, democracy_conduct, democracy_content, democracy_metas, parent_id) (SELECT (data->>'id')::uuid, data->>'democracy_name', data->>'democracy_description', (data->>'democracy_conduct')::jsonb, (data->>'democracy_content')::jsonb, (data->>'democracy_metas')::jsonb, (data->>'parent_id')::uuid FROM tempdemocracy) ON CONFLICT (id) DO UPDATE SET democracy_name = EXCLUDED.democracy_name, democracy_description = EXCLUDED.democracy_description, democracy_conduct = EXCLUDED.democracy_conduct, democracy_content = EXCLUDED.democracy_content, democracy_metas = EXCLUDED.democracy_metas, parent_id = EXCLUDED.parent_id;

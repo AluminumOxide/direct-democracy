@@ -128,7 +128,7 @@ describe('Democracy Read', () => {
 			expect(actual.democracy_content).toEqual(expected.democracy_content)
 			expect(actual.democracy_metas).toEqual(expected.democracy_metas)
 			expect(actual.democracy_parent.id).toBe(expected.parent_id)
-			expect(actual.democracy_children).toEqual([{'id':test_data['democracy']['not_root_child']['id'],'name':test_data['democracy']['not_root_child']['democracy_name']}])
+			expect(actual.democracy_children).toEqual([{'id':test_data['democracy']['not_root_child']['id'],'name':test_data['democracy']['not_root_child']['democracy_name']},{'id':test_data['democracy']['new_child']['id'],'name':test_data['democracy']['new_child']['democracy_name']}])
 			expect(Object.keys(actual)).toEqual(expect.arrayContaining(['democracy_population_verified','democracy_population_unverified','date_created','date_updated']))
 		})
 

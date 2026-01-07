@@ -137,6 +137,25 @@ Properties:
 - [401](#responses-401)
 - [500](#responses-500)
 
+### POST /v1/democracy/:democracy_id/members
+
+*Mass create memberships for a new democracy*
+
+**Params**
+
+- [democracy_id](#params-democracy_id)
+
+**Bodies**
+
+ - [bodies-democracy_members](#bodies-democracy_members)
+
+**Responses**
+
+- [200](#responses-201)
+- [400](#responses-400)
+- [401](#responses-401)
+- [500](#responses-500)
+
 ### GET /v1/population
 
 *Fetch democracy populations*
@@ -183,6 +202,9 @@ Properties:
 #### params-membership_id
 
 Type: [schemas-membership_id](#schemas-membership_id)
+#### params-democracy_id
+
+Type: [schemas-democracy_id](#schemas-democracy_id)
 ## Queries
 
 #### queries-limit
@@ -542,7 +564,16 @@ Properties:
 #### bodies-membership_create
 
 Type: [schemas-membership_create](#schemas-membership_create)
+#### bodies-democracy_members
+
+Type: [schemas-democracy_members](#schemas-democracy_members)
 ## Responses
+
+#### responses-201
+
+
+*Successfully Created*
+
 
 #### responses-204
 
@@ -790,6 +821,28 @@ Properties:
 - **profile_id**
 
 	Type: [schemas-profile_id](#schemas-profile_id)
+
+#### schemas-democracy_members
+
+
+*Democracy - Members*
+
+
+Type: object
+
+Required:
+
+- members
+
+Properties:
+
+- **members**
+
+	Type: array
+
+	Items:
+
+	- Type: [schemas-membership_id](#schemas-membership_id)
 
 #### schemas-population_list
 

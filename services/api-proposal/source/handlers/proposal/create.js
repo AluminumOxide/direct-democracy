@@ -25,6 +25,9 @@ const proposal_create = async function(request, reply, db, log, lib) {
 	let democracy
 	try {
 		democracy = await api_democracy.democracy_read({ democracy_id })
+		let c = {}
+		democracy.democracy_children.map(d => c[d.name] = d.id)
+		democracy.democracy_children = c
 	} catch (e) {
 		if(e.message === api_democracy.errors.democracy_dne) {
 			log.warn(`Proposal/Create: Failure: ${democracy_id} Error: Democracy does not exist`)
@@ -40,6 +43,13 @@ const proposal_create = async function(request, reply, db, log, lib) {
 			log.warn(`Proposal/Create: Failure: ${membership_id} Invalid changes`)
 			return reply.code(400).send(new Error(changes_invalid))
 		}
+
+		// check changes of create democracy
+		if(proposal_target === 'democracy_children' && (!proposal_changes._add || !proposal_changes._add[proposal_name] || !proposal_changes._add[proposal_name].democracy_conduct || !proposal_changes._add[proposal_name].democracy_content || !proposal_changes._add[proposal_name].democracy_metas)) {
+			log.warn(`Proposal/Create: Failure: ${membership_id} Invalid changes`)
+			return reply.code(400).send(new Error(changes_invalid))
+		}
+
 	} catch(e) {
 		log.warn(`Proposal/Create: Failure: ${membership_id} Invalid changes`)
 		return reply.code(400).send(new Error(changes_invalid))

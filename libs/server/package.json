@@ -1,5 +1,5 @@
 {
-  "version": "1.0.36",
+  "version": "1.0.37",
   "name": "@aluminumoxide/direct-democracy-lib-server",
   "description": "Basic fastify server from spec with knex postgres and jest setup",
   "homepage": "https://github.com/aluminumoxide/direct-democracy#readme",
@@ -8,7 +8,7 @@
     "@aluminumoxide/direct-democracy-democracy-api-client": "^1.0.48",
     "@aluminumoxide/direct-democracy-lib-auth": "^1.0.7",
     "@aluminumoxide/direct-democracy-lib-json-changes": "^1.0.5",
-    "@aluminumoxide/direct-democracy-membership-api-client": "^1.0.25",
+    "@aluminumoxide/direct-democracy-membership-api-client": "^1.0.26",
     "@aluminumoxide/direct-democracy-profile-api-client": "^1.0.7",
     "@aluminumoxide/direct-democracy-proposal-api-client": "^1.0.32",
     "@aluminumoxide/direct-democracy-token-api-client": "^1.0.11",

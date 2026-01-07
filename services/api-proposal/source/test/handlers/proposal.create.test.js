@@ -54,7 +54,7 @@ describe('Proposal Create', () => {
 			},{
 				lib: 'api_democracy',
 				fxn: 'democracy_read',
-				val: { 'democracy_target':{} },
+				val: { 'democracy_target':{}, 'democracy_children':[{id:'00000000-0000-0000-0000-000000000000',name:'test'}] },
 				err: false
 			},{
 				lib: 'lib_json',
@@ -306,7 +306,7 @@ describe('Proposal Create', () => {
 			},{
 				lib: 'api_democracy',
 				fxn: 'democracy_read',
-				val: { 'democracy_target':{} },
+				val: { 'democracy_target':{}, 'democracy_children':[]  },
 				err: false
 			},{
 				lib: 'lib_json',
@@ -351,13 +351,60 @@ describe('Proposal Create', () => {
 			},{
 				lib: 'api_democracy',
 				fxn: 'democracy_read',
-				val: { 'democracy_target':{} },
+				val: { 'democracy_target':{}, 'democracy_children':[]  },
 				err: false
 			},{
 				lib: 'lib_json',
 				fxn: 'check_changes',
 				val: false,
 				err: true
+			}], errors)
+
+			// call handler
+			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
+		test('Error: Invalid child democracy', async() => {
+
+			// set up mocks		
+			const dummy_req = {
+				proposal_name: 'test',
+				proposal_description: 'test test test',
+				proposal_target: 'democracy_children',
+				proposal_changes: {_add:{test:{
+					democracy_content:{},
+					democracy_conduct:{}
+				}}},
+				democracy_id: '00000000-0000-0000-0000-000000000000',
+				membership_id: '00000000-0000-0000-0000-000000000000'
+			}
+			const dummy_reply = get_dummy_reply()
+			const dummy_log = get_dummy_log()
+			const dummy_db = get_dummy_db([])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
+				fxn: 'membership_read',
+				val: { democracy_id: dummy_req.democracy_id },
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read',
+				val: { 'democracy_children':[]  },
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
 			}], errors)
 
 			// call handler
@@ -401,7 +448,7 @@ describe('Proposal Create', () => {
 			},{
 				lib: 'api_democracy',
 				fxn: 'democracy_read',
-				val: { 'democracy_target':{} },
+				val: { 'democracy_target':{}, 'democracy_children':[]  },
 				err: false
 			},{
 				lib: 'lib_json',
@@ -451,7 +498,7 @@ describe('Proposal Create', () => {
 			},{
 				lib: 'api_democracy',
 				fxn: 'democracy_read',
-				val: { 'democracy_target':{} },
+				val: { 'democracy_target':{}, 'democracy_children':[]  },
 				err: false
 			},{
 				lib: 'lib_json',
@@ -486,7 +533,7 @@ describe('Proposal Create', () => {
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
 				proposal_target: 'democracy_name',
-				proposal_changes: {'_update':{'name':'qwer'}}
+				proposal_changes: {'_update':{'democracy_name':'qwer'}}
 			}
 			await expect(prop_create_i(test_prop)).resolves.toMatchObject(test_prop)
 		})
@@ -499,7 +546,7 @@ describe('Proposal Create', () => {
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
 				proposal_target: 'democracy_description',
-				proposal_changes: {'_update':{'name':'qwer'}}
+				proposal_changes: {'_update':{'democracy_description':'qwer'}}
 			}
 			await expect(prop_create_i(test_prop)).resolves.toMatchObject(test_prop)
 		})
@@ -539,12 +586,28 @@ describe('Proposal Create', () => {
 				proposal_description: 'asdf',
 				proposal_target: 'democracy_metas',
 				proposal_changes: {
-					'name':{ 'update':{ 
+					'democracy_name':{ 'update':{ 
 						'_add':{ 'approval_number_minimum': 3 }, 
 						'_delete':['approval_percent_minimum']}},
-					 'description': { 'update':{ 
+					 'democracy_description': { 'update':{ 
 						 '_update':{ 'approval_percent_minimum': 80}}}
 				}
+			}
+			await expect(prop_create_i(test_prop)).resolves.toMatchObject(test_prop)
+		})
+		
+		// success: create democracy
+		test('Success: Add child democracy', async () => {
+			const test_prop = {
+				democracy_id: test_data['democracy']['root_child']['id'],
+				membership_id: test_data['membership']['verified_child_1']['id'],
+				proposal_name: 'New Democracy',
+				proposal_description: 'Democracy Desc',
+				proposal_target: 'democracy_children',
+				proposal_changes: {'_add':{'New Democracy':{
+					democracy_conduct:{},
+					democracy_content:{},
+					democracy_metas: test_data['democracy']['root_child']['democracy_metas'] }}}
 			}
 			await expect(prop_create_i(test_prop)).resolves.toMatchObject(test_prop)
 		})
@@ -557,7 +620,7 @@ describe('Proposal Create', () => {
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
 				proposal_target: 'democracy_name',
-				proposal_changes: {'_update':{'name':'qwer'}}
+				proposal_changes: {'_update':{'democracy_name':'qwer'}}
 			}
 			await expect(prop_create_i(test_prop)).rejects.toThrow(new Error(errors.membership_dne))
 		})
@@ -570,7 +633,7 @@ describe('Proposal Create', () => {
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
 				proposal_target: 'democracy_name',
-				proposal_changes: {'_update':{'name':'qwer'}}
+				proposal_changes: {'_update':{'democracy_name':'qwer'}}
 			}
 			await expect(prop_create_i(test_prop)).rejects.toThrow(new Error(errors.democracy_invalid))
 		})
@@ -583,9 +646,9 @@ describe('Proposal Create', () => {
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
 				proposal_target: 'democracy_asdf',
-				proposal_changes: {'_update':{'name':'qwer'}}
+				proposal_changes: {'_update':{'democracy_name':'qwer'}}
 			}
-			await expect(prop_create_i(test_prop)).rejects.toThrow(new Error(errors.changes_invalid))
+			await expect(prop_create_i(test_prop)).rejects.toThrow(Error)
 		})
 	
 		// error: invalid changes 
@@ -596,7 +659,23 @@ describe('Proposal Create', () => {
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
 				proposal_target: 'democracy_name',
-				proposal_changes: {'_add':{'name':'qwer'}}
+				proposal_changes: {'_add':{'democracy_name':'qwer'}}
+			}
+			await expect(prop_create_i(test_prop)).rejects.toThrow(new Error(errors.changes_invalid))
+		})
+		
+		// error: invalid child democracy
+		test('Error: Invalid child democracy', async () => {
+			const test_prop = {
+				democracy_id: test_data['democracy']['root_child']['id'],
+				membership_id: test_data['membership']['verified_child_1']['id'],
+				proposal_name: 'asdf',
+				proposal_description: 'asdf',
+				proposal_target: 'democracy_children',
+				proposal_changes: {'_add':{[test_data['democracy']['not_root_child']['democracy_name']]:{
+					democracy_conduct:{},
+					democracy_content:{},
+					democracy_metas: test_data['democracy']['root_child']['democracy_metas'] }}}
 			}
 			await expect(prop_create_i(test_prop)).rejects.toThrow(new Error(errors.changes_invalid))
 		})

@@ -170,6 +170,22 @@
 				}
 			}
 		},
+		"democracy_members": {
+			"$id": "schemas-democracy_members",
+			"description": "Democracy - Members",
+			"type": "object",
+			"required": [
+				"members"
+			],
+			"properties": {
+				"members": {
+					"type": "array",
+					"items": {
+						"$ref": "schemas-membership_id"
+					}
+				}
+			}
+		},
 		"population_list": {
 			"$id": "schemas-population_list",
 			"description": "Population - List",
@@ -191,6 +207,10 @@
 		"membership_id": {
 			"$id": "params-membership_id",
 			"$ref": "schemas-membership_id"
+		},
+		"democracy_id": {
+			"$id": "params-democracy_id",
+			"$ref": "schemas-democracy_id"
 		}
 	},
 	"queries": {
@@ -460,9 +480,17 @@
 		"membership_create": {
 			"$id": "bodies-membership_create",
 			"$ref": "schemas-membership_create"
+		},
+		"democracy_members": {
+			"$id": "bodies-democracy_members",
+			"$ref": "schemas-democracy_members"
 		}
 	},
 	"responses": {
+		"201": {
+			"$id": "responses-201",
+			"description": "Successfully Created"
+		},
 		"204": {
 			"$id": "responses-204",
 			"description": "Successfully Deleted"
@@ -631,6 +659,32 @@
 				"responses": {
 					"200": {
 						"$ref": "schemas-membership_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/democracy/:democracy_id/members":{
+			"POST": {
+				"description": "Mass create memberships for a new democracy",
+				"operationId": "democracy_members",
+				"param": {
+					"democracy_id": { "$ref": "params-democracy_id" }
+				},
+				"body": {
+					"$ref": "bodies-democracy_members"
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-201"
 					},
 					"400": {
 						"$ref": "responses-400"

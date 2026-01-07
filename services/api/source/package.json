@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@aluminumoxide/direct-democracy-external-api-client": "^1.0.19",
-    "@aluminumoxide/direct-democracy-lib-server": "^1.0.36"
+    "@aluminumoxide/direct-democracy-lib-server": "^1.0.37"
   },
   "scripts": {
     "start": "node index.js",

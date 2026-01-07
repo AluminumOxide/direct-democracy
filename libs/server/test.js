@@ -24,6 +24,7 @@ const get_dummy_db = function(mocks) {
 	mock_db_fxns.select = sinon.stub().returns(mock_db_fxns)
 	mock_db_fxns.from = sinon.stub().returns(mock_db_fxns)
 	mock_db_fxns.where = sinon.stub().returns(mock_db_fxns)
+	mock_db_fxns.whereIn = sinon.stub().returns(mock_db_fxns)
 	mock_db_fxns.whereNull = sinon.stub().returns(mock_db_fxns)
 	mock_db_fxns.insert = sinon.stub().returns(mock_db_fxns)
 	mock_db_fxns.update = sinon.stub().returns(mock_db_fxns)

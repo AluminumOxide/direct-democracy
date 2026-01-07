@@ -9,7 +9,7 @@ const { democracy_dne, democracy_pop, algo_missing, internal_error } = require('
 const apply_proposal = async function(request, reply, db, log, lib) {
 
 	const { proposal_id } = request
-	const { lib_json, api_proposal, api_democracy } = lib
+	const { lib_json, api_proposal, api_democracy, api_membership } = lib
 		
 	try {
 
@@ -37,6 +37,9 @@ const apply_proposal = async function(request, reply, db, log, lib) {
 		let democracy
 		try {
 			democracy = await api_democracy.democracy_read({ democracy_id })
+			let c = {}
+			democracy.democracy_children.map(d => c[d.name] = d.id)
+			democracy.democracy_children = c
 		} catch(e) {
 			if(e.message === democracy_dne) {
 				log.warn(`Proposal/Apply: Failure: ${proposal_id},${democracy_id} Error: Democracy does not exist`)
@@ -59,7 +62,7 @@ const apply_proposal = async function(request, reply, db, log, lib) {
 
 		// proposal target
 		const target = proposal.proposal_target
-		if(!(['democracy_name','democracy_description','democracy_conduct','democracy_content','democracy_metas']).includes(target)) {
+		if(!(['democracy_name','democracy_description','democracy_conduct','democracy_content','democracy_metas','democracy_children']).includes(target)) {
 			log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal has invalid target`)
 			// close proposal and return applicable error
 			return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.target_invalid)
@@ -134,21 +137,75 @@ const apply_proposal = async function(request, reply, db, log, lib) {
 			// check all applicable democracy rules pass
 			if(check_rules(get_rules(changes, rules, algos, false), false, votes_yes, votes_no, population, proposal_days)) {
 
-					// apply changes
-					let a = {}
-					a[target] = lib_json.apply_changes(changes, contents)
+				// apply changes
 
-					// save changes
-					let rows = await db('democracy').update(a).where({ id: democracy_id }).returning('*')
+				// handle new democracy proposal
+				if(target === 'democracy_children') {
+					const democracy_name = proposal.proposal_name
+					const democracy_description = proposal.proposal_description
+
+					// check new democracy is valid
+					if(!changes._add || !changes._add[democracy_name] || !changes._add[democracy_name].democracy_conduct || !changes._add[democracy_name].democracy_content || !changes._add[democracy_name].democracy_metas) {
+						log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal changes are invalid`)
+						// close proposal and return applicable error
+						return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.changes_invalid)
+						
+					}
+
+					// insert new democracy
+					const democracy_conduct = changes._add[democracy_name].democracy_conduct
+					const democracy_content = changes._add[democracy_name].democracy_content
+					const democracy_metas = changes._add[democracy_name].democracy_metas
+					const rows = await db('democracy').insert({
+						parent_id: democracy_id,
+						democracy_name,
+						democracy_description,
+						democracy_conduct,
+						democracy_content,
+						democracy_metas
+					}).returning('*')
+					
+					// handle database errors
 					if(!rows || rows.length < 1) {
 						log.error(`Proposal/Apply: Failure: ${proposal_id},${democracy_id} Error: Unable to update democracy`)
 						return reply.code(500).send(new Error(internal_error))
 					}
 
-					// close proposal and return successfully applied
-					log.info(`Proposal/Apply: Success: ${proposal_id} passed and applied!`)
-					return await close_proposal(api_proposal, reply, log, proposal_id, 200, true, false)
+					// collect a list of approvers
+					const members = await api_proposal.ballot_list({
+						proposal_id,
+						filter: {
+							ballot_approved: {
+								op:'=',
+								val: true
+							}
+						}
+					})
+
+					// create memberships for approvers
+					await api_membership.democracy_members({
+						democracy_id: rows[0].id,
+						members: members.map(m => m.membership_id)
+					})
+					
+				// handle all other proposals
+				} else {
+					let a = {}
+					a[target] = lib_json.apply_changes(changes, contents)
+
+					// save changes
+					const rows = await db('democracy').update(a).where({ id: democracy_id }).returning('*')
+					// handle database errors
+					if(!rows || rows.length < 1) {
+						log.error(`Proposal/Apply: Failure: ${proposal_id},${democracy_id} Error: Unable to update democracy`)
+						return reply.code(500).send(new Error(internal_error))
+					}
 				}
+
+				// close proposal and return successfully applied
+				log.info(`Proposal/Apply: Success: ${proposal_id} passed and applied!`)
+				return await close_proposal(api_proposal, reply, log, proposal_id, 200, true, false)
+			}
 
 			// return successfully ran but did not pass or close
 			log.info(`Proposal/Apply: Failure: ${proposal_id} has not passed yet`)
