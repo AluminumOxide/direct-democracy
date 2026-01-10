@@ -6,13 +6,14 @@ const membership_verify = async function(request, reply, db, log, lib) {
 
 	try {
 		const rows = await db('membership')
-		.update({ is_verified: true })
+		.update({ is_verified: true, is_verifying: false })
 		.where({ id: membership_id })
 		.returning({
 			membership_id: 'membership.id',
 			democracy_id: 'membership.democracy_id',
 			profile_id: 'membership.profile_id',
 			is_verified: 'membership.is_verified',
+			is_verifying: 'membership.is_verifying',
 			date_created: 'membership.date_created',
 			date_updated: 'membership.date_updated'
 		})

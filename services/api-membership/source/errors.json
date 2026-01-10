@@ -3,5 +3,6 @@
 	"democracy_dne": "Democracy does not exist",
 	"membership_dne": "Membership does not exist",
 	"membership_exist": "Membership already exists",
+	"membership_verified": "Membership already verified or verifying",
 	"profile_invalid": "Profile does not match membership"
 }

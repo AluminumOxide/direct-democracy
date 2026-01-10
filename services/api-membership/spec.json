@@ -82,9 +82,19 @@
 			"description": "Profile ID",
 			"$ref": "schemas-uuid"
 		},
+		"proposal_id": {
+			"$id": "schemas-proposal_id",
+			"description": "Proposal ID",
+			"$ref": "schemas-uuid"
+		},
 		"is_verified": {
 			"$id": "schemas-is_verified",
 			"description": "Is the membership verified?",
+			"type": "boolean"
+		},
+		"is_verifying": {
+			"$id": "schemas-is_verifying",
+			"description": "Is the membership in the process of verifying?",
 			"type": "boolean"
 		},
 		"membership_read": {
@@ -96,6 +106,7 @@
 				"democracy_id",
 				"profile_id",
 				"is_verified",
+				"is_verifying",
 				"date_created",
 				"date_updated"
 			],
@@ -111,6 +122,9 @@
 				},
 				"is_verified": {
 					"$ref": "schemas-is_verified"
+				},
+				"is_verifying": {
+					"$ref": "schemas-is_verifying"
 				},
 				"date_created": {
 					"$ref": "schemas-date_created"
@@ -167,6 +181,17 @@
 				},
 				"profile_id": {
 					"$ref": "schemas-profile_id"
+				}
+			}
+		},
+		"membership_verifying": {
+			"$id": "schemas-membership_verifying",
+			"description": "Set membership to verifying",
+			"type": "object",
+			"required": [ "proposal_id" ],
+			"properties": {
+				"proposal_id": {
+					"$ref": "schemas-proposal_id"
 				}
 			}
 		},
@@ -481,6 +506,10 @@
 			"$id": "bodies-membership_create",
 			"$ref": "schemas-membership_create"
 		},
+		"membership_verifying": {
+			"$id": "bodies-membership_verifying",
+			"$ref": "schemas-membership_verifying"
+		},
 		"democracy_members": {
 			"$id": "bodies-democracy_members",
 			"$ref": "schemas-democracy_members"
@@ -634,6 +663,30 @@
 				"operationId": "membership_verify",
 				"param": {
 					"membership_id": { "$ref": "params-membership_id" }
+				},
+				"responses": {
+					"200": {
+						"$ref": "schemas-membership_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			},
+			"POST": {
+				"description": "Set membership to verifying",
+				"operationId": "membership_verifying",
+				"param": {
+					"membership_id": { "$ref": "params-membership_id" }
+				},
+				"body": {
+					"$ref": "bodies-membership_verifying"
 				},
 				"responses": {
 					"200": {

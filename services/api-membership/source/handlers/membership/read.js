@@ -11,6 +11,8 @@ const membership_read = async function(request, reply, db, log, lib) {
 			democracy_id: 'membership.democracy_id',
 			profile_id: 'membership.profile_id',
 			is_verified: 'membership.is_verified',
+			is_verifying: 'membership.is_verifying',
+			verify_proposal: 'membership.verify_proposal',
 			date_created: 'membership.date_created',
 			date_updated: 'membership.date_updated'
 		})
