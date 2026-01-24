@@ -11,5 +11,6 @@
 	"ballot_closed": "Ballot voting is closed",
 	"changes_dne": "Proposal has no changes",
 	"target_invalid": "Proposal target is invalid",
-	"changes_invalid": "Proposal changes do not map to democracy contents"
+	"changes_invalid": "Proposal changes do not map to democracy contents",
+	"membership_unverified": "Membership is unverified"
 }

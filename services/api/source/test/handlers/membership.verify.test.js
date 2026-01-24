@@ -5,32 +5,40 @@ const {
 	get_dummy_reply,
 	get_dummy_lib,
 	integration_test_setup,
-	membership_create_unit: mem_create_u,
-	membership_create_integration: mem_create_i
+	membership_verify_unit: mem_verify_u,
+	membership_read_integration: mem_read_i,
+	membership_verify_integration: mem_verify_i
 } = require('../helper')
 
-describe('Membership Create', () => {
-	
-	describe('Integration Tests', () => {
+describe('Membership Verify', () => {
 
+	describe('Integration Tests', () => {
+		
 		const test_data = integration_test_setup()
 
-		test('Success', async() => {
-			const profile = test_data.profile.profile
-			const mem = await mem_create_i(test_data.democracy.not_root_child.id, profile.id, profile.auth_token, profile.auth_expiry)
-			expect(mem.democracy_id).toBe(test_data.democracy.not_root_child.id)
+		test('Success', async () => {
+			const mem = test_data.membership.unverified_root_1
+			const pro = test_data.profile.profile
+			const ver = await mem_verify_i(mem.id, 'test', pro.id, pro.auth_token, pro.auth_expiry)
+			const mem2 = await mem_read_i(mem.id, pro.id, pro.auth_token, pro.auth_expiry)
+			expect(ver.proposal_id).toBeDefined()
+			expect(!!mem2.verifying)
+			expect(!mem2.verified)
 		})
 	})
 
 	describe('Unit Tests', () => {
-	
-		const profile_id = get_uuid()
-		const jwt = JSON.stringify({ profile_id })
 
-		test('Success', async() => {
+		const profile_id = get_uuid()
+		const democracy_id = get_uuid()
+		const membership_id = get_uuid()
+		const jwt = JSON.stringify({ profile_id })
+		const description  = 'test'
+
+		test('Success', async () => {
 
 			// set up mocks
-			const dummy_req = { democracy_id: get_uuid(), jwt }
+			const dummy_req = {jwt, membership_id, description}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
@@ -40,28 +48,33 @@ describe('Membership Create', () => {
 				err: false
 			},{
 				lib: 'api_membership',
-				fxn: 'membership_create',
-				val: dummy_req,
+				fxn: 'membership_read',
+				val: { profile_id, democracy_id, is_verified: false, is_verifying: false },
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_create',
+				val: {},
 				err: false
 			}], errors)
 			
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+			await mem_verify_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toHaveBeenCalledWith(200)
-			expect(dummy_reply.send).toHaveBeenCalledWith(dummy_req)
+			expect(dummy_reply.send).toHaveBeenCalledWith({})
 
 			// check log
 			expect(dummy_log.info).toHaveBeenCalledTimes(1)
 			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
 			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
-		
-		test('Error: Invalid JWT', async() => {
+
+		test('Error: Invalid JWT', async () => {
 
 			// set up mocks
-			const dummy_req = { democracy_id: get_uuid(), jwt }
+			const dummy_req = {jwt, membership_id, description}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
@@ -69,15 +82,10 @@ describe('Membership Create', () => {
 				fxn: 'sign_in_verify',
 				val: errors.invalid_auth,
 				err: true
-			},{
-				lib: 'api_membership',
-				fxn: 'membership_create',
-				val: dummy_req,
-				err: false
 			}], errors)
 			
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+			await mem_verify_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toHaveBeenCalledWith(401)
@@ -89,26 +97,57 @@ describe('Membership Create', () => {
 			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
-		test('Error: Invalid Profile', async() => {
+		test('Error: Invalid membership', async () => {
 
 			// set up mocks
-			const dummy_req = { democracy_id: get_uuid(), jwt }
+			const dummy_req = {jwt, membership_id, description}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
 				lib: 'api_profile',
 				fxn: 'sign_in_verify',
-				val: {},
+				val: { profile_id },
 				err: false
 			},{
 				lib: 'api_membership',
-				fxn: 'membership_create',
-				val: dummy_req,
+				fxn: 'membership_read',
+				val: errors.membership_dne,
+				err: true
+			}], errors)
+			
+			// call handler
+			await mem_verify_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_dne))
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+
+		test('Error: Invalid profile', async () => {
+
+			// set up mocks
+			const dummy_req = {jwt, membership_id, description}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_profile',
+				fxn: 'sign_in_verify',
+				val: { profile_id },
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_read',
+				val: { profile_id:'bad', democracy_id, is_verified: false, is_verifying: false },
 				err: false
 			}], errors)
 			
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+			await mem_verify_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toHaveBeenCalledWith(401)
@@ -116,14 +155,14 @@ describe('Membership Create', () => {
 
 			// check log
 			expect(dummy_log.info).toHaveBeenCalledTimes(0)
-			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
-			expect(dummy_log.error).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
-
-		test('Error: Democracy DNE', async() => {
+		
+		test('Error: Membership already verified', async () => {
 
 			// set up mocks
-			const dummy_req = { democracy_id: get_uuid(), jwt }
+			const dummy_req = {jwt, membership_id, description}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
@@ -133,17 +172,17 @@ describe('Membership Create', () => {
 				err: false
 			},{
 				lib: 'api_membership',
-				fxn: 'membership_create',
-				val: errors.democracy_dne,
-				err: true
+				fxn: 'membership_read',
+				val: { profile_id, democracy_id, is_verified: true, is_verifying: false },
+				err: false
 			}], errors)
 			
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+			await mem_verify_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toHaveBeenCalledWith(400)
-			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.democracy_dne))
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_verified))
 
 			// check log
 			expect(dummy_log.info).toHaveBeenCalledTimes(0)
@@ -151,10 +190,10 @@ describe('Membership Create', () => {
 			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
-		test('Error: Membership exists', async() => {
+		test('Error: Membership already verifying', async () => {
 
 			// set up mocks
-			const dummy_req = { democracy_id: get_uuid(), jwt }
+			const dummy_req = {jwt, membership_id, description}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
@@ -164,28 +203,28 @@ describe('Membership Create', () => {
 				err: false
 			},{
 				lib: 'api_membership',
-				fxn: 'membership_create',
-				val: errors.membership_exist,
-				err: true
+				fxn: 'membership_read',
+				val: { profile_id, democracy_id, is_verified: false, is_verifying: true },
+				err: false
 			}], errors)
 			
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+			await mem_verify_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toHaveBeenCalledWith(400)
-			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_exist))
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_verified))
 
 			// check log
 			expect(dummy_log.info).toHaveBeenCalledTimes(0)
 			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
 			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
-
-		test('Error: Internal error', async() => {
+		
+		test('Error: Internal error', async () => {
 
 			// set up mocks
-			const dummy_req = { democracy_id: get_uuid(), jwt }
+			const dummy_req = {jwt, membership_id, description}
 			const dummy_log = get_dummy_log()
 			const dummy_reply = get_dummy_reply()
 			const dummy_lib = get_dummy_lib([{
@@ -195,13 +234,13 @@ describe('Membership Create', () => {
 				err: false
 			},{
 				lib: 'api_membership',
-				fxn: 'membership_create',
+				fxn: 'membership_read',
 				val: errors.internal_error,
 				err: true
 			}], errors)
 			
 			// call handler
-			await mem_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+			await mem_verify_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
 			expect(dummy_reply.code).toHaveBeenCalledWith(500)
@@ -212,5 +251,6 @@ describe('Membership Create', () => {
 			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
 			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
+		
 	})
 })

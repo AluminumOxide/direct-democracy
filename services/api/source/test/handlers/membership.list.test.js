@@ -18,7 +18,7 @@ describe('Membership List', () => {
 		test('Success', async() => {
 			const pro = test_data.profile.profile
 			const mems = await mem_list_i(pro.id, pro.auth_token, pro.auth_expiry)
-			expect(mems.length).toBe(1)
+			expect(mems.length).toBe(2)
 		})
 	})
 

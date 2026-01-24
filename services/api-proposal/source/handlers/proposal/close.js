@@ -3,11 +3,14 @@ const { proposal_dne, internal_error, voting_closed } = require('../../errors.js
 const proposal_close = async function(request, reply, db, log, lib) {
 
 	const { proposal_id, passed } = request
+	const { api_membership } = lib
 		
 	try {
 		// get proposal
 		const rows = await db('proposal')
 		.select({
+			'membership_id': 'membership_id',
+			'proposal_target': 'target',
 			'proposal_votable': 'votable'
 		})
 		.where({ id: proposal_id })
@@ -30,6 +33,18 @@ const proposal_close = async function(request, reply, db, log, lib) {
 		if(!res || res.length < 1) {
 			log.error(`Proposal/Close: Failure: ${proposal_id} Error: Proposal failed to close`)
 			return reply.code(500).send(new Error(internal_error))
+		}
+
+		// set the membership to unverified for those proposals
+		if(proposal.proposal_target === 'democracy_members' && !passed) {
+			try {
+				await api_membership.membership_unverify({
+					membership_id: proposal.membership_id
+				})
+			} catch(e) {
+				log.error(`Proposal/Close: Failure: ${proposal_id} Error: Proposal closed but membership ${proposal.membership_id} not unverified!`)
+				return reply.code(500).send(new Error(internal_error))
+			}
 		}
 
 		// return results

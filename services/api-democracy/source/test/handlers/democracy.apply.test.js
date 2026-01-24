@@ -11,7 +11,8 @@ const {
 	democracy_apply_integration: dem_apply_i,
 	democracy_population_integration: dem_pop_i,
 	democracy_read_integration: dem_read_i,
-	proposal_read_integration: prop_read_i
+	proposal_read_integration: prop_read_i,
+	membership_read_integration: mem_read_i
 } = require('../helper')
 
 describe('Apply', () =>  {
@@ -80,6 +81,29 @@ describe('Apply', () =>  {
 
 		})
 
+		test('Success: Membership verify', async () => {
+
+			// update democracy populations
+			await dem_pop_i('2000-01-01T00:00:00.000Z','2100-01-01T00:00:00.000Z')	
+
+			// get proprosal before changes
+			const prop1 = test_data['proposal']['child_mem_verify']
+
+			// call apply
+			await dem_apply_i(prop1.id)
+
+			// get proprosal and membership after changes
+			const prop2 = await prop_read_i(prop1.id)
+			const mem = await mem_read_i(prop1.membership_id)
+
+			// check that proposal was applied
+			expect(mem.is_verified).toBeTruthy()
+			expect(prop1.votable).toBeTruthy()
+			expect(prop2.proposal_votable).toBeFalsy()
+			expect(prop1.passed).toBeNull()
+			expect(prop2.proposal_passed).toBeTruthy()
+		})
+
 		test('Error: Proposal DNE', async () => {
 			
 			await expect(dem_apply_i(get_uuid())).rejects.toThrow(new Error(errors.proposal_dne))
@@ -95,6 +119,7 @@ describe('Apply', () =>  {
 
 		// TODO: more integration tests
 	})
+
 
 	describe('Unit Tests', () => {
 
@@ -329,6 +354,9 @@ describe('Apply', () =>  {
 						democracy_content: {
 							close: {
 								lifetime_maximum_days: 0
+							},
+							add: {
+								approval_percent_minimum: 0
 							}
 						}
 					},
@@ -342,7 +370,8 @@ describe('Apply', () =>  {
 				val: {
 					democracy_content: {
 						algos: {
-							lifetime_maximum_days: 'proposal_days <= value'
+							lifetime_maximum_days: 'proposal_days <= value',
+							approval_percent_minimum: 'approved_votes > value'
 						}
 					}
 				},
@@ -371,7 +400,7 @@ describe('Apply', () =>  {
 			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
 			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
-		
+
 		test('Success: Create Democracy', async () => {
 
 			// set up mocks
@@ -426,14 +455,9 @@ describe('Apply', () =>  {
 						}
 					},
 					democracy_metas: {
-						democracy_content: {
+						democracy_children: {
 							add: {
 								approval_percent_minimum: 0
-							},
-							a: {
-								add: {
-									approval_percent_minimum: 0
-								}
 							}
 						}
 					},
@@ -460,6 +484,116 @@ describe('Apply', () =>  {
 			},{
 				lib: 'api_membership',
 				fxn: 'democracy_members',
+				val: true,
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'apply_changes',
+				val: '',
+				err: false
+			}], errors)
+
+			// call handler
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith("")
+			expect(dummy_reply.code).toHaveBeenCalledWith(200)
+
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(2)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
+		test('Success: Verify Membership', async () => {
+
+			// set up mocks
+			const dummy_req = {}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_db = get_dummy_db([{
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [dummy_req]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: {
+					proposal_votable: true,
+					democracy_id: 'demid',
+					membership_id: 'memid',
+					proposal_target: 'democracy_members',
+					proposal_name: 'test',
+					proposal_description: 'test',
+					proposal_changes: {
+						'memid': {
+							_update: {
+								is_verified: true
+							}
+						}
+					},
+					proposal_votes: {
+						verified: {
+							yes: 1,
+							no: 0
+						},
+					},
+					date_created: new Date().toJSON()
+				},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: {},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read', 
+				val: {
+					democracy_content: {
+						a: {
+							c: 3
+						}
+					},
+					democracy_metas: {
+						democracy_members: {
+							update: {
+								approval_percent_minimum: 0
+							}
+						}
+					},
+					democracy_children: [{'id':'test','name':'test'}],
+					democracy_population_verified: 1
+				},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_root',
+				val: {
+					democracy_content: {
+						algos: {
+							approval_percent_minimum: 'approved_votes > value'
+						}
+					}
+				},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'ballot_list',
+				val: [{membership_id:'test'}],
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_verify',
 				val: true,
 				err: false
 			},{
@@ -567,12 +701,12 @@ describe('Apply', () =>  {
 			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.send).toHaveBeenCalledWith("")
-			expect(dummy_reply.code).toHaveBeenCalledWith(200)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 
 			// check log
-			expect(dummy_log.info).toHaveBeenCalledTimes(2)
-			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
 			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
@@ -1147,6 +1281,95 @@ describe('Apply', () =>  {
 			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 		
+		test('Error: Mod rules empty', async () => {
+
+			// set up mocks
+			const dummy_req = {}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_db = get_dummy_db([])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: {
+					proposal_votable: true,
+					democracy_id: '',
+					proposal_target: 'democracy_content',
+					proposal_changes: {
+						a: {
+							_add: { b: 2 }
+						}
+					},
+					proposal_votes: {
+						verified: {
+							yes: 1,
+							no: 1
+						},
+					},
+					date_created: new Date().toJSON()
+				},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: {},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read', 
+				val: {
+					democracy_content: {
+						a: {
+							c: 3
+						}
+					},
+					democracy_metas: {
+						democracy_content: {
+							update: {
+								approval_percent_minimum: 0
+							}
+						}
+					},
+					democracy_children: [],
+					democracy_population_verified: 1
+				},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_root',
+				val: {
+					democracy_content: {
+						algos: {
+							approval_percent_minimum: 'approved_votes > value'
+						}
+					}
+				},
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'apply_changes',
+				val: true,
+				err: false
+			}], errors)
+
+			// call handler
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_invalid))
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+
 		test('Error: Missing proposal votes', async () => {
 
 			// set up mocks
@@ -1532,7 +1755,7 @@ describe('Apply', () =>  {
 						}
 					},
 					democracy_metas: {
-						content: {
+						democracy_content: {
 							add: {
 								approval_percent_minimum: 0
 							},
@@ -1631,7 +1854,7 @@ describe('Apply', () =>  {
 						}
 					},
 					democracy_metas: {
-						content: {
+						democracy_content: {
 							add: {
 								approval_percent_minimum: 0
 							},
@@ -1788,9 +2011,7 @@ describe('Apply', () =>  {
 					democracy_id: '',
 					proposal_target: 'democracy_content',
 					proposal_changes: {
-						a: {
-							_add: { b: 2 }
-						}
+						_add: { b: 2 }
 					},
 					proposal_votes: {
 						verified: {
@@ -1813,6 +2034,11 @@ describe('Apply', () =>  {
 					democracy_content: {
 					},
 					democracy_metas: {
+						democracy_content: {
+							add: {
+								approval_percent_minimum: 0
+							}
+						}
 					},
 					democracy_children:[],
 					democracy_population_verified: 1
@@ -1983,7 +2209,7 @@ describe('Apply', () =>  {
 				val: {
 					democracy_name: 'name',
 					democracy_metas: {
-						name: {
+						democracy_name: {
 							update: {
 								approval_percent_minimum: 0
 							}
@@ -2279,14 +2505,9 @@ describe('Apply', () =>  {
 						}
 					},
 					democracy_metas: {
-						democracy_content: {
+						democracy_children: {
 							add: {
 								approval_percent_minimum: 0
-							},
-							a: {
-								add: {
-									approval_percent_minimum: 0
-								}
 							}
 						}
 					},
@@ -2395,14 +2616,9 @@ describe('Apply', () =>  {
 						}
 					},
 					democracy_metas: {
-						democracy_content: {
+						democracy_children: {
 							add: {
 								approval_percent_minimum: 0
-							},
-							a: {
-								add: {
-									approval_percent_minimum: 0
-								}
 							}
 						}
 					},
@@ -2455,6 +2671,229 @@ describe('Apply', () =>  {
 			expect(dummy_log.info).toHaveBeenCalledTimes(0)
 			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
 			expect(dummy_log.error).toHaveBeenCalledTimes(1)
+		})
+		
+		test('Error: Verify membership failure', async () => {
+
+			// set up mocks
+			const dummy_req = {}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_db = get_dummy_db([{
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [dummy_req]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: {
+					proposal_votable: true,
+					democracy_id: 'demid',
+					membership_id: 'memid',
+					proposal_target: 'democracy_members',
+					proposal_name: 'test',
+					proposal_description: 'test',
+					proposal_changes: {
+						'memid': {
+							_update: {
+								is_verified: true
+							}
+						}
+					},
+					proposal_votes: {
+						verified: {
+							yes: 1,
+							no: 0
+						},
+					},
+					date_created: new Date().toJSON()
+				},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: {},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read', 
+				val: {
+					democracy_content: {
+						a: {
+							c: 3
+						}
+					},
+					democracy_metas: {
+						democracy_members: {
+							update: {
+								approval_percent_minimum: 0
+							}
+						}
+					},
+					democracy_children: [{'id':'test','name':'test'}],
+					democracy_population_verified: 1
+				},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_root',
+				val: {
+					democracy_content: {
+						algos: {
+							approval_percent_minimum: 'approved_votes > value'
+						}
+					}
+				},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'ballot_list',
+				val: [{membership_id:'test'}],
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_verify',
+				val: errors.internal_error,
+				err: true
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'apply_changes',
+				val: '',
+				err: false
+			}], errors)
+
+			// call handler
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
+		})
+		
+		test('Error: Verify membership invalid changes', async () => {
+
+			// set up mocks
+			const dummy_req = {}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_db = get_dummy_db([{
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [dummy_req]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: {
+					proposal_votable: true,
+					democracy_id: 'demid',
+					membership_id: 'memid',
+					proposal_target: 'democracy_members',
+					proposal_name: 'test',
+					proposal_description: 'test',
+					proposal_changes: {
+						'memid': {
+							_update: {}
+						}
+					},
+					proposal_votes: {
+						verified: {
+							yes: 1,
+							no: 0
+						},
+					},
+					date_created: new Date().toJSON()
+				},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: {},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read', 
+				val: {
+					democracy_content: {
+						a: {
+							c: 3
+						}
+					},
+					democracy_metas: {
+						democracy_content: {
+							add: {
+								approval_percent_minimum: 0
+							},
+							a: {
+								add: {
+									approval_percent_minimum: 0
+								}
+							}
+						}
+					},
+					democracy_children: [{'id':'test','name':'test'}],
+					democracy_population_verified: 1
+				},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_root',
+				val: {
+					democracy_content: {
+						algos: {
+							approval_percent_minimum: 'approved_votes > value'
+						}
+					}
+				},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'ballot_list',
+				val: [{membership_id:'test'}],
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_verify',
+				val: errors.internal_error,
+				err: true
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'apply_changes',
+				val: '',
+				err: false
+			}], errors)
+
+			// call handler
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 	})
 })

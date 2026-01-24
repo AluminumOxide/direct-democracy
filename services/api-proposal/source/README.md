@@ -1096,6 +1096,7 @@ Enum:
 - democracy_conduct
 - democracy_metas
 - democracy_children
+- democracy_members
 #### schemas-proposal_votable
 
 
