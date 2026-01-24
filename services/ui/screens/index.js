@@ -15,6 +15,7 @@ import MembershipListScreen from './MembershipList'
 import MembershipViewScreen from './MembershipView'
 import MembershipCreateScreen from './MembershipCreate'
 import MembershipDeleteScreen from './MembershipDelete'
+import MembershipVerifyScreen from './MembershipVerify'
 import AccountScreen from './Account'
 import SignInScreen from './SignIn'
 import SignOutScreen from './SignOut'
@@ -38,6 +39,7 @@ const screens = {
 	MembershipView: MembershipViewScreen,
 	MembershipCreate: MembershipCreateScreen,
 	MembershipDelete: MembershipDeleteScreen,
+	MembershipVerify: MembershipVerifyScreen,
 	Account: AccountScreen,
 	SignIn: SignInScreen,
 	SignOut: SignOutScreen,

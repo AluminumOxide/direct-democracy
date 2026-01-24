@@ -57,7 +57,14 @@ export default function FieldValue({ data, format, layout, opts={}, styles, text
 				 />)}
 			/>)
 
-	// string, multiline, integer, enum
+	} else if(format === 'enum') {
+		let val = data
+		if(!!opts && !!opts.vals) {
+			val = opts.vals[data]
+		}
+		return(<Text style={{...textStyle, ...styles.fieldValueText }}>{val}</Text>)
+
+	// string, multiline, integer
 	} else {
 		return(<Text style={{...textStyle, ...styles.fieldValueText }}>{data}</Text>)
 	}

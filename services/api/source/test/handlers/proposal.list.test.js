@@ -17,7 +17,7 @@ describe('Proposal List Public', () => {
 
 		test('Success', async() => {
 			const props = await prop_list_i()
-			expect(props.length).toBe(5)
+			expect(props.length).toBe(7)
 		})
 	})
 

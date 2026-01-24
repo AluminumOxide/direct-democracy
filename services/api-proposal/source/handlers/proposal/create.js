@@ -1,4 +1,4 @@
-const { democracy_dne, democracy_invalid, membership_dne, changes_invalid, internal_error } = require('../../errors.json')
+const { democracy_dne, democracy_invalid, membership_dne, membership_unverified, changes_invalid, internal_error } = require('../../errors.json')
 
 const proposal_create = async function(request, reply, db, log, lib) {
 
@@ -6,11 +6,16 @@ const proposal_create = async function(request, reply, db, log, lib) {
 	const { api_membership, api_democracy, lib_json } = lib
 
 	// check the membership_id & democracy_id are valid
+	let mem_check
 	try {
-		const mem_check = await api_membership.membership_read({ membership_id })
+		mem_check = await api_membership.membership_read({ membership_id })
 		if(mem_check.democracy_id !== democracy_id) {
 			log.warn(`Proposal/Create: Failure: ${democracy_id} Error: Invalid democracy`)
 			return reply.code(400).send(new Error(democracy_invalid))
+		}
+		if(!mem_check.is_verified && proposal_target !== 'democracy_members') {
+			log.warn(`Proposal/Create: Failure: ${membership_id} Error: Membership Unverified`)
+			return reply.code(400).send(new Error(membership_unverified))
 		}
 	} catch (e) {
 		if(e.message === api_membership.errors.membership_dne) {
@@ -39,6 +44,17 @@ const proposal_create = async function(request, reply, db, log, lib) {
 
 	// check the proposed changes are valid
 	try {
+		
+		// check changes of membership verify
+		if(proposal_target === 'democracy_members') {
+			if(!!mem_check.is_verified || !proposal_changes[membership_id] || !proposal_changes[membership_id]._update || !proposal_changes[membership_id]._update.is_verified) {
+				log.warn(`Proposal/Create: Failure: ${membership_id} Invalid changes`)
+				return reply.code(400).send(new Error(changes_invalid))
+			}
+			democracy.democracy_members = { [membership_id]: { is_verified: false }}
+		}
+
+		// check changes against democracy
 		if(!lib_json.check_changes(proposal_changes, democracy[proposal_target])) {
 			log.warn(`Proposal/Create: Failure: ${membership_id} Invalid changes`)
 			return reply.code(400).send(new Error(changes_invalid))
@@ -51,12 +67,13 @@ const proposal_create = async function(request, reply, db, log, lib) {
 		}
 
 	} catch(e) {
-		log.warn(`Proposal/Create: Failure: ${membership_id} Invalid changes`)
+		log.warn(`Proposal/Create: Failure: ${membership_id} Invalid changes: ${e}`)
 		return reply.code(400).send(new Error(changes_invalid))
 	}
-	
-	// save the proposal
+
+	let proposal
 	try {
+		// save the proposal
 		const rows = await db('proposal')
 		.insert({
 			'democracy_id': democracy_id,
@@ -68,13 +85,13 @@ const proposal_create = async function(request, reply, db, log, lib) {
 		})
 		.returning('*')
 
+		// handle database error
 		if(!rows || rows.length < 1) {
 			log.error(`Proposal/Create: Failure: ${democracy_id} Error: Failed to insert proposal`)
 			return reply.code(500).send(new Error(internal_error))
 		}
-
-		// return results
-		const proposal = {
+		
+		proposal = {
 			proposal_id: rows[0].id,
 			democracy_id: rows[0].democracy_id,
 			membership_id: rows[0].membership_id,
@@ -86,13 +103,30 @@ const proposal_create = async function(request, reply, db, log, lib) {
 			date_created: rows[0].date_created,
 			date_updated: rows[0].date_updated
 		}
-		log.info(`Proposal/Create: Success: ${proposal.proposal_id}`)
-		return reply.code(201).send(proposal)
 
 	} catch (e) {
 		log.error(`Proposal/Create: Failure: ${democracy_id} Error: ${e}`)
 		return reply.code(500).send(new Error(internal_error))
 	}
+
+
+	// set the membership to verifying for those proposals
+	if(proposal_target === 'democracy_members') {
+		try {
+			await api_membership.membership_verifying({
+				membership_id,
+				proposal_id: proposal.proposal_id
+			})
+		} catch (e) {
+			log.error(`Proposal/Create: Failure: ${proposal.proposal_id} Error: Proposal created but member ${membership_id} not verifying`)
+			return reply.code(500).send(new Error(internal_error))
+		}
+	}
+
+	// return results
+	log.info(`Proposal/Create: Success: ${proposal.proposal_id}`)
+	return reply.code(201).send(proposal)
+
 }
 
 module.exports = proposal_create

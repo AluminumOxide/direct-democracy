@@ -32,6 +32,10 @@ const membership_verify_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/membership/verify')(request, reply, db, log, lib)
 }
 
+const membership_verifying_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/membership/verifying')(request, reply, db, log, lib)
+}
+
 const membership_unverify_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/membership/unverify')(request, reply, db, log, lib)
 }
@@ -72,6 +76,10 @@ const membership_verify_integration = async(membership_id) => {
 	return await api_membership_client.membership_verify({ membership_id })
 }
 
+const membership_verifying_integration = async(membership_id, proposal_id) => {
+	return await api_membership_client.membership_verifying({ membership_id, proposal_id })
+}
+
 const membership_unverify_integration = async(membership_id) => {
 	return await api_membership_client.membership_unverify({ membership_id })
 }
@@ -106,6 +114,8 @@ module.exports = {
 	democracy_members_integration,
 	membership_verify_unit,
 	membership_verify_integration,
+	membership_verifying_unit,
+	membership_verifying_integration,
 	membership_unverify_unit,
 	membership_unverify_integration
 }

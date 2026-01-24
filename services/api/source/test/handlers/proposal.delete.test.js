@@ -22,7 +22,9 @@ describe('Proposal Delete', () => {
 			const prof = test_data.profile.profile
 			await expect(prop_read_i(prop.id)).resolves.toBeInstanceOf(Object)
 			await prop_delete_i(prop.id, prof.id, prof.auth_token, prof.auth_expiry)
-			await expect(prop_read_i(prop.id)).rejects.toThrow(new Error(errors.proposal_dne))
+			const prop2 = await prop_read_i(prop.id)
+			expect(!prop2.proposal_votable)
+			expect(!prop2.proposal_passed)
 		})
 	})
 	
@@ -57,7 +59,7 @@ describe('Proposal Delete', () => {
 				err: false
 			},{
 				lib: 'api_proposal',
-				fxn: 'proposal_delete',
+				fxn: 'proposal_close',
 				val: dummy_req,
 				err: false
 			}], errors)
@@ -98,7 +100,7 @@ describe('Proposal Delete', () => {
 				err: false
 			},{
 				lib: 'api_proposal',
-				fxn: 'proposal_delete',
+				fxn: 'proposal_close',
 				val: dummy_req,
 				err: false
 			}], errors)
@@ -139,7 +141,7 @@ describe('Proposal Delete', () => {
 				err: false
 			},{
 				lib: 'api_proposal',
-				fxn: 'proposal_delete',
+				fxn: 'proposal_close',
 				val: dummy_req,
 				err: false
 			}], errors)

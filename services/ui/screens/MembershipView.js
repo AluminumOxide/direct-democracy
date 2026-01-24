@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../contexts/';
@@ -17,24 +17,38 @@ export default function MembershipViewScreen({ route }) {
 	}
 	const membershipId = authState.memberships[democracyId]
 
-	let actions = []
-	if(democracyId != authState.root) {
-		actions.push({
-			title: 'Leave Democracy',
-			press: () => navigation.navigate('MembershipDelete', { id: democracyId })
-		})
-	}
+	const [ actions, setActions ] = useState([])
 
 	const handleData = async function() {
-		return await api.membership_read({
+		if(democracyId != authState.root) {
+			actions.push({
+				title: 'Leave Democracy',
+				press: () => navigation.navigate('MembershipDelete', { id: democracyId })
+			})
+		}
+		let mem = await api.membership_read({
 			membership_id: membershipId,
 			jwt: authState.jwt 
 		})
+		mem.status = !!mem.is_verified ? 'Verified' : !!mem.is_verifying ? 'Verifying' : 'Unverified'
+		if(mem.status === 'Unverified') {
+			actions.push({
+				title: 'Request Membership Verification',
+				press: () => navigation.navigate('MembershipVerify', { id: membershipId })
+			})
+		}
+		if(mem.status === 'Verifying') {
+			actions.push({
+				title: 'View Membership Verification Request',
+				press: () => navigation.navigate('ProposalView', { id: mem.verify_proposal })
+			})
+		}
+		return mem
 	}
 
 	return DetailView({
 		nameField: 'democracy_id',
-		shortFields: ['democracy_id','is_verified','date_created','date_updated'],
+		shortFields: ['democracy_id','status','date_created','date_updated'],
 		longFields: [],
 		actions,
 		colDefns: config.defn.membership,

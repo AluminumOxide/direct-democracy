@@ -62,10 +62,20 @@ const apply_proposal = async function(request, reply, db, log, lib) {
 
 		// proposal target
 		const target = proposal.proposal_target
-		if(!(['democracy_name','democracy_description','democracy_conduct','democracy_content','democracy_metas','democracy_children']).includes(target)) {
+		if(!(['democracy_name','democracy_description','democracy_conduct','democracy_content','democracy_metas','democracy_children','democracy_members']).includes(target)) {
 			log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal has invalid target`)
 			// close proposal and return applicable error
 			return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.target_invalid)
+		}
+
+		// get democracy members if needed
+		if(target === 'democracy_members') {
+			if(!proposal.proposal_changes[proposal.membership_id] || !proposal.proposal_changes[proposal.membership_id]._update || !proposal.proposal_changes[proposal.membership_id]._update.is_verified) {
+				// shouldn't happen
+				log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal has invalid membership verification`)
+				return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.changes_invalid)
+			}
+			democracy.democracy_members = {[proposal.membership_id]:{is_verified: false}}
 		}
 
 		// proposal changes
@@ -124,18 +134,27 @@ const apply_proposal = async function(request, reply, db, log, lib) {
 			return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, democracy_pop)
 		}
 
-
 		try {
+			// get closing rules
+			const close_rules = get_rules(changes, rules, algos, true)
+
 			// check if any closers pass
-			if(check_rules(get_rules(changes, rules, algos, true), true, votes_yes, votes_no, population, proposal_days)) {
+			if(check_rules(close_rules, true, votes_yes, votes_no, population, proposal_days)) {
 				
 				// close proposal and return that closers passed
 				log.info(`Proposal/Apply: Failure: ${proposal_id} Closing conditions passed`)
 				return await close_proposal(api_proposal, reply, log, proposal_id, 204, false, false)
 			}
+			
+			// get modification rules
+			const mod_rules = get_rules(changes, rules, algos, false)
+			if(Object.keys(mod_rules).length === 0) {
+				log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: No rules`)
+				return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.changes_invalid)
+			}
 
 			// check all applicable democracy rules pass
-			if(check_rules(get_rules(changes, rules, algos, false), false, votes_yes, votes_no, population, proposal_days)) {
+			if(check_rules(mod_rules, false, votes_yes, votes_no, population, proposal_days)) {
 
 				// apply changes
 
@@ -187,7 +206,18 @@ const apply_proposal = async function(request, reply, db, log, lib) {
 						democracy_id: rows[0].id,
 						members: members.map(m => m.membership_id)
 					})
-					
+			
+				// handle membership verification
+				} else if(target === 'democracy_members') {
+					try {
+						await api_membership.membership_verify({
+							membership_id: proposal.membership_id
+						})
+					} catch(e) {
+						log.error(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal approved but membership failed to verify`)
+						return reply.code(500).send(new Error(internal_error))
+					}
+
 				// handle all other proposals
 				} else {
 					let a = {}
@@ -264,7 +294,6 @@ const close_proposal = async function(api_proposal, reply, log, proposal_id, cod
  * 			add: { approval_percent_minimum: 53 },
  * 			update: { approval_percent_minimum: 54 },
  * 			delete: { approval_percent_minimum: 55 },
- * 			close: { lifetime_maximum_days: 3 }
  * 		} 
  * 	}
  * 	algos: { 
@@ -274,8 +303,7 @@ const close_proposal = async function(api_proposal, reply, log, proposal_id, cod
  * 	close: boolean
  * Output: 
  * 	if close is true: [
- * 		{ 'proposal_days <= value': 14 },
- * 		{ 'proposal_days <= value': 3 }
+ * 		{ 'proposal_days <= value': 14 }
  * 	]
  * 	if close is false: [
  * 		{ 'approved_votes > value': 50 },
@@ -288,27 +316,48 @@ const close_proposal = async function(api_proposal, reply, log, proposal_id, cod
  * Error:
  *	algo_missing: algo in rules missing from algos
  */
-const get_rules = function(changes, rules, algos, close) {
+const get_rules = function(changes, rules, algos, close, defaults={}) {
 	let to_check = []
-	let lookup
+	let lookup = { 'add': '_add', 'update': '_update', 'delete': '_delete' }
 	if(close) {
 		lookup = { 'close': '_close' }
-	} else {
-		lookup = { 'add': '_add', 'update': '_update', 'delete': '_delete' }
 	}
+
+	if(typeof changes !== "object") {
+		return !defaults.close ? [] : Object.entries(defaults.close).map(e => ({[e[0]]:e[1]}))
+	}
+
+	// update defaults for lookups
 	for(const i in rules) {
-		if(i in lookup && (lookup[i] in changes || i === 'close')) {
+		if(i in lookup) {
+			defaults[i] = {}
 			for(const j in rules[i]) {
-				if(!(j in algos)) {
-					throw new Error(algo_missing)
+				if(!(j in lookup)) {
+					if(!(j in algos)) {
+						throw new Error(algo_missing)
+					}
+                        		defaults[i][algos[j]] = rules[i][j]
 				}
-				a = {}
-                        	a[ algos[j] ] = rules[i][j]
-				to_check.push(a)
 			}
-		} else if(i in changes) {
-	       		to_check = to_check.concat(get_rules(changes[i], rules[i], algos, close))
-		}	
+		}
+	}
+	
+	// go through changes
+	for(const i in changes) {
+
+		// handle add/update/delete lookups
+		if(Object.values(lookup).indexOf(i) >= 0) {
+			const j = Object.entries(lookup).find((e) => e[1] == i)[0]
+			if(j in defaults) {
+				to_check.push(defaults[j])
+			}
+
+		// recursively handle non-lookups
+		} else if(i in rules) {
+	       		to_check = to_check.concat(get_rules(changes[i], rules[i], algos, close, defaults))
+		} else {
+	       		to_check = to_check.concat(get_rules(changes[i], rules, algos, close, defaults))
+		}
 	}
 	return to_check 
 }

@@ -4,6 +4,7 @@ module.exports = {
 	membership_create: require('./membership/create'),
 	membership_delete: require('./membership/delete'),
 	membership_verify: require('./membership/verify'),
+	membership_verifying: require('./membership/verifying'),
 	membership_unverify: require('./membership/unverify'),
 	membership_population: require('./membership/population'),
 	democracy_members: require('./membership/democracy')

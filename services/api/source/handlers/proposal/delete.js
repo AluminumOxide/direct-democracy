@@ -43,7 +43,7 @@ const proposal_delete = async function(request, reply, db, log, lib) {
 		}
   
 		// delete from proposal service
-		await api_proposal.proposal_delete({ proposal_id })
+		await api_proposal.proposal_close({ proposal_id, passed: false })
 
 		// return results
 		log.info(`Proposal/Delete: Success: ${proposal_id}`)
