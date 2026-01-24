@@ -47,8 +47,12 @@ export default function Form({ formFields=[], reqFields=[], fields={}, keys=[], 
 				datas[fld] = await fields[fld].opts.fetch()
 			
 			// fetch data for enums
-			} else if(!!fields[fld] && fields[fld].format === 'enum' && !!fields[fld].opts && !!fields[fld].opts.fetch) {
-				datas[fld] = await fields[fld].opts.fetch()
+			} else if(!!fields[fld] && fields[fld].format === 'enum' && !!fields[fld].opts) {
+				if(!!fields[fld].opts.fetch) {
+					datas[fld] = await fields[fld].opts.fetch()
+				} else {
+					datas[fld] = fields[fld].opts.vals
+				}
 
 			// fetch data for objects
 			} else if(!!fields[fld] && fields[fld].format === 'object' && !!fields[fld].opts.fetch) {

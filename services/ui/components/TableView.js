@@ -82,6 +82,7 @@ export default function TableView({ title, idField, sortCols, displayCols, filte
 							<FieldValue
 							 data={item[id]}
 							 format={col.format}
+							 opts={col.opts}
 							 layout='short'
 							 textStyle={i==0 && displayMode=='list' ? styles.tableCellTextFirst : {}}
 							 styles={styles} />

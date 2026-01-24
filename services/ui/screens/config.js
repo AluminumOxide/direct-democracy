@@ -86,6 +86,22 @@ const democracy_defn = {
 
 }
 const proposal_defn = {
+	proposal_target: {
+	        title: 'Target',
+	        format: 'enum',
+	        display: true,
+	        sort: false,
+	        filters: ['=','!='],
+		opts: { vals: {
+			'democracy_name': 'Democracy Name',
+			'democracy_description': 'Democracy Description',
+			'democracy_conduct': 'Code of Conduct',
+			'democracy_content': 'Democracy Content',
+			'democracy_metas': 'Democracy Content Rules',
+			'democracy_children': 'New Democracy',
+			'democracy_members': 'Membership Verification'
+		} }
+	},
 	proposal_name: {
 	        title: 'Name',
 	        format: 'string',
@@ -107,20 +123,6 @@ const proposal_defn = {
 	        display: false,
 	        sort: false,
 	        filters: ['=','!=']
-	},
-	proposal_target: {
-	        title: 'Target',
-	        format: 'enum',
-	        display: false,
-	        sort: false,
-	        filters: ['=','!='],
-		opts: { fetch: async() => { return {
-			'democracy_name': 'Democracy Name',
-			'democracy_description': 'Democracy Description',
-			'democracy_conduct': 'Code of Conduct',
-			'democracy_content': 'Democracy Content',
-			'democracy_metas': 'Democracy Content Rules'
-		} } }
 	},
 	proposal_changes: {
 	        title: 'Changes',
@@ -235,8 +237,22 @@ const membership_defn = {
 	        sort: false,
 	        filters: ['=','!=']
 	},
+	status: {
+	        title: 'Status',
+	        format: 'string',
+	        display: false,
+	        sort: false,
+	        filters: ['=','!=']
+	},
 	is_verified: {
 	        title: 'Verified?',
+	        format: 'boolean',
+	        display: false,
+	        sort: false,
+	        filters: ['=','!=']
+	},
+	is_verifying: {
+	        title: 'Verifying?',
 	        format: 'boolean',
 	        display: false,
 	        sort: false,

@@ -38,10 +38,10 @@ export default function ProposalViewScreen({ route }) {
 				prop.voted = false
 			}
 		}
-		if(!!prop.mine) {
+		if(!!prop.mine && !!prop.vote) {
 			actions.push({
 			      key: 'delbutton',
-			      title: "Delete Proposal",
+			      title: "Cancel Proposal",
 			      press: () => navigation.navigate('ProposalDelete', {
 				      id: proposalId
 			      })
@@ -55,7 +55,7 @@ export default function ProposalViewScreen({ route }) {
 				      id: proposalId
 			      })
                 	})
-		} else if(!!prop.vote) {
+		} else if(!!prop.vote && !prop.mine) {
 			actions.push({
 				key: 'votebutton',
 				title: "Vote!",
