@@ -274,6 +274,306 @@ const membership_defn = {
 	}
 }
 
+const default_metas = {
+	"democracy_name": {
+		"update": {
+			"approval_percent_minimum": 75
+		},
+		"close": {
+			"lifetime_maximum_days": 30
+		}
+	},
+	"democracy_description": {
+		"update": {
+			"approval_percent_minimum": 75
+		},
+		"close": {
+			"lifetime_maximum_days": 30
+		}
+	},
+	"democracy_children": {
+		"add": {
+			"approval_number_minimum": 20
+		},
+		"close": {
+			"lifetime_maximum_days": 30
+		}
+	},
+	"democracy_members": {
+		"update": {
+			"approval_number_minimum": 5
+		},
+		"close": {
+			"lifetime_maximum_days": 30
+		}
+	},
+	"democracy_content": {
+		"add": {
+			"approval_percent_minimum": 50
+		},
+		"update": {
+			"approval_percent_minimum": 50
+		},
+		"delete": {
+			"approval_percent_minimum": 50
+		},
+		"close": {
+			"lifetime_maximum_days": 30
+		}
+	},
+	"democracy_conduct": {
+		"add": {
+			"approval_percent_minimum": 75
+		},
+		"update": {
+			"approval_percent_minimum": 75
+		},
+		"delete": {
+			"approval_percent_minimum": 75
+		},
+		"close": {
+			"lifetime_maximum_days": 30
+		}
+	},
+	"democracy_metas": {
+		"democracy_name": {
+			"update": {
+				"add": {
+					"approval_percent_minimum": 75
+				},
+				"update": {
+					"approval_percent_minimum": 75
+				},
+				"delete": {
+					"approval_percent_minimum": 75
+				},
+				"close": {
+					"lifetime_maximum_days": 30
+				}
+			},
+			"close": {
+				"add": {
+					"approval_percent_minimum": 50
+				},
+				"update": {
+					"approval_percent_minimum": 50
+				},
+				"delete": {
+					"approval_percent_minimum": 50
+				},
+				"close": {
+					"lifetime_maximum_days": 30
+				}
+			}
+		},
+		"democracy_description": {
+			"update": {
+				"add": {
+					"approval_percent_minimum": 75
+				},
+				"update": {
+					"approval_percent_minimum": 75
+				},
+				"delete": {
+					"approval_percent_minimum": 75
+				},
+				"close": {
+					"lifetime_maximum_days": 30
+				}
+			},
+			"close": {
+				"add": {
+					"approval_percent_minimum": 50
+				},
+				"update": {
+					"approval_percent_minimum": 50
+				},
+				"delete": {
+					"approval_percent_minimum": 50
+				},
+				"close": {
+					"lifetime_maximum_days": 30
+				}
+			}
+		},
+		"democracy_children": {
+			"add": {
+				"add": {
+					"approval_percent_minimum": 50
+				},
+				"update": {
+					"approval_percent_minimum": 50
+				},
+				"delete": {
+					"approval_percent_minimum": 50
+				},
+				"close": {
+					"lifetime_maximum_days": 30
+				}
+			},
+			"close": {
+				"add": {
+					"approval_percent_minimum": 50
+				},
+				"update": {
+					"approval_percent_minimum": 50
+				},
+				"delete": {
+					"approval_percent_minimum": 50
+				},
+				"close": {
+					"lifetime_maximum_days": 30
+				}
+			}
+		},
+		"democracy_members": {
+			"update": {
+				"add": {
+					"approval_percent_minimum": 50
+				},
+				"update": {
+					"approval_percent_minimum": 50
+				},
+				"delete": {
+					"approval_percent_minimum": 50
+				},
+				"close": {
+					"lifetime_maximum_days": 30
+				}
+			},
+			"close": {
+				"add": {
+					"approval_percent_minimum": 50
+				},
+				"update": {
+					"approval_percent_minimum": 50
+				},
+				"delete": {
+					"approval_percent_minimum": 50
+				},
+				"close": {
+					"lifetime_maximum_days": 30
+				}
+			}
+		},
+		"democracy_conduct": {
+			"add": {
+				"add": {
+					"approval_percent_minimum": 75
+				},
+				"update": {
+					"approval_percent_minimum": 75
+				},
+				"delete": {
+					"approval_percent_minimum": 75
+				},
+				"close": {
+					"lifetime_maximum_days": 30
+				}
+			},
+			"update": {
+				"add": {
+					"approval_percent_minimum": 75
+				},
+				"update": {
+					"approval_percent_minimum": 75
+				},
+				"delete": {
+					"approval_percent_minimum": 75
+				},
+				"close": {
+					"lifetime_maximum_days": 30
+				}
+			},
+			"delete": {
+				"add": {
+					"approval_percent_minimum": 75
+				},
+				"update": {
+					"approval_percent_minimum": 75
+				},
+				"delete": {
+					"approval_percent_minimum": 75
+				},
+				"close": {
+					"lifetime_maximum_days": 30
+				}
+			},
+			"close": {
+				"add": {
+					"approval_percent_minimum": 50
+				},
+				"update": {
+					"approval_percent_minimum": 50
+				},
+				"delete": {
+					"approval_percent_minimum": 50
+				},
+				"close": {
+					"lifetime_maximum_days": 30
+				}
+			}
+		},
+		"democracy_content": {
+			"add": {
+				"add": {
+					"approval_percent_minimum": 50
+				},
+				"update": {
+					"approval_percent_minimum": 50
+				},
+				"delete": {
+					"approval_percent_minimum": 50
+				},
+				"close": {
+					"lifetime_maximum_days": 30
+				}
+			},
+			"update": {
+				"add": {
+					"approval_percent_minimum": 50
+				},
+				"update": {
+					"approval_percent_minimum": 50
+				},
+				"delete": {
+					"approval_percent_minimum": 50
+				},
+				"close": {
+					"lifetime_maximum_days": 30
+				}
+			},
+			"delete": {
+				"add": {
+					"approval_percent_minimum": 50
+				},
+				"update": {
+					"approval_percent_minimum": 50
+				},
+				"delete": {
+					"approval_percent_minimum": 50
+				},
+				"close": {
+					"lifetime_maximum_days": 30
+				}
+			},
+			"close": {
+				"add": {
+					"approval_percent_minimum": 50
+				},
+				"update": {
+					"approval_percent_minimum": 50
+				},
+				"delete": {
+					"approval_percent_minimum": 50
+				},
+				"close": {
+					"lifetime_maximum_days": 30
+				}
+			}
+		}
+	}
+}
 
 export default {
 	defn: {
@@ -281,5 +581,8 @@ export default {
 		proposal: proposal_defn,
 		ballot: ballot_defn,
 		membership: membership_defn,
+	},
+	defaults: {
+		metas: default_metas
 	}
 }

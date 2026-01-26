@@ -22,6 +22,10 @@ export default function DemocracyViewScreen({ route }) {
 				title:'Create a Proposal',
 				press: () => navigation.navigate('ProposalCreate', { democracy: democracyId })
 			})
+			actions.push({
+				title:'Create a Democracy',
+				press: () => navigation.navigate('DemocracyCreate', { democracy: democracyId })
+			})
 			if(democracyId != authState.root) {
 				actions.push({
 					title:'Leave Democracy',

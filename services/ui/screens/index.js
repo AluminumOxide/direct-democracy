@@ -1,6 +1,7 @@
 import HomeScreen from './Home'
 import DemocracyListScreen from './DemocracyList'
 import DemocracyViewScreen from './DemocracyView'
+import DemocracyCreateScreen from './DemocracyCreate'
 import ProposalListScreen from './ProposalList'
 import ProposalViewScreen from './ProposalView'
 import ProposalCreateScreen from './ProposalCreate'
@@ -25,6 +26,7 @@ const screens = {
 	Home: HomeScreen,
 	DemocracyList: DemocracyListScreen,	
 	DemocracyView: DemocracyViewScreen,
+	DemocracyCreate: DemocracyCreateScreen,
 	ProposalList: ProposalListScreen,
 	ProposalView: ProposalViewScreen,
 	ProposalCreate: ProposalCreateScreen,
