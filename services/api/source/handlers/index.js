@@ -8,6 +8,7 @@ module.exports = {
 	membership_create: require('./membership/create'),
 	membership_read: require('./membership/read'),
 	membership_delete: require('./membership/delete'),
+	membership_verify: require('./membership/verify'),
 	proposal_my_list: require('./proposal/my_list'),
 	proposal_create: require('./proposal/create'),
 	proposal_my_read: require('./proposal/my_read'),

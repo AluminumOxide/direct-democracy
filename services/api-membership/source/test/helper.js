@@ -1,5 +1,6 @@
 const api_membership_client = require('@aluminumoxide/direct-democracy-membership-api-client')
 const { 
+	get_uuid,
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
@@ -31,12 +32,20 @@ const membership_verify_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/membership/verify')(request, reply, db, log, lib)
 }
 
+const membership_verifying_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/membership/verifying')(request, reply, db, log, lib)
+}
+
 const membership_unverify_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/membership/unverify')(request, reply, db, log, lib)
 }
 
 const membership_population_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/membership/population')(request, reply, db, log, lib)
+}
+
+const democracy_members_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/membership/democracy')(request, reply, db, log, lib)
 }
 
 
@@ -67,6 +76,10 @@ const membership_verify_integration = async(membership_id) => {
 	return await api_membership_client.membership_verify({ membership_id })
 }
 
+const membership_verifying_integration = async(membership_id, proposal_id) => {
+	return await api_membership_client.membership_verifying({ membership_id, proposal_id })
+}
+
 const membership_unverify_integration = async(membership_id) => {
 	return await api_membership_client.membership_unverify({ membership_id })
 }
@@ -75,8 +88,13 @@ const membership_population_integration = async(args) => {
 	return await api_membership_client.membership_population(args)
 }
 
+const democracy_members_integration = async(args) => {
+	return await api_membership_client.democracy_members(args)
+}
+
 module.exports = {
 	errors,
+	get_uuid,
 	get_dummy_log,
 	get_dummy_reply,
 	get_dummy_db,
@@ -92,8 +110,12 @@ module.exports = {
 	membership_delete_integration,
 	membership_population_unit,
 	membership_population_integration,
+	democracy_members_unit,
+	democracy_members_integration,
 	membership_verify_unit,
 	membership_verify_integration,
+	membership_verifying_unit,
+	membership_verifying_integration,
 	membership_unverify_unit,
 	membership_unverify_integration
 }

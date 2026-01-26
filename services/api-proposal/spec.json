@@ -636,7 +636,16 @@
 		"proposal_target": {
 			"$id": "schemas-proposal_target",
 			"description": "Proposal target",
-			"type": "string"
+			"type": "string",
+			"enum": [
+				"democracy_name",
+				"democracy_description",
+				"democracy_content",
+				"democracy_conduct",
+				"democracy_metas",
+				"democracy_children",
+				"democracy_members"
+			]
 		},
 		"proposal_votable": {
 			"$id": "schemas-proposal_votable",

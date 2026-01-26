@@ -5,13 +5,13 @@ const democracy_root = async function(request, reply, db, log, lib) {
 		const rows = await db('democracy')
 		.select({
 			democracy_id: 'democracy.id',
-			democracy_name: 'democracy.name',
-			democracy_description: 'democracy.description',
+			democracy_name: 'democracy.democracy_name',
+			democracy_description: 'democracy.democracy_description',
 			democracy_population_verified: 'democracy.population_verified',
 			democracy_population_unverified: 'democracy.population_unverified',
-			democracy_conduct: 'democracy.conduct',
-			democracy_content: 'democracy.content',
-			democracy_metas: 'democracy.metas',
+			democracy_conduct: 'democracy.democracy_conduct',
+			democracy_content: 'democracy.democracy_content',
+			democracy_metas: 'democracy.democracy_metas',
 			date_created: 'democracy.date_created',
 			date_updated: 'democracy.date_updated'
 		})

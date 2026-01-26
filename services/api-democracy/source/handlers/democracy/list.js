@@ -12,17 +12,17 @@ const democracy_list = async function(request, reply, db, log, lib) {
 		const rows = await db.pageQuery(limit, last, sort, order, filter,
 			db.select({
 				democracy_id: 'democracy.id',
-				democracy_name: 'democracy.name',
-				democracy_description: 'democracy.description',
+				democracy_name: 'democracy.democracy_name',
+				democracy_description: 'democracy.democracy_description',
 				democracy_population_verified: 'democracy.population_verified',
 				democracy_population_unverified: 'democracy.population_unverified',
 				date_created: 'democracy.date_created',
 				date_updated: 'democracy.date_updated',
-				democracy_conduct: 'democracy.conduct',
-				democracy_content: 'democracy.content',
-				democracy_metas: 'democracy.metas',
+				democracy_conduct: 'democracy.democracy_conduct',
+				democracy_content: 'democracy.democracy_content',
+				democracy_metas: 'democracy.democracy_metas',
 				democracy_parent_id: 'democracy.parent_id',
-				democracy_parent: db.raw("json_build_object('id',b.id,'name',b.name)")
+				democracy_parent: db.raw("json_build_object('id',b.id,'name',b.democracy_name)")
 			})
 			.fromRaw('democracy left outer join democracy b on democracy.parent_id = b.id'))
 

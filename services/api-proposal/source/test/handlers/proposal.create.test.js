@@ -6,7 +6,8 @@ const {
 	get_dummy_reply,
 	proposal_create_unit: prop_create_u,
 	integration_test_setup,
-	proposal_create_integration: prop_create_i
+	proposal_create_integration: prop_create_i,
+	membership_read_integration: mem_read_i
 } = require('../helper') 
 const json_changes = require('@aluminumoxide/direct-democracy-lib-json-changes')
 
@@ -49,12 +50,90 @@ describe('Proposal Create', () => {
 			const dummy_lib = get_dummy_lib([{
 				lib: 'api_membership',
 				fxn: 'membership_read',
-				val: { democracy_id: dummy_req.democracy_id },
+				val: { democracy_id: dummy_req.democracy_id, is_verified:true },
 				err: false
 			},{
 				lib: 'api_democracy',
 				fxn: 'democracy_read',
-				val: { 'democracy_target':{} },
+				val: { 'democracy_target':{}, 'democracy_children':[{id:'00000000-0000-0000-0000-000000000000',name:'test'}] },
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			}], errors)
+
+			// call handler
+			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expected.proposal_id = expected.id
+			expected.proposal_name = expected.name
+			expected.proposal_description = expected.description
+			expected.proposal_target = expected.target
+			expected.proposal_changes = expected.changes
+			expected.proposal_votable = expected.votable
+			delete expected.id
+			delete expected.name
+			delete expected.description
+			delete expected.target
+			delete expected.changes
+			delete expected.votable
+			expect(dummy_reply.code).toHaveBeenCalledWith(201)
+			expect(dummy_reply.send).toHaveBeenCalledWith(expected)
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
+		test('Success: Verify Membership', async() => {
+
+			// set up mocks
+			
+			const dummy_req = {
+				proposal_name: 'test',
+				proposal_description: 'test test test',
+				proposal_target: 'democracy_members',
+				proposal_changes: {'00000000-0000-0000-0000-000000000000':{_update:{is_verified:true}}},
+				democracy_id: '00000000-0000-0000-0000-000000000000',
+				membership_id: '00000000-0000-0000-0000-000000000000'
+			}
+			let expected = {
+				id: '00000000-0000-0000-0000-000000000000',
+				democracy_id: dummy_req.democracy_id,
+				membership_id: dummy_req.membership_id,
+				name: dummy_req.proposal_name,
+				description: dummy_req.proposal_description,
+				target: dummy_req.proposal_target,
+				changes: dummy_req.proposal_changes,
+				votable: true,
+				date_created: '2100-01-01T00:00:00',
+				date_updated: '2100-01-01T00:00:00'
+			}
+			const dummy_reply = get_dummy_reply()
+			const dummy_log = get_dummy_log()
+			const dummy_db = get_dummy_db([{
+				fxn: 'returning',
+				args: ['*'],
+				val: [expected]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
+				fxn: 'membership_read',
+				val: { democracy_id: dummy_req.democracy_id, is_verified:false },
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_verifying',
+				val: '',
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read',
+				val: { 'democracy_target':{}, 'democracy_children':[{id:'00000000-0000-0000-0000-000000000000',name:'test'}] },
 				err: false
 			},{
 				lib: 'lib_json',
@@ -106,7 +185,7 @@ describe('Proposal Create', () => {
 			const dummy_lib = get_dummy_lib([{
 				lib: 'api_membership',
 				fxn: 'membership_read',
-				val: { democracy_id: 'nottheid' },
+				val: { democracy_id: 'nottheid', is_verified:true  },
 				err: false
 			}], errors)
 
@@ -116,6 +195,40 @@ describe('Proposal Create', () => {
 			// check reply
 			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.democracy_invalid))
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
+		test('Error: Unverified membership', async() => {
+
+			// set up mocks		
+			const dummy_req = {
+				proposal_name: 'test',
+				proposal_description: 'test test test',
+				proposal_target: 'target',
+				proposal_changes: {},
+				democracy_id: '00000000-0000-0000-0000-000000000000',
+				membership_id: '00000000-0000-0000-0000-000000000000'
+			}
+			const dummy_reply = get_dummy_reply()
+			const dummy_log = get_dummy_log()
+			const dummy_db = get_dummy_db([])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
+				fxn: 'membership_read',
+				val: { democracy_id: dummy_req.democracy_id, is_verified: false },
+				err: false
+			}], errors)
+
+			// call handler
+			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_unverified))
 
 			// check log
 			expect(dummy_log.info).toHaveBeenCalledTimes(0)
@@ -211,7 +324,7 @@ describe('Proposal Create', () => {
 			const dummy_lib = get_dummy_lib([{
 				lib: 'api_membership',
 				fxn: 'membership_read',
-				val: { democracy_id: dummy_req.democracy_id },
+				val: { democracy_id: dummy_req.democracy_id, is_verified:true  },
 				err: false
 			},{
 				lib: 'api_democracy',
@@ -256,7 +369,7 @@ describe('Proposal Create', () => {
 			const dummy_lib = get_dummy_lib([{
 				lib: 'api_membership',
 				fxn: 'membership_read',
-				val: { democracy_id: dummy_req.democracy_id },
+				val: { democracy_id: dummy_req.democracy_id , is_verified:true },
 				err: false
 			},{
 				lib: 'api_democracy',
@@ -301,12 +414,12 @@ describe('Proposal Create', () => {
 			const dummy_lib = get_dummy_lib([{
 				lib: 'api_membership',
 				fxn: 'membership_read',
-				val: { democracy_id: dummy_req.democracy_id },
+				val: { democracy_id: dummy_req.democracy_id, is_verified:true  },
 				err: false
 			},{
 				lib: 'api_democracy',
 				fxn: 'democracy_read',
-				val: { 'democracy_target':{} },
+				val: { 'democracy_target':{}, 'democracy_children':[]  },
 				err: false
 			},{
 				lib: 'lib_json',
@@ -329,6 +442,105 @@ describe('Proposal Create', () => {
 			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 		
+		test('Error: Invalid membership verification', async() => {
+
+			// set up mocks		
+			const dummy_req = {
+				proposal_name: 'test',
+				proposal_description: 'test test test',
+				proposal_target: 'democracy_members',
+				proposal_changes: {},
+				democracy_id: '00000000-0000-0000-0000-000000000000',
+				membership_id: '00000000-0000-0000-0000-000000000000'
+			}
+			const dummy_reply = get_dummy_reply()
+			const dummy_log = get_dummy_log()
+			const dummy_db = get_dummy_db([])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
+				fxn: 'membership_read',
+				val: { democracy_id: dummy_req.democracy_id, is_verified:true  },
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read',
+				val: { 'democracy_target':{}, 'democracy_children':[]  },
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: false,
+				err: false
+			}], errors)
+
+			// call handler
+			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+	
+		test('Error: Membership verification error', async() => {
+
+			// set up mocks		
+			const dummy_req = {
+				proposal_name: 'test',
+				proposal_description: 'test test test',
+				proposal_target: 'democracy_members',
+				proposal_changes: {'00000000-0000-0000-0000-000000000000':{_update:{is_verified:true}}},
+				democracy_id: '00000000-0000-0000-0000-000000000000',
+				membership_id: '00000000-0000-0000-0000-000000000000'
+			}
+			const dummy_reply = get_dummy_reply()
+			const dummy_log = get_dummy_log()
+			const dummy_db = get_dummy_db([{
+				fxn: 'returning',
+				args: ['*'],
+				val: [dummy_req]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
+				fxn: 'membership_read',
+				val: { democracy_id: dummy_req.democracy_id, is_verified: false },
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read',
+				val: { 'democracy_target':{}, 'democracy_children':[{id:'00000000-0000-0000-0000-000000000000',name:'test'}] },
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_verifying',
+				val: errors.internal_error,
+				err: true
+			}], errors)
+
+			// call handler
+			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
+		})
+
 		test('Error: Invalid error changes', async() => {
 
 			// set up mocks		
@@ -346,18 +558,65 @@ describe('Proposal Create', () => {
 			const dummy_lib = get_dummy_lib([{
 				lib: 'api_membership',
 				fxn: 'membership_read',
-				val: { democracy_id: dummy_req.democracy_id },
+				val: { democracy_id: dummy_req.democracy_id, is_verified:true  },
 				err: false
 			},{
 				lib: 'api_democracy',
 				fxn: 'democracy_read',
-				val: { 'democracy_target':{} },
+				val: { 'democracy_target':{}, 'democracy_children':[]  },
 				err: false
 			},{
 				lib: 'lib_json',
 				fxn: 'check_changes',
 				val: false,
 				err: true
+			}], errors)
+
+			// call handler
+			await prop_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
+		test('Error: Invalid child democracy', async() => {
+
+			// set up mocks		
+			const dummy_req = {
+				proposal_name: 'test',
+				proposal_description: 'test test test',
+				proposal_target: 'democracy_children',
+				proposal_changes: {_add:{test:{
+					democracy_content:{},
+					democracy_conduct:{}
+				}}},
+				democracy_id: '00000000-0000-0000-0000-000000000000',
+				membership_id: '00000000-0000-0000-0000-000000000000'
+			}
+			const dummy_reply = get_dummy_reply()
+			const dummy_log = get_dummy_log()
+			const dummy_db = get_dummy_db([])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
+				fxn: 'membership_read',
+				val: { democracy_id: dummy_req.democracy_id, is_verified:true  },
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read',
+				val: { 'democracy_children':[]  },
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
 			}], errors)
 
 			// call handler
@@ -396,12 +655,12 @@ describe('Proposal Create', () => {
 			const dummy_lib = get_dummy_lib([{
 				lib: 'api_membership',
 				fxn: 'membership_read',
-				val: { democracy_id: dummy_req.democracy_id },
+				val: { democracy_id: dummy_req.democracy_id, is_verified:true  },
 				err: false
 			},{
 				lib: 'api_democracy',
 				fxn: 'democracy_read',
-				val: { 'democracy_target':{} },
+				val: { 'democracy_target':{}, 'democracy_children':[]  },
 				err: false
 			},{
 				lib: 'lib_json',
@@ -446,12 +705,12 @@ describe('Proposal Create', () => {
 			const dummy_lib = get_dummy_lib([{
 				lib: 'api_membership',
 				fxn: 'membership_read',
-				val: { democracy_id: dummy_req.democracy_id },
+				val: { democracy_id: dummy_req.democracy_id, is_verified:true  },
 				err: false
 			},{
 				lib: 'api_democracy',
 				fxn: 'democracy_read',
-				val: { 'democracy_target':{} },
+				val: { 'democracy_target':{}, 'democracy_children':[]  },
 				err: false
 			},{
 				lib: 'lib_json',
@@ -486,7 +745,7 @@ describe('Proposal Create', () => {
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
 				proposal_target: 'democracy_name',
-				proposal_changes: {'_update':{'name':'qwer'}}
+				proposal_changes: {'_update':{'democracy_name':'qwer'}}
 			}
 			await expect(prop_create_i(test_prop)).resolves.toMatchObject(test_prop)
 		})
@@ -499,7 +758,7 @@ describe('Proposal Create', () => {
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
 				proposal_target: 'democracy_description',
-				proposal_changes: {'_update':{'name':'qwer'}}
+				proposal_changes: {'_update':{'democracy_description':'qwer'}}
 			}
 			await expect(prop_create_i(test_prop)).resolves.toMatchObject(test_prop)
 		})
@@ -539,14 +798,47 @@ describe('Proposal Create', () => {
 				proposal_description: 'asdf',
 				proposal_target: 'democracy_metas',
 				proposal_changes: {
-					'name':{ 'update':{ 
+					'democracy_name':{ 'update':{ 
 						'_add':{ 'approval_number_minimum': 3 }, 
 						'_delete':['approval_percent_minimum']}},
-					 'description': { 'update':{ 
+					 'democracy_description': { 'update':{ 
 						 '_update':{ 'approval_percent_minimum': 80}}}
 				}
 			}
 			await expect(prop_create_i(test_prop)).resolves.toMatchObject(test_prop)
+		})
+		
+		// success: create democracy
+		test('Success: Add child democracy', async () => {
+			const test_prop = {
+				democracy_id: test_data['democracy']['root_child']['id'],
+				membership_id: test_data['membership']['verified_child_1']['id'],
+				proposal_name: 'New Democracy',
+				proposal_description: 'Democracy Desc',
+				proposal_target: 'democracy_children',
+				proposal_changes: {'_add':{'New Democracy':{
+					democracy_conduct:{},
+					democracy_content:{},
+					democracy_metas: test_data['democracy']['root_child']['democracy_metas'] }}}
+			}
+			await expect(prop_create_i(test_prop)).resolves.toMatchObject(test_prop)
+		})
+		
+		// success: verify membership
+		test('Success: Membership verify', async () => {
+			const test_prop = {
+				democracy_id: test_data['democracy']['root_child']['id'],
+				membership_id: test_data['membership']['unverified_child_1']['id'],
+				proposal_name: 'Membership Verification Request',
+				proposal_description: 'Text entered by user wanting verification',
+				proposal_target: 'democracy_members',
+				proposal_changes: {[test_data['membership']['unverified_child_1']['id']]:{_update:{is_verified:true}}}
+			}
+			const new_prop = await prop_create_i(test_prop)
+			expect(new_prop).toMatchObject(test_prop)
+			const test_mem = await mem_read_i(test_prop.membership_id)
+			expect(!!test_mem.is_verifying)
+			expect(test_mem.verify_proposal).toBe(new_prop.proposal_id)
 		})
 	
 		// error: invalid membership id
@@ -557,7 +849,7 @@ describe('Proposal Create', () => {
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
 				proposal_target: 'democracy_name',
-				proposal_changes: {'_update':{'name':'qwer'}}
+				proposal_changes: {'_update':{'democracy_name':'qwer'}}
 			}
 			await expect(prop_create_i(test_prop)).rejects.toThrow(new Error(errors.membership_dne))
 		})
@@ -570,7 +862,7 @@ describe('Proposal Create', () => {
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
 				proposal_target: 'democracy_name',
-				proposal_changes: {'_update':{'name':'qwer'}}
+				proposal_changes: {'_update':{'democracy_name':'qwer'}}
 			}
 			await expect(prop_create_i(test_prop)).rejects.toThrow(new Error(errors.democracy_invalid))
 		})
@@ -583,9 +875,9 @@ describe('Proposal Create', () => {
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
 				proposal_target: 'democracy_asdf',
-				proposal_changes: {'_update':{'name':'qwer'}}
+				proposal_changes: {'_update':{'democracy_name':'qwer'}}
 			}
-			await expect(prop_create_i(test_prop)).rejects.toThrow(new Error(errors.changes_invalid))
+			await expect(prop_create_i(test_prop)).rejects.toThrow(Error)
 		})
 	
 		// error: invalid changes 
@@ -596,7 +888,23 @@ describe('Proposal Create', () => {
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
 				proposal_target: 'democracy_name',
-				proposal_changes: {'_add':{'name':'qwer'}}
+				proposal_changes: {'_add':{'democracy_name':'qwer'}}
+			}
+			await expect(prop_create_i(test_prop)).rejects.toThrow(new Error(errors.changes_invalid))
+		})
+		
+		// error: invalid child democracy
+		test('Error: Invalid child democracy', async () => {
+			const test_prop = {
+				democracy_id: test_data['democracy']['root_child']['id'],
+				membership_id: test_data['membership']['verified_child_1']['id'],
+				proposal_name: 'asdf',
+				proposal_description: 'asdf',
+				proposal_target: 'democracy_children',
+				proposal_changes: {'_add':{[test_data['democracy']['not_root_child']['democracy_name']]:{
+					democracy_conduct:{},
+					democracy_content:{},
+					democracy_metas: test_data['democracy']['root_child']['democracy_metas'] }}}
 			}
 			await expect(prop_create_i(test_prop)).rejects.toThrow(new Error(errors.changes_invalid))
 		})

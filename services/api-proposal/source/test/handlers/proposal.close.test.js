@@ -7,7 +7,8 @@ const {
 	integration_test_setup,
 	proposal_close_unit: prop_close_u,
 	proposal_read_integration: prop_read_i,
-	proposal_close_integration: prop_close_i
+	proposal_close_integration: prop_close_i,
+	membership_read_integration: mem_read_i
 } = require('../helper')
 
 describe('Proposal Close', () => {
@@ -15,7 +16,7 @@ describe('Proposal Close', () => {
 	describe('Unit Tests', () => {
 
 		// success
-		test('Success', async() => {
+		test('Success: Pass', async() => {
 
 			// set up mocks
 			const dummy_req = {
@@ -28,7 +29,48 @@ describe('Proposal Close', () => {
 			const dummy_db = get_dummy_db([{
 				fxn: 'where',
 				args: [{id: dummy_req.proposal_id}],
-				val: [{proposal_votable: true}],
+				val: [{membership_id: 'test', proposal_target: 'test', proposal_votable: true}],
+				err: false,
+				call: 1
+			},{
+				fxn: 'returning',
+				args: ["*"],
+				val: [{}],
+				err: false
+			}])
+
+			// call handler
+			await prop_close_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith()
+			expect(dummy_reply.code).toHaveBeenCalledWith(200)
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+
+		test('Success: Fail', async() => {
+
+			// set up mocks
+			const dummy_req = {
+				proposal_id: 'd3a48d83-eace-4097-bdd9-c0116b7f1474',
+				passed: false
+			}
+			const dummy_reply = get_dummy_reply()
+			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
+				fxn: 'membership_unverify',
+				val: '',
+				err: false
+			}])
+			const dummy_db = get_dummy_db([{
+				fxn: 'where',
+				args: [{id: dummy_req.proposal_id}],
+				val: [{membership_id: dummy_req.proposal_id, proposal_target: 'democracy_members', proposal_votable: true}],
 				err: false,
 				call: 1
 			},{
@@ -179,7 +221,48 @@ describe('Proposal Close', () => {
 			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
 			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
-		
+
+		test('Error: Membership unverify error', async() => {
+
+			// set up mocks
+			const dummy_req = {
+				proposal_id: 'd3a48d83-eace-4097-bdd9-c0116b7f1474',
+				passed: false
+			}
+			const dummy_reply = get_dummy_reply()
+			const dummy_log = get_dummy_log()
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_membership',
+				fxn: 'membership_unverify',
+				val: errors.internal_error,
+				err: true
+			}])
+			const dummy_db = get_dummy_db([{
+				fxn: 'where',
+				args: [{id: dummy_req.proposal_id}],
+				val: [{membership_id: 'test', proposal_target: 'democracy_members', proposal_votable: true}],
+				err: false,
+				call: 1
+			},{
+				fxn: 'returning',
+				args: ["*"],
+				val: [{}],
+				err: false
+			}])
+
+			// call handler
+			await prop_close_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
+		})
+
 		// error: db update failure
 		test('Error: DB update failure', async() => {
 
@@ -275,7 +358,7 @@ describe('Proposal Close', () => {
 	
 		// success: close failed proposal
 		test('Success: Failed', async () => {		
-			let test_prop = test_data['proposal']['root_conduct_fail']
+			let test_prop = test_data['proposal']['child_mem_verify']
 			await expect(prop_read_i(test_prop.id)).resolves.toMatchObject({
 				'proposal_votable': true,
 				'proposal_passed': null
@@ -285,6 +368,10 @@ describe('Proposal Close', () => {
 				'proposal_votable': false,
 				'proposal_passed': false
 			})
+			const test_mem = await mem_read_i(test_prop.membership_id)
+			expect(!test_mem.is_verified)
+			expect(!test_mem.is_verifying)
+			expect(!test_mem.verify_proposal)
 		})
 	
 		// error: invalid proposal id

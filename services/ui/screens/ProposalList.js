@@ -11,7 +11,7 @@ export default function ProposalListScreen({ route }) {
 	const navigation = useNavigation();
 	const { authState } = useContext(AuthContext)
 
-	let filters = {}
+	let filters = {proposal_votable:{op:'=',val:true}}
 	if(!!route.params) {
 		if(!!authState.state && 'my' in route.params) {
 			filters.mine = true

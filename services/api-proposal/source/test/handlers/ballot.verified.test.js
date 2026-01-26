@@ -76,7 +76,7 @@ describe('Verified', () => {
 			// check there are more verified ballots
 			const blt2 = await blt_list_i({ filter })
 			expect(actual).toEqual("")
-			expect(blt2.length).toBe(blt1.length+4) // 2 ballots per member
+			expect(blt2.length).toBe(blt1.length+6) // 2 ballots per member
 		})
 
 		// error: no start time

@@ -87,7 +87,15 @@
 		"proposal_target": {
 			"$id": "schemas-proposal_target",
 			"description": "Proposal target",
-			"type": "string"
+			"type": "string",
+			"enum": [
+				"democracy_name",
+				"democracy_description",
+				"democracy_content",
+				"democracy_conduct",
+				"democracy_metas",
+				"democracy_children"
+			]
 		},
 		"proposal_votable": {
 			"$id": "schemas-proposal_votable",
@@ -387,6 +395,19 @@
 			"properties": {
 				"profile_id": {
 					"$ref": "schemas-profile_id"
+				}
+			}
+		},
+		"membership_verify": {
+			"$id": "schemas-membership_verify",
+			"description": "Membership - Verify",
+			"type": "object",
+			"required": [
+				"description"
+			],
+			"properties": {
+				"description": {
+					"type": "string"
 				}
 			}
 		},
@@ -1334,6 +1355,10 @@
 		"membership_create": {
 			"$id": "bodies-membership_create",
 			"$ref": "schemas-membership_create"
+		},
+		"membership_verify": {
+			"$id": "bodies-membership_verify",
+			"$ref": "schemas-membership_verify"
 		}
 	},
 	"responses": {
@@ -1486,7 +1511,7 @@
 		},
 		"/democracy/root": {
 			"GET": {
-				"description": "Get a democracy",
+				"description": "Get root democracy",
 				"operationId": "democracy_root",
 				"responses": {
 					"200": {
@@ -1891,7 +1916,7 @@
 		},
 		"/my/membership/:membership_id": {
 			"GET": {
-				"description": "Get a membership",
+				"description": "Get my membership",
 				"operationId": "membership_read",
 				"headers": {
 					"jwt": { "$ref": "headers-jwt" }
@@ -1914,8 +1939,35 @@
 					}
 				}
 			},
+			"POST": {
+				"description": "Request verification for my membership",
+				"operationId": "membership_verify",
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
+				},
+				"param": {
+					"membership_id": { "$ref": "params-membership_id" }
+				},
+				"body": {
+					"$ref": "bodies-membership_verify"
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-proposal_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			},
 			"DELETE": {
-				"description": "Delete a membership",
+				"description": "Delete my membership",
 				"operationId": "membership_delete",
 				"headers": {
 					"jwt": { "$ref": "headers-jwt" }

@@ -1,4 +1,5 @@
 const api_proposal_client = require('@aluminumoxide/direct-democracy-proposal-api-client')
+const api_membership_client = require('@aluminumoxide/direct-democracy-membership-api-client')
 const {
 	get_uuid,
 	get_dummy_log,
@@ -118,6 +119,10 @@ const proposal_close_integration = async(proposal_id, passed) => {
 	return await api_proposal_client.proposal_close({ proposal_id, passed })
 }
 
+const membership_read_integration = async(membership_id) => {
+	return await api_membership_client.membership_read({ membership_id })
+}
+
 module.exports = {
 	errors,
 	get_uuid,
@@ -147,6 +152,7 @@ module.exports = {
 	proposal_read_integration,
 	proposal_create_integration,
 	proposal_delete_integration,
-	proposal_close_integration
+	proposal_close_integration,
+	membership_read_integration
 }
 

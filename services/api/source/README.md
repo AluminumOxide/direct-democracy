@@ -68,7 +68,7 @@ Properties:
 
 ### GET /v1/democracy/root
 
-*Get a democracy*
+*Get root democracy*
 
 **Responses**
 
@@ -364,7 +364,7 @@ Properties:
 
 ### GET /v1/my/membership/:membership_id
 
-*Get a membership*
+*Get my membership*
 
 **Params**
 
@@ -377,9 +377,28 @@ Properties:
 - [401](#responses-401)
 - [500](#responses-500)
 
+### POST /v1/my/membership/:membership_id
+
+*Request verification for my membership*
+
+**Params**
+
+- [membership_id](#params-membership_id)
+
+**Bodies**
+
+ - [bodies-membership_verify](#bodies-membership_verify)
+
+**Responses**
+
+- [200](#responses-proposal_read)
+- [400](#responses-400)
+- [401](#responses-401)
+- [500](#responses-500)
+
 ### DELETE /v1/my/membership/:membership_id
 
-*Delete a membership*
+*Delete my membership*
 
 **Params**
 
@@ -1258,6 +1277,9 @@ Type: [schemas-ballot_update](#schemas-ballot_update)
 #### bodies-membership_create
 
 Type: [schemas-membership_create](#schemas-membership_create)
+#### bodies-membership_verify
+
+Type: [schemas-membership_verify](#schemas-membership_verify)
 ## Responses
 
 #### responses-400
@@ -1506,6 +1528,15 @@ Type: string
 
 
 Type: string
+
+Enum:
+
+- democracy_name
+- democracy_description
+- democracy_content
+- democracy_conduct
+- democracy_metas
+- democracy_children
 #### schemas-proposal_votable
 
 
@@ -1908,6 +1939,24 @@ Properties:
 - **profile_id**
 
 	Type: [schemas-profile_id](#schemas-profile_id)
+
+#### schemas-membership_verify
+
+
+*Membership - Verify*
+
+
+Type: object
+
+Required:
+
+- description
+
+Properties:
+
+- **description**
+
+	Type: string
 
 #### schemas-population_list
 

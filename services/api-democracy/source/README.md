@@ -686,7 +686,7 @@ Additional Properties: false
 
 Properties:
 
-- **name**
+- **democracy_name**
 
 
 	*Conditions to update democracy name*
@@ -703,7 +703,7 @@ Properties:
 		Type: [schemas-democracy_meta_cond](#schemas-democracy_meta_cond)
 
 
-- **description**
+- **democracy_description**
 
 
 	*Conditions to update democracy description*
@@ -720,7 +720,7 @@ Properties:
 		Type: [schemas-democracy_meta_cond](#schemas-democracy_meta_cond)
 
 
-- **democracies**
+- **democracy_children**
 
 
 	*Conditions to add or remove child democracies*
@@ -757,7 +757,7 @@ Properties:
 
 	Type: [schemas-democracy_meta_leaf](#schemas-democracy_meta_leaf)
 
-- **conduct**
+- **democracy_conduct**
 
 
 	*Conditions to add, remove or update rules of conduct*
@@ -765,7 +765,7 @@ Properties:
 
 	Type: [schemas-democracy_meta_leaf](#schemas-democracy_meta_leaf)
 
-- **content**
+- **democracy_content**
 
 
 	*Conditions to add, remove or update content*
@@ -774,7 +774,7 @@ Properties:
 	Type: object
 
 
-- **meta**
+- **democracy_metas**
 
 
 	*Conditions to add, remove or update meta rules*

@@ -82,9 +82,19 @@
 			"description": "Profile ID",
 			"$ref": "schemas-uuid"
 		},
+		"proposal_id": {
+			"$id": "schemas-proposal_id",
+			"description": "Proposal ID",
+			"$ref": "schemas-uuid"
+		},
 		"is_verified": {
 			"$id": "schemas-is_verified",
 			"description": "Is the membership verified?",
+			"type": "boolean"
+		},
+		"is_verifying": {
+			"$id": "schemas-is_verifying",
+			"description": "Is the membership in the process of verifying?",
 			"type": "boolean"
 		},
 		"membership_read": {
@@ -96,6 +106,7 @@
 				"democracy_id",
 				"profile_id",
 				"is_verified",
+				"is_verifying",
 				"date_created",
 				"date_updated"
 			],
@@ -111,6 +122,9 @@
 				},
 				"is_verified": {
 					"$ref": "schemas-is_verified"
+				},
+				"is_verifying": {
+					"$ref": "schemas-is_verifying"
 				},
 				"date_created": {
 					"$ref": "schemas-date_created"
@@ -170,6 +184,33 @@
 				}
 			}
 		},
+		"membership_verifying": {
+			"$id": "schemas-membership_verifying",
+			"description": "Set membership to verifying",
+			"type": "object",
+			"required": [ "proposal_id" ],
+			"properties": {
+				"proposal_id": {
+					"$ref": "schemas-proposal_id"
+				}
+			}
+		},
+		"democracy_members": {
+			"$id": "schemas-democracy_members",
+			"description": "Democracy - Members",
+			"type": "object",
+			"required": [
+				"members"
+			],
+			"properties": {
+				"members": {
+					"type": "array",
+					"items": {
+						"$ref": "schemas-membership_id"
+					}
+				}
+			}
+		},
 		"population_list": {
 			"$id": "schemas-population_list",
 			"description": "Population - List",
@@ -191,6 +232,10 @@
 		"membership_id": {
 			"$id": "params-membership_id",
 			"$ref": "schemas-membership_id"
+		},
+		"democracy_id": {
+			"$id": "params-democracy_id",
+			"$ref": "schemas-democracy_id"
 		}
 	},
 	"queries": {
@@ -460,9 +505,21 @@
 		"membership_create": {
 			"$id": "bodies-membership_create",
 			"$ref": "schemas-membership_create"
+		},
+		"membership_verifying": {
+			"$id": "bodies-membership_verifying",
+			"$ref": "schemas-membership_verifying"
+		},
+		"democracy_members": {
+			"$id": "bodies-democracy_members",
+			"$ref": "schemas-democracy_members"
 		}
 	},
 	"responses": {
+		"201": {
+			"$id": "responses-201",
+			"description": "Successfully Created"
+		},
 		"204": {
 			"$id": "responses-204",
 			"description": "Successfully Deleted"
@@ -622,6 +679,30 @@
 					}
 				}
 			},
+			"POST": {
+				"description": "Set membership to verifying",
+				"operationId": "membership_verifying",
+				"param": {
+					"membership_id": { "$ref": "params-membership_id" }
+				},
+				"body": {
+					"$ref": "bodies-membership_verifying"
+				},
+				"responses": {
+					"200": {
+						"$ref": "schemas-membership_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			},
 			"DELETE": {
 				"description": "Unverify a membership",
 				"operationId": "membership_unverify",
@@ -631,6 +712,32 @@
 				"responses": {
 					"200": {
 						"$ref": "schemas-membership_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/democracy/:democracy_id/members":{
+			"POST": {
+				"description": "Mass create memberships for a new democracy",
+				"operationId": "democracy_members",
+				"param": {
+					"democracy_id": { "$ref": "params-democracy_id" }
+				},
+				"body": {
+					"$ref": "bodies-democracy_members"
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-201"
 					},
 					"400": {
 						"$ref": "responses-400"

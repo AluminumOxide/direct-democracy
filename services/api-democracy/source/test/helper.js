@@ -64,6 +64,10 @@ const membership_create_integration = async(democracy_id, profile_id) => {
 	return await api_membership_client.membership_create({ democracy_id, profile_id })
 }
 
+const membership_read_integration = async(membership_id) => {
+	return await api_membership_client.membership_read({ membership_id })
+}
+
 const proposal_read_integration = async (proposal_id) => {
 	return await api_proposal_client.proposal_read({ proposal_id })
 }
@@ -92,5 +96,6 @@ module.exports = {
 	democracy_apply_unit,
 	democracy_apply_integration,
 	membership_create_integration,
+	membership_read_integration,
 	proposal_read_integration
 }

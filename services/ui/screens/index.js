@@ -1,6 +1,7 @@
 import HomeScreen from './Home'
 import DemocracyListScreen from './DemocracyList'
 import DemocracyViewScreen from './DemocracyView'
+import DemocracyCreateScreen from './DemocracyCreate'
 import ProposalListScreen from './ProposalList'
 import ProposalViewScreen from './ProposalView'
 import ProposalCreateScreen from './ProposalCreate'
@@ -15,6 +16,7 @@ import MembershipListScreen from './MembershipList'
 import MembershipViewScreen from './MembershipView'
 import MembershipCreateScreen from './MembershipCreate'
 import MembershipDeleteScreen from './MembershipDelete'
+import MembershipVerifyScreen from './MembershipVerify'
 import AccountScreen from './Account'
 import SignInScreen from './SignIn'
 import SignOutScreen from './SignOut'
@@ -24,6 +26,7 @@ const screens = {
 	Home: HomeScreen,
 	DemocracyList: DemocracyListScreen,	
 	DemocracyView: DemocracyViewScreen,
+	DemocracyCreate: DemocracyCreateScreen,
 	ProposalList: ProposalListScreen,
 	ProposalView: ProposalViewScreen,
 	ProposalCreate: ProposalCreateScreen,
@@ -38,6 +41,7 @@ const screens = {
 	MembershipView: MembershipViewScreen,
 	MembershipCreate: MembershipCreateScreen,
 	MembershipDelete: MembershipDeleteScreen,
+	MembershipVerify: MembershipVerifyScreen,
 	Account: AccountScreen,
 	SignIn: SignInScreen,
 	SignOut: SignOutScreen,

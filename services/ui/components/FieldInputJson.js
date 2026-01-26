@@ -203,6 +203,6 @@ export default function FieldInputJson({ label, val, opts, keys: valKeys, valCha
 		 getVisibility={() => addField.show}
 		 submit={() => handleAdd(addField.k, addField.keys, addField.allKeys) || handleHideAdd()}
 		 cancel={() => handleHideAdd() }/>
-		{drawRow(!!val && !!data && !!data.proposal_changes ? {[Object.keys(val)[0]]: data.proposal_changes[Object.keys(val)[0]]} : {},[])}
+		{drawRow(!!val && !!data && !!data.proposal_changes ? {[Object.keys(val)[0]]: data.proposal_changes[Object.keys(val)[0]]} : Object.fromEntries(Object.entries(data).filter(([k, v]) => k !== 'mode')),[])}
 	</View>)
 }

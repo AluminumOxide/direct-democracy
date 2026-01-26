@@ -9,7 +9,7 @@ const { democracy_dne, democracy_pop, algo_missing, internal_error } = require('
 const apply_proposal = async function(request, reply, db, log, lib) {
 
 	const { proposal_id } = request
-	const { lib_json, api_proposal, api_democracy } = lib
+	const { lib_json, api_proposal, api_democracy, api_membership } = lib
 		
 	try {
 
@@ -37,6 +37,9 @@ const apply_proposal = async function(request, reply, db, log, lib) {
 		let democracy
 		try {
 			democracy = await api_democracy.democracy_read({ democracy_id })
+			let c = {}
+			democracy.democracy_children.map(d => c[d.name] = d.id)
+			democracy.democracy_children = c
 		} catch(e) {
 			if(e.message === democracy_dne) {
 				log.warn(`Proposal/Apply: Failure: ${proposal_id},${democracy_id} Error: Democracy does not exist`)
@@ -59,10 +62,20 @@ const apply_proposal = async function(request, reply, db, log, lib) {
 
 		// proposal target
 		const target = proposal.proposal_target
-		if(!(['name','description','conduct','content','metas']).includes(target)) {
+		if(!(['democracy_name','democracy_description','democracy_conduct','democracy_content','democracy_metas','democracy_children','democracy_members']).includes(target)) {
 			log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal has invalid target`)
 			// close proposal and return applicable error
 			return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.target_invalid)
+		}
+
+		// get democracy members if needed
+		if(target === 'democracy_members') {
+			if(!proposal.proposal_changes[proposal.membership_id] || !proposal.proposal_changes[proposal.membership_id]._update || !proposal.proposal_changes[proposal.membership_id]._update.is_verified) {
+				// shouldn't happen
+				log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal has invalid membership verification`)
+				return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.changes_invalid)
+			}
+			democracy.democracy_members = {[proposal.membership_id]:{is_verified: false}}
 		}
 
 		// proposal changes
@@ -74,7 +87,7 @@ const apply_proposal = async function(request, reply, db, log, lib) {
 		}
 
 		// targeted contents
-		const contents = democracy['democracy_'+target]
+		const contents = democracy[target]
 		if(!lib_json.check_changes(changes, contents)) {
 			log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal changes do not map to democracy contents`)
 			// close proposal and return applicable error
@@ -121,34 +134,108 @@ const apply_proposal = async function(request, reply, db, log, lib) {
 			return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, democracy_pop)
 		}
 
-
 		try {
+			// get closing rules
+			const close_rules = get_rules(changes, rules, algos, true)
+
 			// check if any closers pass
-			if(check_rules(get_rules(changes, rules, algos, true), true, votes_yes, votes_no, population, proposal_days)) {
+			if(check_rules(close_rules, true, votes_yes, votes_no, population, proposal_days)) {
 				
 				// close proposal and return that closers passed
 				log.info(`Proposal/Apply: Failure: ${proposal_id} Closing conditions passed`)
 				return await close_proposal(api_proposal, reply, log, proposal_id, 204, false, false)
 			}
+			
+			// get modification rules
+			const mod_rules = get_rules(changes, rules, algos, false)
+			if(Object.keys(mod_rules).length === 0) {
+				log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: No rules`)
+				return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.changes_invalid)
+			}
 
 			// check all applicable democracy rules pass
-			if(check_rules(get_rules(changes, rules, algos, false), false, votes_yes, votes_no, population, proposal_days)) {
+			if(check_rules(mod_rules, false, votes_yes, votes_no, population, proposal_days)) {
 
-					// apply changes
-					let a = {}
-					a[target] = lib_json.apply_changes(changes, contents)
+				// apply changes
 
-					// save changes
-					let rows = await db('democracy').update(a).where({ id: democracy_id }).returning('*')
+				// handle new democracy proposal
+				if(target === 'democracy_children') {
+					const democracy_name = proposal.proposal_name
+					const democracy_description = proposal.proposal_description
+
+					// check new democracy is valid
+					if(!changes._add || !changes._add[democracy_name] || !changes._add[democracy_name].democracy_conduct || !changes._add[democracy_name].democracy_content || !changes._add[democracy_name].democracy_metas) {
+						log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal changes are invalid`)
+						// close proposal and return applicable error
+						return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.changes_invalid)
+						
+					}
+
+					// insert new democracy
+					const democracy_conduct = changes._add[democracy_name].democracy_conduct
+					const democracy_content = changes._add[democracy_name].democracy_content
+					const democracy_metas = changes._add[democracy_name].democracy_metas
+					const rows = await db('democracy').insert({
+						parent_id: democracy_id,
+						democracy_name,
+						democracy_description,
+						democracy_conduct,
+						democracy_content,
+						democracy_metas
+					}).returning('*')
+					
+					// handle database errors
 					if(!rows || rows.length < 1) {
 						log.error(`Proposal/Apply: Failure: ${proposal_id},${democracy_id} Error: Unable to update democracy`)
 						return reply.code(500).send(new Error(internal_error))
 					}
 
-					// close proposal and return successfully applied
-					log.info(`Proposal/Apply: Success: ${proposal_id} passed and applied!`)
-					return await close_proposal(api_proposal, reply, log, proposal_id, 200, true, false)
+					// collect a list of approvers
+					const members = await api_proposal.ballot_list({
+						proposal_id,
+						filter: {
+							ballot_approved: {
+								op:'=',
+								val: true
+							}
+						}
+					})
+
+					// create memberships for approvers
+					await api_membership.democracy_members({
+						democracy_id: rows[0].id,
+						members: members.map(m => m.membership_id)
+					})
+			
+				// handle membership verification
+				} else if(target === 'democracy_members') {
+					try {
+						await api_membership.membership_verify({
+							membership_id: proposal.membership_id
+						})
+					} catch(e) {
+						log.error(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal approved but membership failed to verify`)
+						return reply.code(500).send(new Error(internal_error))
+					}
+
+				// handle all other proposals
+				} else {
+					let a = {}
+					a[target] = lib_json.apply_changes(changes, contents)
+
+					// save changes
+					const rows = await db('democracy').update(a).where({ id: democracy_id }).returning('*')
+					// handle database errors
+					if(!rows || rows.length < 1) {
+						log.error(`Proposal/Apply: Failure: ${proposal_id},${democracy_id} Error: Unable to update democracy`)
+						return reply.code(500).send(new Error(internal_error))
+					}
 				}
+
+				// close proposal and return successfully applied
+				log.info(`Proposal/Apply: Success: ${proposal_id} passed and applied!`)
+				return await close_proposal(api_proposal, reply, log, proposal_id, 200, true, false)
+			}
 
 			// return successfully ran but did not pass or close
 			log.info(`Proposal/Apply: Failure: ${proposal_id} has not passed yet`)
@@ -207,7 +294,6 @@ const close_proposal = async function(api_proposal, reply, log, proposal_id, cod
  * 			add: { approval_percent_minimum: 53 },
  * 			update: { approval_percent_minimum: 54 },
  * 			delete: { approval_percent_minimum: 55 },
- * 			close: { lifetime_maximum_days: 3 }
  * 		} 
  * 	}
  * 	algos: { 
@@ -217,8 +303,7 @@ const close_proposal = async function(api_proposal, reply, log, proposal_id, cod
  * 	close: boolean
  * Output: 
  * 	if close is true: [
- * 		{ 'proposal_days <= value': 14 },
- * 		{ 'proposal_days <= value': 3 }
+ * 		{ 'proposal_days <= value': 14 }
  * 	]
  * 	if close is false: [
  * 		{ 'approved_votes > value': 50 },
@@ -231,27 +316,45 @@ const close_proposal = async function(api_proposal, reply, log, proposal_id, cod
  * Error:
  *	algo_missing: algo in rules missing from algos
  */
-const get_rules = function(changes, rules, algos, close) {
+const get_rules = function(changes, rules, algos, close, defaults={}) {
 	let to_check = []
-	let lookup
-	if(close) {
-		lookup = { 'close': '_close' }
-	} else {
-		lookup = { 'add': '_add', 'update': '_update', 'delete': '_delete' }
+	let lookup = { 'add': '_add', 'update': '_update', 'delete': '_delete', 'close': '_close' }
+
+	if(typeof changes !== "object") {
+		return !close || !defaults.close ? [] : Object.entries(defaults.close).map(e => ({[e[0]]:e[1]}))
 	}
+
+	// update defaults for lookups
 	for(const i in rules) {
-		if(i in lookup && (lookup[i] in changes || i === 'close')) {
+		if(i in lookup) {
+			defaults[i] = {}
 			for(const j in rules[i]) {
-				if(!(j in algos)) {
-					throw new Error(algo_missing)
+				if(!(j in lookup)) {
+					if(!(j in algos)) {
+						throw new Error(algo_missing)
+					}
+                        		defaults[i][algos[j]] = rules[i][j]
 				}
-				a = {}
-                        	a[ algos[j] ] = rules[i][j]
-				to_check.push(a)
 			}
-		} else if(i in changes) {
-	       		to_check = to_check.concat(get_rules(changes[i], rules[i], algos, close))
-		}	
+		}
+	}
+	
+	// go through changes
+	for(const i in changes) {
+
+		// handle add/update/delete lookups
+		if(!close && Object.values(lookup).indexOf(i) >= 0) {
+			const j = Object.entries(lookup).find((e) => e[1] == i)[0]
+			if(j in defaults) {
+				to_check.push(defaults[j])
+			}
+
+		// recursively handle non-lookups
+		} else if(i in rules) {
+	       		to_check = to_check.concat(get_rules(changes[i], rules[i], algos, close, defaults))
+		} else {
+	       		to_check = to_check.concat(get_rules(changes[i], rules, algos, close, defaults))
+		}
 	}
 	return to_check 
 }

@@ -122,6 +122,25 @@ Properties:
 - [401](#responses-401)
 - [500](#responses-500)
 
+### POST /v1/membership/:membership_id/verify
+
+*Set membership to verifying*
+
+**Params**
+
+- [membership_id](#params-membership_id)
+
+**Bodies**
+
+ - [bodies-membership_verifying](#bodies-membership_verifying)
+
+**Responses**
+
+- [200](#schemas-membership_read)
+- [400](#responses-400)
+- [401](#responses-401)
+- [500](#responses-500)
+
 ### DELETE /v1/membership/:membership_id/verify
 
 *Unverify a membership*
@@ -133,6 +152,25 @@ Properties:
 **Responses**
 
 - [200](#schemas-membership_read)
+- [400](#responses-400)
+- [401](#responses-401)
+- [500](#responses-500)
+
+### POST /v1/democracy/:democracy_id/members
+
+*Mass create memberships for a new democracy*
+
+**Params**
+
+- [democracy_id](#params-democracy_id)
+
+**Bodies**
+
+ - [bodies-democracy_members](#bodies-democracy_members)
+
+**Responses**
+
+- [200](#responses-201)
 - [400](#responses-400)
 - [401](#responses-401)
 - [500](#responses-500)
@@ -183,6 +221,9 @@ Properties:
 #### params-membership_id
 
 Type: [schemas-membership_id](#schemas-membership_id)
+#### params-democracy_id
+
+Type: [schemas-democracy_id](#schemas-democracy_id)
 ## Queries
 
 #### queries-limit
@@ -542,7 +583,19 @@ Properties:
 #### bodies-membership_create
 
 Type: [schemas-membership_create](#schemas-membership_create)
+#### bodies-membership_verifying
+
+Type: [schemas-membership_verifying](#schemas-membership_verifying)
+#### bodies-democracy_members
+
+Type: [schemas-democracy_members](#schemas-democracy_members)
 ## Responses
+
+#### responses-201
+
+
+*Successfully Created*
+
 
 #### responses-204
 
@@ -675,10 +728,24 @@ Type: [schemas-uuid](#schemas-uuid)
 
 
 Type: [schemas-uuid](#schemas-uuid)
+#### schemas-proposal_id
+
+
+*Proposal ID*
+
+
+Type: [schemas-uuid](#schemas-uuid)
 #### schemas-is_verified
 
 
 *Is the membership verified?*
+
+
+Type: boolean
+#### schemas-is_verifying
+
+
+*Is the membership in the process of verifying?*
 
 
 Type: boolean
@@ -696,6 +763,7 @@ Required:
 - democracy_id
 - profile_id
 - is_verified
+- is_verifying
 - date_created
 - date_updated
 
@@ -716,6 +784,10 @@ Properties:
 - **is_verified**
 
 	Type: [schemas-is_verified](#schemas-is_verified)
+
+- **is_verifying**
+
+	Type: [schemas-is_verifying](#schemas-is_verifying)
 
 - **date_created**
 
@@ -790,6 +862,46 @@ Properties:
 - **profile_id**
 
 	Type: [schemas-profile_id](#schemas-profile_id)
+
+#### schemas-membership_verifying
+
+
+*Set membership to verifying*
+
+
+Type: object
+
+Required:
+
+- proposal_id
+
+Properties:
+
+- **proposal_id**
+
+	Type: [schemas-proposal_id](#schemas-proposal_id)
+
+#### schemas-democracy_members
+
+
+*Democracy - Members*
+
+
+Type: object
+
+Required:
+
+- members
+
+Properties:
+
+- **members**
+
+	Type: array
+
+	Items:
+
+	- Type: [schemas-membership_id](#schemas-membership_id)
 
 #### schemas-population_list
 

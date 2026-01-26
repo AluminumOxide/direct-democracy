@@ -187,8 +187,8 @@ describe('Democracy List', () => {
 					democracy_name: {
 						op: "IN",
 						val: [
-							test_data['democracy']['root_child']['name'],
-							test_data['democracy']['not_root_child']['name']
+							test_data['democracy']['root_child']['democracy_name'],
+							test_data['democracy']['not_root_child']['democracy_name']
 						]
 					}
 				}
@@ -202,7 +202,7 @@ describe('Democracy List', () => {
 				filter: {
 					democracy_description: {
 						op: "~",
-						val: test_data['democracy']['root_child']['description']
+						val: test_data['democracy']['root_child']['democracy_description']
 					}
 				}
 			})

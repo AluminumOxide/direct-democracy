@@ -6,15 +6,15 @@ const democracy_read = async function(request, reply, db, log, lib) {
 		const rows = await db
 		.select({
 			democracy_id: 'democracy.id',
-			democracy_parent: db.raw("json_build_object('id',b.id,'name',b.name)"),
-			democracy_children: db('democracy').select(db.raw("array_agg(json_build_object('id',democracy.id,'name',democracy.name))")).where('democracy.parent_id', democracy_id).groupBy('democracy.parent_id'),
-			democracy_name: 'democracy.name',
-			democracy_description: 'democracy.description',
+			democracy_parent: db.raw("json_build_object('id',b.id,'name',b.democracy_name)"),
+			democracy_children: db('democracy').select(db.raw("array_agg(json_build_object('id',democracy.id,'name',democracy.democracy_name))")).where('democracy.parent_id', democracy_id).groupBy('democracy.parent_id'),
+			democracy_name: 'democracy.democracy_name',
+			democracy_description: 'democracy.democracy_description',
 			democracy_population_verified: 'democracy.population_verified',
 			democracy_population_unverified: 'democracy.population_unverified',
-			democracy_conduct: 'democracy.conduct',
-			democracy_content: 'democracy.content',
-			democracy_metas: 'democracy.metas',
+			democracy_conduct: 'democracy.democracy_conduct',
+			democracy_content: 'democracy.democracy_content',
+			democracy_metas: 'democracy.democracy_metas',
 			date_created: 'democracy.date_created',
 			date_updated: 'democracy.date_updated'
 		})

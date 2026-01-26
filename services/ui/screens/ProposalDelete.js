@@ -22,7 +22,7 @@ export default function ProposalDeleteScreen({ route }) {
 	}
 
 	return ConfirmView({
-		question: 'Would you like to delete this proposal?',
+		question: 'Would you like to cancel this proposal?',
 		proceed: handleProceed,
 		nextScreen: 'ProposalList'
 	})

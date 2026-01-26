@@ -47,6 +47,10 @@ const membership_delete_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/membership/delete')(request, reply, db, log, lib)
 }
 
+const membership_verify_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/membership/verify')(request, reply, db, log, lib)
+}
+
 const proposal_my_list_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/proposal/my_list')(request, reply, db, log, lib)
 }
@@ -120,6 +124,10 @@ const membership_delete_integration = async(membership_id, profile_id, auth_toke
 	return await api_external_client.membership_delete({ membership_id, jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile')})
 }
 
+const membership_verify_integration = async(membership_id, description, profile_id, auth_token, auth_expiry) => {
+	return await api_external_client.membership_verify({ membership_id, description, jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile')})
+}
+
 const proposal_my_list_integration = async(args) => {
 	let { profile_id, auth_token, auth_expiry, ...prop } = args
 	prop.jwt = await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile')
@@ -187,6 +195,7 @@ module.exports = {
 	membership_list_unit,
 	membership_create_unit,
 	membership_read_unit,
+	membership_verify_unit,
 	membership_delete_unit,
 	proposal_my_list_unit,
 	proposal_list_unit,
@@ -205,6 +214,7 @@ module.exports = {
 	membership_list_integration,
 	membership_create_integration,
 	membership_read_integration,
+	membership_verify_integration,
 	membership_delete_integration,
 	proposal_my_list_integration,
 	proposal_list_integration,
