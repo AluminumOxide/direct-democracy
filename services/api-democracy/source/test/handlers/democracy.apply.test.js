@@ -22,7 +22,7 @@ describe('Apply', () =>  {
 		const test_data = integration_test_setup()
 
 		test('Success: Proposal passed', async () => {
-
+			
 			// update democracy populations
 			await dem_pop_i('2000-01-01T00:00:00.000Z','2100-01-01T00:00:00.000Z')	
 

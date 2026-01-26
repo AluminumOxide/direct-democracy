@@ -318,13 +318,10 @@ const close_proposal = async function(api_proposal, reply, log, proposal_id, cod
  */
 const get_rules = function(changes, rules, algos, close, defaults={}) {
 	let to_check = []
-	let lookup = { 'add': '_add', 'update': '_update', 'delete': '_delete' }
-	if(close) {
-		lookup = { 'close': '_close' }
-	}
+	let lookup = { 'add': '_add', 'update': '_update', 'delete': '_delete', 'close': '_close' }
 
 	if(typeof changes !== "object") {
-		return !defaults.close ? [] : Object.entries(defaults.close).map(e => ({[e[0]]:e[1]}))
+		return !close || !defaults.close ? [] : Object.entries(defaults.close).map(e => ({[e[0]]:e[1]}))
 	}
 
 	// update defaults for lookups
@@ -346,7 +343,7 @@ const get_rules = function(changes, rules, algos, close, defaults={}) {
 	for(const i in changes) {
 
 		// handle add/update/delete lookups
-		if(Object.values(lookup).indexOf(i) >= 0) {
+		if(!close && Object.values(lookup).indexOf(i) >= 0) {
 			const j = Object.entries(lookup).find((e) => e[1] == i)[0]
 			if(j in defaults) {
 				to_check.push(defaults[j])
