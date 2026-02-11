@@ -107,6 +107,25 @@ Properties:
 - [401](#responses-401)
 - [500](#responses-500)
 
+### POST /v1/membership/:membership_id/timeout
+
+*Put membership in timeout*
+
+**Params**
+
+- [membership_id](#params-membership_id)
+
+**Bodies**
+
+ - [bodies-membership_timeout](#bodies-membership_timeout)
+
+**Responses**
+
+- [201](#responses-201)
+- [400](#responses-400)
+- [401](#responses-401)
+- [500](#responses-500)
+
 ### GET /v1/membership/:membership_id/verify
 
 *Verify a membership*
@@ -369,6 +388,23 @@ Properties:
 		Type: [schemas-is_verified](#schemas-is_verified)
 
 
+- **in_timeout**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op_bool](#schemas-op_bool)
+
+	- **val**
+
+		Type: [schemas-in_timeout](#schemas-in_timeout)
+
+
 - **date_created**
 
 
@@ -583,6 +619,9 @@ Properties:
 #### bodies-membership_create
 
 Type: [schemas-membership_create](#schemas-membership_create)
+#### bodies-membership_timeout
+
+Type: [schemas-membership_timeout](#schemas-membership_timeout)
 #### bodies-membership_verifying
 
 Type: [schemas-membership_verifying](#schemas-membership_verifying)
@@ -749,6 +788,28 @@ Type: boolean
 
 
 Type: boolean
+#### schemas-in_timeout
+
+
+*Is the in timeout?*
+
+
+Type: boolean
+#### schemas-timeout_end
+
+
+*When member's timeout ends*
+
+
+Type: [schemas-date](#schemas-date)
+#### schemas-timeout_history
+
+
+*Proposals that put member in timeout*
+
+
+Type: object
+
 #### schemas-membership_read
 
 
@@ -764,6 +825,8 @@ Required:
 - profile_id
 - is_verified
 - is_verifying
+- timeout_end
+- timeout_history
 - date_created
 - date_updated
 
@@ -789,6 +852,14 @@ Properties:
 
 	Type: [schemas-is_verifying](#schemas-is_verifying)
 
+- **timeout_end**
+
+	Type: [schemas-timeout_end](#schemas-timeout_end)
+
+- **timeout_history**
+
+	Type: [schemas-timeout_history](#schemas-timeout_history)
+
 - **date_created**
 
 	Type: [schemas-date_created](#schemas-date_created)
@@ -810,6 +881,7 @@ Required:
 - membership_id
 - democracy_id
 - profile_id
+- in_timeout
 - is_verified
 - date_created
 - date_updated
@@ -831,6 +903,10 @@ Properties:
 - **is_verified**
 
 	Type: [schemas-is_verified](#schemas-is_verified)
+
+- **in_timeout**
+
+	Type: [schemas-in_timeout](#schemas-in_timeout)
 
 - **date_created**
 
@@ -876,6 +952,29 @@ Required:
 - proposal_id
 
 Properties:
+
+- **proposal_id**
+
+	Type: [schemas-proposal_id](#schemas-proposal_id)
+
+#### schemas-membership_timeout
+
+
+*Put membership in timeout*
+
+
+Type: object
+
+Required:
+
+- timeout_days
+- proposal_id
+
+Properties:
+
+- **timeout_days**
+
+	Type: integer
 
 - **proposal_id**
 

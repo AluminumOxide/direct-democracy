@@ -30,9 +30,9 @@ export default function MembershipListScreen({ route }) {
 	return TableView({
 		title:'My Memberships', 
 		idField: 'membership_id',
-		sortCols: ['date_created','date_updated'],
-		displayCols: ['democracy_id','is_verified','date_created','date_updated'],
-		filterCols: ['democracy_id','is_verified','date_created','date_updated'],
+		sortCols: ['timeout_end','date_created','date_updated'],
+		displayCols: ['democracy_id','is_verified','is_verifying','in_timeout','timeout_end','date_created','date_updated'],
+		filterCols: ['democracy_id','is_verified','is_verifying','in_timeout','timeout_end','date_created','date_updated'],
 		rowPress: function(item){
 			navigation.navigate('MembershipView', {id: item.democracy_id.id })
 		},

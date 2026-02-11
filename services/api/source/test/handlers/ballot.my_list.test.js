@@ -18,7 +18,7 @@ describe('Ballot List', () => {
 		test('Success', async() => {
 			const profile = test_data.profile.profile
 			const blts = await blt_list_i(profile.id, profile.auth_token, profile.auth_expiry)
-			expect(blts.length).toBe(5)
+			expect(blts.length).toBe(6)
 		})
 	})
 

@@ -66,6 +66,26 @@ Properties:
 - [401](#responses-401)
 - [500](#responses-500)
 
+### DELETE /v1/democracy/:democracy_id/:erase_field
+
+*Erase democracy data*
+
+**Params**
+
+- [democracy_id](#params-democracy_id)
+- [erase_field](#params-erase_field)
+
+**Bodies**
+
+ - [bodies-democracy_erase](#bodies-democracy_erase)
+
+**Responses**
+
+- [204](#responses-204)
+- [400](#responses-400)
+- [401](#responses-401)
+- [500](#responses-500)
+
 ### GET /v1/democracy/root
 
 *Get root democracy*
@@ -133,6 +153,16 @@ Type: [schemas-democracy_id](#schemas-democracy_id)
 #### params-proposal_id
 
 Type: [schemas-proposal_id](#schemas-proposal_id)
+#### params-erase_field
+
+Type: string
+
+Enum:
+
+- name
+- description
+- conduct
+- content
 ## Queries
 
 #### queries-limit
@@ -478,6 +508,9 @@ Properties:
 
 ## Bodies
 
+#### bodies-democracy_erase
+
+Type: [schemas-democracy_erase](#schemas-democracy_erase)
 ## Responses
 
 #### responses-200
@@ -1006,3 +1039,21 @@ Properties:
 - **date_updated**
 
 	Type: [schemas-date_updated](#schemas-date_updated)
+
+#### schemas-democracy_erase
+
+
+*Democracy - Erase*
+
+
+Type: object
+
+Properties:
+
+- **erase_keys**
+
+	Type: array
+
+	Items:
+
+	- Type: string

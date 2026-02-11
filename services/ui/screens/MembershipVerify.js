@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useEffect, useContext } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { AuthContext, FormContext } from '../contexts/'
 import { FormView } from '../components/'
@@ -13,6 +13,18 @@ export default function MembershipVerifyScreen({ route }) {
 	if(!authState.state) {
 		return navigation.navigate('SignIn')
 	}
+
+	// redirect if in timeout
+	const fetchMember = async() => {
+		const mem = await api.membership_read({ membership_id: membershipId, jwt: authState.jwt })
+		if(!!mem.in_timeout) {
+			return navigation.replace('TimeOut', {
+				id: mem.democracy_id.id,
+				end: mem.timeout_end
+			})
+		}
+	}
+	useEffect(() => { fetchMember() }, [])
 
 	const handleProceed = async function({ description }) {
 		const prop = await api.membership_verify({

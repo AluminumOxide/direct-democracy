@@ -18,7 +18,7 @@ describe('Proposal Create', () => {
 		test('Success', async() => {
 			const profile = test_data.profile.profile
 			const test_prop = {
-				democracy_id: test_data.democracy.root_child.id,
+				democracy_id: test_data.democracy.not_root_child.id,
 				proposal_name: 'asdf',
 				proposal_description: 'asdf',
 				proposal_target: 'democracy_name',
@@ -30,6 +30,24 @@ describe('Proposal Create', () => {
 			const { profile_id, auth_token, auth_expiry, ...expected } = test_prop
 			await expect(prop_create_i(test_prop)).resolves.toMatchObject(expected)
 		})
+
+		test('Error: Timeout', async () => {
+			const mem = test_data.membership.verified_child_1
+			const profile = test_data.profile.profile
+			const test_prop = {
+				democracy_id: mem.democracy_id,
+				proposal_name: 'asdf',
+				proposal_description: 'asdf',
+				proposal_target: 'democracy_name',
+				proposal_changes: {'_update':{'name':'qwer'}},
+				profile_id: profile.id,
+				auth_token: profile.auth_token,
+				auth_expiry: profile.auth_expiry
+			}
+			await expect(prop_create_i(test_prop)).rejects.toThrow(new Error(errors.membership_timeout))
+		})
+
+		// TODO: member unverified
 	})
 
 	describe('Unit Tests', () => {
@@ -52,7 +70,7 @@ describe('Proposal Create', () => {
 			},{
 				lib: 'api_membership',
 				fxn: 'membership_list',
-				val: [{ membership_id }],
+				val: [{ membership_id, is_verified: true }],
 				err: false
 			},{
 				lib: 'api_proposal',
@@ -65,8 +83,8 @@ describe('Proposal Create', () => {
 			await prop_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toHaveBeenCalledWith(201)
 			expect(dummy_reply.send).toHaveBeenCalledWith(dummy_req)
+			expect(dummy_reply.code).toHaveBeenCalledWith(201)
 
 			// check log
 			expect(dummy_log.info).toHaveBeenCalledTimes(1)
@@ -88,7 +106,7 @@ describe('Proposal Create', () => {
 			},{
 				lib: 'api_membership',
 				fxn: 'membership_list',
-				val: [{ membership_id }],
+				val: [{ membership_id, is_verified: true }],
 				err: false
 			},{
 				lib: 'api_proposal',
@@ -124,7 +142,7 @@ describe('Proposal Create', () => {
 			},{
 				lib: 'api_membership',
 				fxn: 'membership_list',
-				val: [{ membership_id }],
+				val: [{ membership_id, is_verified: true }],
 				err: false
 			},{
 				lib: 'api_proposal',
@@ -208,6 +226,68 @@ describe('Proposal Create', () => {
 			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 		
+		test('Error: Membership timeout', async() => {
+
+			// set up mocks
+			const dummy_req = { jwt }
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_profile',
+				fxn: 'sign_in_verify',
+				val: { profile_id },
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_list',
+				val: [{ in_timeout: true }],
+				err: false
+			}], errors)
+			
+			// call handler
+			await prop_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_timeout))
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
+		test('Error: Membership unverified', async() => {
+
+			// set up mocks
+			const dummy_req = { jwt }
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_profile',
+				fxn: 'sign_in_verify',
+				val: { profile_id },
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_list',
+				val: [{ is_verified: false }],
+				err: false
+			}], errors)
+			
+			// call handler
+			await prop_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_unverified))
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
 		test('Error: Invalid democracy', async() => {
 
 			// set up mocks
@@ -222,7 +302,7 @@ describe('Proposal Create', () => {
 			},{
 				lib: 'api_membership',
 				fxn: 'membership_list',
-				val: [{ membership_id }],
+				val: [{ membership_id, is_verified: true }],
 				err: false
 			},{
 				lib: 'api_proposal',
@@ -235,8 +315,8 @@ describe('Proposal Create', () => {
 			await prop_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.democracy_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 
 			// check log
 			expect(dummy_log.info).toHaveBeenCalledTimes(0)
@@ -258,7 +338,7 @@ describe('Proposal Create', () => {
 			},{
 				lib: 'api_membership',
 				fxn: 'membership_list',
-				val: [{ membership_id }],
+				val: [{ membership_id, is_verified: true }],
 				err: false
 			},{
 				lib: 'api_proposal',
@@ -271,8 +351,8 @@ describe('Proposal Create', () => {
 			await prop_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
 
 			// check reply
-			expect(dummy_reply.code).toHaveBeenCalledWith(500)
 			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
 
 			// check log
 			expect(dummy_log.info).toHaveBeenCalledTimes(0)

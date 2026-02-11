@@ -14,8 +14,10 @@ module.exports = {
 	proposal_my_read: require('./proposal/my_read'),
 	proposal_delete: require('./proposal/delete'),
 	ballot_my_list: require('./ballot/my_list'),
+	ballot_list: require('./ballot/list'),
 	ballot_create: require('./ballot/create'),
 	ballot_my_read: require('./ballot/my_read'),
 	ballot_update: require('./ballot/update'),
-	ballot_delete: require('./ballot/delete')
+	ballot_delete: require('./ballot/delete'),
+	report_create: require('./report/create')
 }

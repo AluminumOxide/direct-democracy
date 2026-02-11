@@ -104,6 +104,37 @@ describe('Apply', () =>  {
 			expect(prop2.proposal_passed).toBeTruthy()
 		})
 
+		test('Success: Misconduct', async () => {
+
+			// update democracy populations
+			await dem_pop_i('2000-01-01T00:00:00.000Z','2100-01-01T00:00:00.000Z')	
+
+			// get proprosal before changes
+			const prop1 = test_data.proposal.root_misconduct_changes
+
+			// call apply
+			await dem_apply_i(prop1.id)
+
+			// get proprosals and membership after changes
+			const prop2 = await prop_read_i(prop1.id)
+			const prop3 = await prop_read_i(test_data.proposal.root_conduct_fail.id)
+			const mem = await mem_read_i(prop3.membership_id)
+
+			// check that proposal was applied
+			expect(prop2.proposal_votable).toBeFalsy()
+			expect(prop2.proposal_passed).toBeTruthy()
+
+			// check reported proposal was closed and censored
+			expect(prop3.proposal_votable).toBeFalsy()
+			expect(prop3.proposal_passed).toBeFalsy()
+			expect(prop3.proposal_changes).toMatchObject({})
+
+			// check reported proposal member is in timeout
+			expect(mem.timeout_count).toBe(1)
+			expect(mem.timeout_total).toBe(1)
+			expect(mem.timeout_end).not.toBeNull()
+		})
+
 		test('Error: Proposal DNE', async () => {
 			
 			await expect(dem_apply_i(get_uuid())).rejects.toThrow(new Error(errors.proposal_dne))
@@ -621,7 +652,886 @@ describe('Apply', () =>  {
 			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
 			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
-	
+
+		test('Success: Misconduct democracy name', async () => {
+
+			// set up mocks
+			const dummy_req = {}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_db = get_dummy_db([{
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [dummy_req]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: {
+					proposal_votable: true,
+					democracy_id: 'a062d797-8b6a-499c-9d8b-9a0cdf0871bf',
+					proposal_name: 'Nothing illegal',
+					proposal_target: 'democracy_misconduct',
+					proposal_changes: {
+						'Nothing illegal':{
+							'democracy':{
+								'a062d797-8b6a-499c-9d8b-9a0cdf0871bf':{
+									'_add':{
+										'name':[]
+									}
+								}
+							}
+						}
+					},
+					proposal_votes: {
+						verified: {
+							yes: 5,
+							no: 1
+						},
+					},
+					date_created: new Date().toJSON()
+				},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: {},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read', 
+				val: {
+					democracy_name: 'Test Name',
+					democracy_conduct: {
+						'Nothing illegal': {}
+					},
+					democracy_metas: {
+						democracy_misconduct: {
+							add: {
+								approval_number_minimum: 5
+							}
+						}
+					},
+					democracy_children: [],
+					democracy_population_verified: 1
+				},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_root',
+				val: {
+					democracy_content: {
+						algos: {
+							approval_number_minimum: 'approved_votes >= value'
+						}
+					}
+				},
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_erase',
+				val: '',
+				err: false
+			}], errors)
+
+			// call handler
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith("")
+			expect(dummy_reply.code).toHaveBeenCalledWith(200)
+
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(2)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
+		test('Success: Misconduct ballot comments', async () => {
+
+			// set up mocks
+			const dummy_req = {}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_db = get_dummy_db([{
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [dummy_req]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: {
+					proposal_votable: true,
+					democracy_id: 'a062d797-8b6a-499c-9d8b-9a0cdf0871bf',
+					proposal_name: 'Nothing illegal',
+					proposal_target: 'democracy_misconduct',
+					proposal_changes: {
+						'Nothing illegal':{
+							'ballot':{
+								'a062d797-8b6a-499c-9d8b-9a0cdf0871bf':{
+									'_add':{
+										'comments':[]
+									}
+								}
+							}
+						}
+					},
+					proposal_votes: {
+						verified: {
+							yes: 5,
+							no: 1
+						},
+					},
+					date_created: new Date().toJSON()
+				},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: {},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read', 
+				val: {
+					democracy_name: 'Test Name',
+					democracy_conduct: {
+						'Nothing illegal': {
+							timeout_total_multi: 1,
+							timeout_min: 100
+						}
+					},
+					democracy_metas: {
+						democracy_misconduct: {
+							add: {
+								approval_number_minimum: 5
+							}
+						}
+					},
+					democracy_children: [],
+					democracy_population_verified: 1
+				},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_root',
+				val: {
+					democracy_content: {
+						algos: {
+							approval_number_minimum: 'approved_votes >= value'
+						}
+					}
+				},
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_read',
+				val: {timeout_count: 0, timeout_total: 0},
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_timeout',
+				val: '',
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'ballot_read',
+				val: {membership_id: 'test', timeout_count: 0, timeout_total: 0},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'ballot_erase',
+				val: '',
+				err: false
+			}], errors)
+
+			// call handler
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith("")
+			expect(dummy_reply.code).toHaveBeenCalledWith(200)
+
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(2)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
+		test('Success: Misconduct proposal changes', async () => {
+
+			// set up mocks
+			const dummy_req = {}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_db = get_dummy_db([{
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [dummy_req]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: {
+					proposal_votable: true,
+					democracy_id: 'a062d797-8b6a-499c-9d8b-9a0cdf0871bf',
+					membership_id: 'a062d797-8b6a-499c-9d8b-9a0cdf0871bf',
+					proposal_name: 'Nothing illegal',
+					proposal_target: 'democracy_misconduct',
+					proposal_changes: {
+						'Nothing illegal':{
+							'proposal':{
+								'a062d797-8b6a-499c-9d8b-9a0cdf0871bf':{
+									'_add':{
+										'changes':[]
+									}
+								}
+							}
+						}
+					},
+					proposal_votes: {
+						verified: {
+							yes: 5,
+							no: 1
+						},
+					},
+					date_created: new Date().toJSON()
+				},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: {},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read', 
+				val: {
+					democracy_name: 'Test Name',
+					democracy_conduct: {
+						'Nothing illegal': {
+							timeout_count_multi: 10,
+							timeout_max: 2,
+							timeout_base: 100
+						}
+					},
+					democracy_metas: {
+						democracy_misconduct: {
+							add: {
+								approval_number_minimum: 5
+							}
+						}
+					},
+					democracy_children: [],
+					democracy_population_verified: 1
+				},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_root',
+				val: {
+					democracy_content: {
+						algos: {
+							approval_number_minimum: 'approved_votes >= value',
+						}
+					}
+				},
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_timeout',
+				val: '',
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_read',
+				val: {timeout_count: 0, timeout_total: 0},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_erase',
+				val: '',
+				err: false
+			}], errors)
+
+			// call handler
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith("")
+			expect(dummy_reply.code).toHaveBeenCalledWith(200)
+
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(2)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
+		test('Error: Invalid misconduct report', async () => {
+
+			// set up mocks
+			const dummy_req = {}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_db = get_dummy_db([{
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [dummy_req]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: {
+					proposal_votable: true,
+					democracy_id: 'a062d797-8b6a-499c-9d8b-9a0cdf0871bf',
+					membership_id: 'a062d797-8b6a-499c-9d8b-9a0cdf0871bf',
+					proposal_name: 'Nothing illegal',
+					proposal_target: 'democracy_misconduct',
+					proposal_changes: {
+						'Nothing illegal':{
+							'proposal':{
+								'a062d797-8b6a-499c-9d8b-9a0cdf0871bf':{
+									'_add':{
+									}
+								}
+							}
+						}
+					},
+					proposal_votes: {
+						verified: {
+							yes: 5,
+							no: 1
+						},
+					},
+					date_created: new Date().toJSON()
+				},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: {},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read', 
+				val: {
+					democracy_name: 'Test Name',
+					democracy_conduct: {
+						'Nothing illegal': {
+							timeout_max: 2,
+							timeout_base: 100
+						}
+					},
+					democracy_metas: {
+						democracy_misconduct: {
+							add: {
+								approval_number_minimum: 5
+							}
+						}
+					},
+					democracy_children: [],
+					democracy_population_verified: 1
+				},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_root',
+				val: {
+					democracy_content: {
+						algos: {
+							approval_number_minimum: 'approved_votes >= value',
+						}
+					}
+				},
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_timeout',
+				val: '',
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_read',
+				val: {timeout_count: 0, timeout_total: 0},
+				err: false
+			}], errors)
+
+			// call handler
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
+		test('Error: Invalid misconduct type', async () => {
+
+			// set up mocks
+			const dummy_req = {}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_db = get_dummy_db([{
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [dummy_req]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: {
+					proposal_votable: true,
+					democracy_id: 'a062d797-8b6a-499c-9d8b-9a0cdf0871bf',
+					membership_id: 'a062d797-8b6a-499c-9d8b-9a0cdf0871bf',
+					proposal_name: 'Nothing illegal',
+					proposal_target: 'democracy_misconduct',
+					proposal_changes: {
+						'bad':{
+							'proposal':{
+								'a062d797-8b6a-499c-9d8b-9a0cdf0871bf':{
+									'_add':{
+									}
+								}
+							}
+						}
+					},
+					proposal_votes: {
+						verified: {
+							yes: 5,
+							no: 1
+						},
+					},
+					date_created: new Date().toJSON()
+				},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: {},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read', 
+				val: {
+					democracy_name: 'Test Name',
+					democracy_conduct: {
+						'Nothing illegal': {
+							timeout_max: 2,
+							timeout_base: 100
+						}
+					},
+					democracy_metas: {
+						democracy_misconduct: {
+							add: {
+								approval_number_minimum: 5
+							}
+						}
+					},
+					democracy_children: [],
+					democracy_population_verified: 1
+				},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_root',
+				val: {
+					democracy_content: {
+						algos: {
+							approval_number_minimum: 'approved_votes >= value',
+						}
+					}
+				},
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_timeout',
+				val: '',
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_read',
+				val: {timeout_count: 0, timeout_total: 0},
+				err: false
+			}], errors)
+
+			// call handler
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
+		test('Error: Invalid misconduct proposal', async () => {
+
+			// set up mocks
+			const dummy_req = {}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_db = get_dummy_db([{
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [dummy_req]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: {
+					proposal_votable: true,
+					democracy_id: 'a062d797-8b6a-499c-9d8b-9a0cdf0871bf',
+					membership_id: 'a062d797-8b6a-499c-9d8b-9a0cdf0871bf',
+					proposal_name: 'Nothing illegal',
+					proposal_target: 'democracy_misconduct',
+					proposal_changes: {
+						'Nothing illegal':{
+							'proposal':{
+								'a062d797-8b6a-499c-9d8b-9a0cdf0871bf':{
+									'_add':{
+										'bad':[]
+									}
+								}
+							}
+						}
+					},
+					proposal_votes: {
+						verified: {
+							yes: 5,
+							no: 1
+						},
+					},
+					date_created: new Date().toJSON()
+				},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: {},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read', 
+				val: {
+					democracy_name: 'Test Name',
+					democracy_conduct: {
+						'Nothing illegal': {
+							timeout_max: 2,
+							timeout_base: 100
+						}
+					},
+					democracy_metas: {
+						democracy_misconduct: {
+							add: {
+								approval_number_minimum: 5
+							}
+						}
+					},
+					democracy_children: [],
+					democracy_population_verified: 1
+				},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_root',
+				val: {
+					democracy_content: {
+						algos: {
+							approval_number_minimum: 'approved_votes >= value',
+						}
+					}
+				},
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_timeout',
+				val: '',
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_read',
+				val: {timeout_count: 0, timeout_total: 0},
+				err: false
+			}], errors)
+
+			// call handler
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
+		test('Error: Invalid misconduct democracy', async () => {
+
+			// set up mocks
+			const dummy_req = {}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_db = get_dummy_db([{
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [dummy_req]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: {
+					proposal_votable: true,
+					democracy_id: 'a062d797-8b6a-499c-9d8b-9a0cdf0871bf',
+					membership_id: 'a062d797-8b6a-499c-9d8b-9a0cdf0871bf',
+					proposal_name: 'Nothing illegal',
+					proposal_target: 'democracy_misconduct',
+					proposal_changes: {
+						'Nothing illegal':{
+							'democracy':{
+								'a062d797-8b6a-499c-9d8b-9a0cdf0871bf':{
+									'_add':{
+										'bad':[]
+									}
+								}
+							}
+						}
+					},
+					proposal_votes: {
+						verified: {
+							yes: 5,
+							no: 1
+						},
+					},
+					date_created: new Date().toJSON()
+				},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: {},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read', 
+				val: {
+					democracy_name: 'Test Name',
+					democracy_conduct: {
+						'Nothing illegal': {
+							timeout_max: 2,
+							timeout_base: 100
+						}
+					},
+					democracy_metas: {
+						democracy_misconduct: {
+							add: {
+								approval_number_minimum: 5
+							}
+						}
+					},
+					democracy_children: [],
+					democracy_population_verified: 1
+				},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_root',
+				val: {
+					democracy_content: {
+						algos: {
+							approval_number_minimum: 'approved_votes >= value',
+						}
+					}
+				},
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_timeout',
+				val: '',
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_read',
+				val: {timeout_count: 0, timeout_total: 0},
+				err: false
+			}], errors)
+
+			// call handler
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
+		test('Error: Invalid misconduct type', async () => {
+
+			// set up mocks
+			const dummy_req = {}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_db = get_dummy_db([{
+				fxn: 'returning',
+				args: ['*'],
+				err: false,
+				val: [dummy_req]
+			}])
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: {
+					proposal_votable: true,
+					democracy_id: 'a062d797-8b6a-499c-9d8b-9a0cdf0871bf',
+					membership_id: 'a062d797-8b6a-499c-9d8b-9a0cdf0871bf',
+					proposal_name: 'Nothing illegal',
+					proposal_target: 'democracy_misconduct',
+					proposal_changes: {
+						'Nothing illegal':{
+							'bad':{
+								'a062d797-8b6a-499c-9d8b-9a0cdf0871bf':{
+									'_add':{
+										'name':[]
+									}
+								}
+							}
+						}
+					},
+					proposal_votes: {
+						verified: {
+							yes: 5,
+							no: 1
+						},
+					},
+					date_created: new Date().toJSON()
+				},
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_close',
+				val: {},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read', 
+				val: {
+					democracy_name: 'Test Name',
+					democracy_conduct: {
+						'Nothing illegal': {
+							timeout_max: 2,
+							timeout_base: 100
+						}
+					},
+					democracy_metas: {
+						democracy_misconduct: {
+							add: {
+								approval_number_minimum: 5
+							}
+						}
+					},
+					democracy_children: [],
+					democracy_population_verified: 1
+				},
+				err: false
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_root',
+				val: {
+					democracy_content: {
+						algos: {
+							approval_number_minimum: 'approved_votes >= value',
+						}
+					}
+				},
+				err: false
+			},{
+				lib: 'lib_json',
+				fxn: 'check_changes',
+				val: true,
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_timeout',
+				val: '',
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_read',
+				val: {timeout_count: 0, timeout_total: 0},
+				err: false
+			}], errors)
+
+			// call handler
+			await dem_apply_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.changes_invalid))
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+
 		test('Success: No democracy rules', async () => {
 
 			// set up mocks

@@ -7,17 +7,51 @@ const api = require('@aluminumoxide/direct-democracy-external-api-client')
 
 export default function ProposalCreateScreen({ route }) {
 
-	// redirect if not logged in
 	const navigation = useNavigation();
+	const democracyId = route.params.democracy;
+
+	// redirect if not logged in
 	const { authState } = useContext(AuthContext);
 	if(!authState.state) {
 		return navigation.navigate('SignIn')
 	}
 
+	// manages member access
+	const fetchMember = async() => {
+		const membership_id = authState.memberships[democracyId]
+
+		// redirect if not member
+		if(!membership_id) {
+			return navigation.replace('MembershipCreate', {
+				id: democracyId
+			})
+		}
+
+		const mem = await api.membership_read({
+			membership_id: authState.memberships[democracyId],
+			jwt: authState.jwt
+		})
+		
+		// redirect if not verified
+		if(!mem.is_verified) {
+			return navigation.replace('MembershipVerify', {
+				id: mem.membership_id
+			})
+		}
+
+		// redirect if in timeout
+		if(!!mem.in_timeout) {
+			return navigation.replace('TimeOut', {
+				id: mem.democracy_id.id,
+				end: mem.timeout_end
+			})
+		}
+	}
+
 	// manages form values
-	const democracyId = route.params.democracy;
 	const { value, setValue } = useContext(FormContext)
 	useEffect(() => {
+		fetchMember()
 		setValue({ id: democracyId })
 	}, [])
 

@@ -11,8 +11,10 @@ const membership_list = async function(request, reply, db, log, lib) {
 				democracy_id: 'membership.democracy_id',
 				profile_id: 'membership.profile_id',
 				is_verified: 'membership.is_verified',
-				date_created: 'membership.date_created'
+				date_created: 'membership.date_created',
+				timeout_end: 'membership.timeout_end'
 			}).select(db.raw('greatest(date_created,date_updated) as date_updated'))
+			.select(db.raw('case when timeout_end is null or timeout_end < NOW() then false else true end as in_timeout'))
 			.from('membership'))
 
 		log.info('Membership/List: Success')

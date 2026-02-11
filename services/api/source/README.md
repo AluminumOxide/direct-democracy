@@ -182,6 +182,18 @@ undefined
 **Responses**
 undefined
 
+### GET /v1/proposal/:proposal_id/ballots/:ballot_approved
+
+*List proposal ballot comments*
+
+**Params**
+
+- [proposal_id](#params-proposal_id)
+- [ballot_approved](#params-ballot_approved)
+
+**Responses**
+undefined
+
 ### GET /v1/my/proposal
 
 *List proposals*
@@ -415,6 +427,21 @@ Properties:
 - [401](#responses-401)
 - [500](#responses-500)
 
+### POST /v1/report
+
+*Create misconduct report*
+
+**Bodies**
+
+ - [bodies-report_create](#bodies-report_create)
+
+**Responses**
+
+- [200](#responses-proposal_read)
+- [400](#responses-400)
+- [401](#responses-401)
+- [500](#responses-500)
+
 
 ## Headers
 
@@ -429,6 +456,14 @@ Type: [schemas-proposal_id](#schemas-proposal_id)
 #### params-ballot_id
 
 Type: [schemas-ballot_id](#schemas-ballot_id)
+#### params-ballot_approved
+
+Type: string
+
+Enum:
+
+- yes
+- no
 #### params-membership_id
 
 Type: [schemas-membership_id](#schemas-membership_id)
@@ -891,6 +926,40 @@ Properties:
 		Type: [schemas-is_verified](#schemas-is_verified)
 
 
+- **in_timeout**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op](#schemas-op)
+
+	- **val**
+
+		Type: [schemas-in_timeout](#schemas-in_timeout)
+
+
+- **timeout_end**
+
+	Type: object
+
+	Additional Properties: false
+
+	Properties:
+
+	- **op**
+
+		Type: [schemas-op](#schemas-op)
+
+	- **val**
+
+		Type: [schemas-timeout_end](#schemas-timeout_end)
+
+
 - **date_created**
 
 	Type: object
@@ -1280,6 +1349,9 @@ Type: [schemas-membership_create](#schemas-membership_create)
 #### bodies-membership_verify
 
 Type: [schemas-membership_verify](#schemas-membership_verify)
+#### bodies-report_create
+
+Type: [schemas-report_create](#schemas-report_create)
 ## Responses
 
 #### responses-400
@@ -1836,6 +1908,28 @@ Type: [schemas-uuid](#schemas-uuid)
 
 
 Type: boolean
+#### schemas-in_timeout
+
+
+*Is the member in timeout?*
+
+
+Type: boolean
+#### schemas-timeout_end
+
+
+*When member's timeout ends*
+
+
+Type: [schemas-date](#schemas-date)
+#### schemas-timeout_history
+
+
+*Proposals that put member in timeout*
+
+
+Type: object
+
 #### schemas-membership_read
 
 
@@ -1850,6 +1944,8 @@ Required:
 - democracy_id
 - profile_id
 - is_verified
+- timeout_end
+- timeout_history
 - date_created
 - date_updated
 
@@ -1870,6 +1966,14 @@ Properties:
 - **is_verified**
 
 	Type: [schemas-is_verified](#schemas-is_verified)
+
+- **timeout_end**
+
+	Type: [schemas-timeout_end](#schemas-timeout_end)
+
+- **timeout_history**
+
+	Type: [schemas-timeout_history](#schemas-timeout_history)
 
 - **date_created**
 
@@ -1892,6 +1996,7 @@ Required:
 - membership_id
 - democracy_id
 - profile_id
+- in_timeout
 - is_verified
 - date_created
 - date_updated
@@ -1913,6 +2018,10 @@ Properties:
 - **is_verified**
 
 	Type: [schemas-is_verified](#schemas-is_verified)
+
+- **in_timeout**
+
+	Type: [schemas-in_timeout](#schemas-in_timeout)
 
 - **date_created**
 
@@ -2370,6 +2479,77 @@ Properties:
 - **date_updated**
 
 	Type: [schemas-date_updated](#schemas-date_updated)
+
+#### schemas-misconduct_id
+
+Type: string
+#### schemas-misconduct_description
+
+Type: string
+#### schemas-target_type
+
+Type: string
+#### schemas-target_id
+
+Type: string
+#### schemas-target_text
+
+Type: string
+#### schemas-target_keys
+
+Type: array
+
+Items:
+
+- Type: string
+#### schemas-report_create
+
+
+*Report - Create*
+
+
+Type: object
+
+Required:
+
+- democracy_id
+- misconduct_id
+- misconduct_description
+- target_type
+- target_id
+- target_text
+
+Additional Properties: false
+
+Properties:
+
+- **democracy_id**
+
+	Type: [schemas-democracy_id](#schemas-democracy_id)
+
+- **misconduct_id**
+
+	Type: [schemas-misconduct_id](#schemas-misconduct_id)
+
+- **misconduct_description**
+
+	Type: [schemas-misconduct_description](#schemas-misconduct_description)
+
+- **target_type**
+
+	Type: [schemas-target_type](#schemas-target_type)
+
+- **target_id**
+
+	Type: [schemas-target_id](#schemas-target_id)
+
+- **target_text**
+
+	Type: [schemas-target_text](#schemas-target_text)
+
+- **target_keys**
+
+	Type: [schemas-target_keys](#schemas-target_keys)
 
 #### schemas-jwt
 

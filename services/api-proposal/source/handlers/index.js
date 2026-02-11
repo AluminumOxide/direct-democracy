@@ -3,11 +3,13 @@ module.exports = {
 	proposal_create: require('./proposal/create'),
 	proposal_read: require('./proposal/read'),
 	proposal_delete: require('./proposal/delete'),
+	proposal_erase: require('./proposal/erase'),
 	proposal_close: require('./proposal/close'),
 	ballot_list: require('./ballot/list'),
 	ballot_create: require('./ballot/create'),
 	ballot_read: require('./ballot/read'),
 	ballot_update: require('./ballot/update'),
 	ballot_delete: require('./ballot/delete'),
+	ballot_erase: require('./ballot/erase'),
 	ballot_verified: require('./ballot/verified')
 }

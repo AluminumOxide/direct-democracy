@@ -25,6 +25,13 @@ describe('Membership Verify', () => {
 			expect(!!mem2.verifying)
 			expect(!mem2.verified)
 		})
+		
+		test('Error: Timeout', async () => {
+			const mem = test_data.membership.verified_child_1
+			const pro = test_data.profile.profile
+			await expect(mem_verify_i(mem.id, 'test', pro.id, pro.auth_token, pro.auth_expiry))
+				.rejects.toThrow(new Error(errors.membership_timeout))
+		})
 	})
 
 	describe('Unit Tests', () => {
@@ -214,6 +221,37 @@ describe('Membership Verify', () => {
 			// check reply
 			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_verified))
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
+		test('Error: Membership in timeout', async () => {
+
+			// set up mocks
+			const dummy_req = {jwt, membership_id, description}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_profile',
+				fxn: 'sign_in_verify',
+				val: { profile_id },
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_read',
+				val: { profile_id, democracy_id, is_verified: false, is_verifying: false, timeout_end:'2100-01-01T00:00:00.000Z' },
+				err: false
+			}], errors)
+			
+			// call handler
+			await mem_verify_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_timeout))
 
 			// check log
 			expect(dummy_log.info).toHaveBeenCalledTimes(0)

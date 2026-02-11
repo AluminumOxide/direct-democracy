@@ -1,4 +1,4 @@
-const { invalid_auth, internal_error } = require('../../errors.json')
+const { membership_unverified, membership_timeout, invalid_auth, internal_error } = require('../../errors.json')
 
 const proposal_create = async function(request, reply, db, log, lib) {
 
@@ -15,7 +15,7 @@ const proposal_create = async function(request, reply, db, log, lib) {
 		}
 
 		// get membership
-		const membership = await api_membership.membership_list({
+		let membership = await api_membership.membership_list({
 			filter: {
 				democracy_id: { op: '=', val: democracy_id },
 				profile_id: { op: '=', val: profile_id }
@@ -32,7 +32,20 @@ const proposal_create = async function(request, reply, db, log, lib) {
 			log.error(`Proposal/Create: Failure: Error: Duplicate Membership`)
 			return reply.code(500).send(new Error(internal_error))
 		}
-		const membership_id = membership[0].membership_id
+		membership = membership[0]
+		const membership_id = membership.membership_id
+
+		// check member is not in time out
+		if(!!membership.in_timeout) {
+			log.warn(`Proposal/Create: Failure: ${membership_id} Error: Member in time out`)
+			return reply.code(400).send(new Error(membership_timeout))
+		}
+
+		// check member is verified or verifying
+		if(!membership.is_verified && proposal_target !== 'democracy_members') {
+			log.warn(`Proposal/Create: Failure: ${membership_id} Error: Member is unverified`)
+			return reply.code(400).send(new Error(membership_unverified))
+		}
 
 		// send to proposal service
 		const prop = await api_proposal.proposal_create({ democracy_id, membership_id, proposal_name, proposal_description, proposal_target, proposal_changes })

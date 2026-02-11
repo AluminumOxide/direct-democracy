@@ -21,6 +21,7 @@ const ballot_list = async function(request, reply, db, log, lib) {
 					'membership_id': 'b.membership_id',
 					'proposal_id_id': 'p.id',
 					'proposal_id': db.raw("json_build_object('id',p.id,'name',p.name)"),
+					'democracy_id': 'p.democracy_id',
 					'ballot_approved': 'b.is_approved',
 					'ballot_comments': 'b.comments',
 					'ballot_modifiable': 'b.modifiable',

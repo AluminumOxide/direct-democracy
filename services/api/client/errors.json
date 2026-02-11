@@ -13,6 +13,8 @@
 	"membership_dne": "Membership does not exist",
 	"membership_exist": "Membership already exists",
 	"membership_invalid": "Invalid membership provided",
+	"membership_unverified": "Membership is unverified",
+	"membership_timeout": "Member is in timeout",
 	"profile_invalid": "Profile does not match membership",
 	"proposal_dne": "Proposal does not exist",
 	"target_invalid": "Proposal target is invalid",

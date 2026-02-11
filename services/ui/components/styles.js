@@ -356,6 +356,22 @@ const getStyles = function() {
 	resultContainer: {
 		alignItems: 'center',
 		padding: 5
-	}
+	},
+	timeoutContainer: {
+		height: '100%',
+		color: theme.colors.onError,
+		backgroundColor: 'rgba(186, 26, 26, 0.75)',
+		alignItems: 'center',
+		justifyContent: 'center',
+		padding: 5,
+	},
+	timeoutText: {
+		variant: 'titleLarge',
+		fontWeight: 'bold',
+	},
+	timeoutButton: {
+		mode: 'contained',
+		margin: 5,
+	},
 })}
 export default getStyles;

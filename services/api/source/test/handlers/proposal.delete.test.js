@@ -16,7 +16,6 @@ describe('Proposal Delete', () => {
 
 		const test_data = integration_test_setup()
 
-		// TODO: update profile in database
 		test('Success', async() => {
 			const prop = test_data.proposal.gchild_content_close
 			const prof = test_data.profile.profile
@@ -25,6 +24,13 @@ describe('Proposal Delete', () => {
 			const prop2 = await prop_read_i(prop.id)
 			expect(!prop2.proposal_votable)
 			expect(!prop2.proposal_passed)
+		})
+		
+		test('Error: timeout', async() => {
+			const prop = test_data.proposal.child_dem_create
+			const prof = test_data.profile.profile
+			await expect(prop_delete_i(prop.id, prof.id, prof.auth_token, prof.auth_expiry))
+				.rejects.toThrow(new Error(errors.membership_timeout))
 		})
 	})
 	
@@ -291,6 +297,42 @@ describe('Proposal Delete', () => {
 			// check reply
 			expect(dummy_reply.code).toHaveBeenCalledWith(400)
 			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_invalid))
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+
+		test('Error: Membership timeout', async() => {
+
+			// set up mocks
+			const dummy_req = { proposal_id, jwt }
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_profile',
+				fxn: 'sign_in_verify',
+				val: { profile_id },
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: { membership_id, proposal_id, democracy_id },
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_list',
+				val: [{ membership_id, in_timeout: true }],
+				err: false
+			}], errors)
+			
+			// call handler
+			await prop_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_timeout))
 
 			// check log
 			expect(dummy_log.info).toHaveBeenCalledTimes(0)

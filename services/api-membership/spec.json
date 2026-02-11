@@ -97,6 +97,21 @@
 			"description": "Is the membership in the process of verifying?",
 			"type": "boolean"
 		},
+		"in_timeout": {
+			"$id": "schemas-in_timeout",
+			"description": "Is the in timeout?",
+			"type": "boolean"
+		},
+		"timeout_end": {
+			"$id": "schemas-timeout_end",
+			"description": "When member's timeout ends",
+			"$ref": "schemas-date"
+		},
+		"timeout_history": {
+			"$id": "schemas-timeout_history",
+			"description": "Proposals that put member in timeout",
+			"type": "object"
+		},
 		"membership_read": {
 			"$id": "schemas-membership_read",
 			"description": "Membership - Read",
@@ -107,6 +122,8 @@
 				"profile_id",
 				"is_verified",
 				"is_verifying",
+				"timeout_end",
+				"timeout_history",
 				"date_created",
 				"date_updated"
 			],
@@ -126,6 +143,12 @@
 				"is_verifying": {
 					"$ref": "schemas-is_verifying"
 				},
+				"timeout_end": {
+					"$ref": "schemas-timeout_end"
+				},
+				"timeout_history": {
+					"$ref": "schemas-timeout_history"
+				},
 				"date_created": {
 					"$ref": "schemas-date_created"
 				},
@@ -142,6 +165,7 @@
 				"membership_id",
 				"democracy_id",
 				"profile_id",
+				"in_timeout",
 				"is_verified",
 				"date_created",
 				"date_updated"
@@ -158,6 +182,9 @@
 				},
 				"is_verified": {
 					"$ref": "schemas-is_verified"
+				},
+				"in_timeout": {
+					"$ref": "schemas-in_timeout"
 				},
 				"date_created": {
 					"$ref": "schemas-date_created"
@@ -190,6 +217,20 @@
 			"type": "object",
 			"required": [ "proposal_id" ],
 			"properties": {
+				"proposal_id": {
+					"$ref": "schemas-proposal_id"
+				}
+			}
+		},
+		"membership_timeout": {
+			"$id": "schemas-membership_timeout",
+			"description": "Put membership in timeout",
+			"type": "object",
+			"required": [ "timeout_days", "proposal_id" ],
+			"properties": {
+				"timeout_days": {
+					"type": "integer"
+				},
 				"proposal_id": {
 					"$ref": "schemas-proposal_id"
 				}
@@ -353,6 +394,18 @@
 						}
 					}
 				},
+				"in_timeout": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op_bool"
+						},
+						"val": {
+							"$ref": "schemas-in_timeout"
+						}
+					}
+				},
 				"date_created": {
 					"oneOf": [{
 						"type": "object",
@@ -506,6 +559,10 @@
 			"$id": "bodies-membership_create",
 			"$ref": "schemas-membership_create"
 		},
+		"membership_timeout": {
+			"$id": "bodies-membership_timeout",
+			"$ref": "schemas-membership_timeout"
+		},
 		"membership_verifying": {
 			"$id": "bodies-membership_verifying",
 			"$ref": "schemas-membership_verifying"
@@ -644,6 +701,32 @@
 				"responses": {
 					"204": {
 						"$ref": "responses-204"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/membership/:membership_id/timeout": {
+			"POST": {
+				"description": "Put membership in timeout",
+				"operationId": "membership_timeout",
+				"param": {
+					"membership_id": { "$ref": "params-membership_id" }
+				},
+				"body": {
+					"$ref": "bodies-membership_timeout"
+				},
+				"responses": {
+					"201": {
+						"$ref": "responses-201"
 					},
 					"400": {
 						"$ref": "responses-400"

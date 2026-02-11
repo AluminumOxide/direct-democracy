@@ -6,6 +6,7 @@ module.exports = {
 	membership_verify: require('./membership/verify'),
 	membership_verifying: require('./membership/verifying'),
 	membership_unverify: require('./membership/unverify'),
+	membership_timeout: require('./membership/timeout'),
 	membership_population: require('./membership/population'),
 	democracy_members: require('./membership/democracy')
 }

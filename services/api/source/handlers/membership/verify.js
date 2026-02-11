@@ -1,4 +1,4 @@
-const { invalid_auth, internal_error } = require('../../errors')
+const { membership_timeout, invalid_auth, internal_error } = require('../../errors')
 
 const membership_verify = async function(request, reply, db, log, lib) {
 
@@ -16,6 +16,12 @@ const membership_verify = async function(request, reply, db, log, lib) {
 		if(profile_id !== member.profile_id) {
 			log.warn(`Membership/Verify: Failure: ${profile_id} Error: Trying to modify ${membership_id}`)
 			return reply.code(401).send(new Error(invalid_auth))
+		}
+
+		// check member is not in time out
+		if(!!member.timeout_end && Date.parse(member.timeout_end) > Date.now()) {
+			log.warn(`Membership/Verify: Failure: ${membership_id} Error: Member in time out`)
+			return reply.code(400).send(new Error(membership_timeout))
 		}
 
 		// check membership is unverified

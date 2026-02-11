@@ -258,6 +258,26 @@ const membership_defn = {
 	        sort: false,
 	        filters: ['=','!=']
 	},
+	in_timeout: {
+	        title: 'In Timeout?',
+	        format: 'boolean',
+	        display: false,
+	        sort: false,
+	        filters: ['=','!=']
+	},
+	timeout_end: {
+	        title: 'Timeout End',
+	        format: 'date',
+	        display: false,
+	        sort: false,
+	        filters: ['=','!=','>=','>','<=','<']
+	},
+	timeout_history: {
+	        title: 'Timeout History',
+	        format: 'array',
+		opts: { link: 'ProposalView', format: 'uuid' },
+		filters: []
+	},
 	date_created: {
 	        title: 'Created',
 	        format: 'date',

@@ -1,4 +1,4 @@
-const { invalid_auth, internal_error } = require('../../errors.json')
+const { membership_timeout, invalid_auth, internal_error } = require('../../errors.json')
 
 const proposal_delete = async function(request, reply, db, log, lib) {
 
@@ -18,7 +18,7 @@ const proposal_delete = async function(request, reply, db, log, lib) {
 		const prop = await api_proposal.proposal_read({ proposal_id })
 
 		// get membership
-		const membership = await api_membership.membership_list({
+		let membership = await api_membership.membership_list({
 			filter: {
 				democracy_id: { op: '=', val: prop.democracy_id },
 				profile_id: { op: '=', val: profile_id }
@@ -35,11 +35,19 @@ const proposal_delete = async function(request, reply, db, log, lib) {
 			log.error(`Proposal/Create: Failure: Error: Duplicate Membership`)
 			return reply.code(500).send(new Error(api_proposal.errors.internal_error))
 		}
-		
-		const membership_id = membership[0].membership_id
+		membership = membership[0]
+		const membership_id = membership.membership_id
+
+		// check member is owner of proposal
 		if(prop.membership_id !== membership_id) {
 		        log.warn(`Proposal/Delete: Failure: ${proposal_id},${membership_id} Error: Invalid membership`)
 		        return reply.code(400).send(new Error(api_proposal.errors.membership_invalid))
+		}
+
+		// check member is not in time out
+		if(!!membership.in_timeout) {
+			log.warn(`Proposal/Delete: Failure: ${membership_id} Error: Member in time out`)
+			return reply.code(400).send(new Error(membership_timeout))
 		}
   
 		// delete from proposal service

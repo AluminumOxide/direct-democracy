@@ -194,6 +194,19 @@ describe('Membership List', () => {
 			})
 			expect(mems.length).toBe(14)
 		})
+		
+		// filter by in timeout equals
+		test('Filter by in_timeout equals', async() => {
+			const mems = await mem_list_i({
+				filter: {
+					in_timeout: {
+						op: "=",
+						val: true 
+					}
+				}
+			})
+			expect(mems.length).toBe(1)
+		})
 
 		// filter by date created less than
 		test('Filter by date_created less than', async() => {

@@ -21,6 +21,7 @@ import AccountScreen from './Account'
 import SignInScreen from './SignIn'
 import SignOutScreen from './SignOut'
 import SignUpScreen from './SignUp'
+import TimeOutScreen from './TimeOut'
 
 const screens = {
 	Home: HomeScreen,
@@ -46,6 +47,7 @@ const screens = {
 	SignIn: SignInScreen,
 	SignOut: SignOutScreen,
 	SignUp: SignUpScreen,
+	TimeOut: TimeOutScreen,
 }
 
 export default screens

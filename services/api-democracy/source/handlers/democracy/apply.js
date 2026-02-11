@@ -62,7 +62,7 @@ const apply_proposal = async function(request, reply, db, log, lib) {
 
 		// proposal target
 		const target = proposal.proposal_target
-		if(!(['democracy_name','democracy_description','democracy_conduct','democracy_content','democracy_metas','democracy_children','democracy_members']).includes(target)) {
+		if(!(['democracy_name','democracy_description','democracy_conduct','democracy_content','democracy_metas','democracy_children','democracy_members','democracy_misconduct']).includes(target)) {
 			log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal has invalid target`)
 			// close proposal and return applicable error
 			return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.target_invalid)
@@ -76,6 +76,21 @@ const apply_proposal = async function(request, reply, db, log, lib) {
 				return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.changes_invalid)
 			}
 			democracy.democracy_members = {[proposal.membership_id]:{is_verified: false}}
+		}
+
+		// get democracy misconduct if needed
+		if(target === 'democracy_misconduct') {
+			const t_type = !proposal.proposal_changes[proposal.proposal_name] ? false : Object.keys(proposal.proposal_changes[proposal.proposal_name])[0]
+			const t_id = !t_type || !proposal.proposal_changes[proposal.proposal_name][t_type] ? false : Object.keys(proposal.proposal_changes[proposal.proposal_name][t_type])[0]
+			const t_text = !t_id || !proposal.proposal_changes[proposal.proposal_name][t_type][t_id] || !proposal.proposal_changes[proposal.proposal_name][t_type][t_id]._add ? false : Object.keys(proposal.proposal_changes[proposal.proposal_name][t_type][t_id]._add)[0]
+			if((['democracy','proposal','ballot'].indexOf(t_type) === -1) ||
+				(t_type === 'democracy' && ['name','description','conduct','content'].indexOf(t_text) === -1) ||
+				(t_type === 'proposal' && ['name','description','changes'].indexOf(t_text) === -1)) {
+				// shouldn't happen
+			        log.warn(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal has invalid misconduct report`)
+			        return await close_proposal(api_proposal, reply, log, proposal_id, 400, false, api_proposal.errors.changes_invalid)
+			}
+			democracy.democracy_misconduct = { [proposal.proposal_name] : { [t_type] : { [t_id]: {} }}}
 		}
 
 		// proposal changes
@@ -216,6 +231,78 @@ const apply_proposal = async function(request, reply, db, log, lib) {
 					} catch(e) {
 						log.error(`Proposal/Apply: Failure: ${proposal_id} Error: Proposal approved but membership failed to verify`)
 						return reply.code(500).send(new Error(internal_error))
+					}
+
+				// handle misconduct reports
+				} else if(target === 'democracy_misconduct') {
+
+					// get misconduct info
+					const t_type = Object.keys(changes[proposal.proposal_name])[0]
+					const t_id = Object.keys(changes[proposal.proposal_name][t_type])[0]
+					const t_text = Object.keys(changes[proposal.proposal_name][t_type][t_id]._add)[0]
+					const t_keys = changes[proposal.proposal_name][t_type][t_id]._add[t_text]
+					const mis = democracy.democracy_conduct[proposal.proposal_name]
+					let t_member
+					let t_obj
+					
+					// determine if someone goes in timeout
+					if(t_type !== 'democracy') {
+
+						// figure out who to put in timeout
+						if(t_type === 'ballot') {
+							t_obj = await api_proposal.ballot_read({ ballot_id: t_id })
+							t_member = t_obj.membership_id
+						} else if(t_type === 'proposal') {
+							t_obj = await api_proposal.proposal_read({ proposal_id: t_id })
+							t_member = t_obj.membership_id
+						}
+						t_member = await api_membership.membership_read({ membership_id: t_member })
+
+						// figure out how long to put them in timeout
+						const timeout_count = t_member.timeout_count+1
+						const timeout_count_multi = !mis.timeout_count_multi ? 1 : mis.timeout_count_multi
+						const timeout_total = t_member.timeout_total
+						const timeout_total_multi = !mis.timeout_total_multi ? 1 : mis.timeout_total_multi
+						const timeout_base = !mis.timeout_base ? 0 : mis.timeout_base
+						let timeout_days = timeout_count_multi*timeout_count+timeout_total_multi*timeout_total+timeout_base
+						if(!!mis.timeout_min && timeout_days < mis.timeout_min) {
+							timeout_days = mis.timeout_min
+						}
+						if(!!mis.timeout_max && timeout_days > mis.timeout_max) {
+							timeout_days = mis.timeout_max
+						}
+
+						// put them in timeout
+						await api_membership.membership_timeout({
+							membership_id: t_member.membership_id,
+							timeout_days,
+							proposal_id
+						})
+					}
+					
+					// erase target content
+					if(t_type === 'ballot') {
+						await api_proposal.ballot_erase({
+							ballot_id: t_id
+						})
+					} else if(t_type === 'proposal') {
+						if(t_obj.proposal_votable) {
+							await api_proposal.proposal_close({
+								proposal_id: t_id,
+								passed: false 
+							})
+						}
+						await api_proposal.proposal_erase({
+							proposal_id: t_id,
+							erase_field: t_text,
+							erase_keys: t_keys
+						})
+					} else if(t_type === 'democracy') {
+						await api_democracy.democracy_erase({
+							democracy_id: t_id,
+							erase_field: t_text,
+							erase_keys: t_keys
+						})
 					}
 
 				// handle all other proposals
