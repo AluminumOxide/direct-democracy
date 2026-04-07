@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 import { FormContext } from '../contexts/'
 import getStyles from './styles';
 
-export default function PageContainer({title, contents}) {
+export default function PageContainer({title, contents, buttons=false}) {
 
 	const navigation = useNavigation()
 	const { setValue, setData, setErrors } = useContext(FormContext)
@@ -25,6 +25,7 @@ export default function PageContainer({title, contents}) {
 			 style={styles.pageHeadingText}>
 				{title}
 			</Text>
+			{!!buttons && buttons}
 		</View>
 		<View>
 			{contents}

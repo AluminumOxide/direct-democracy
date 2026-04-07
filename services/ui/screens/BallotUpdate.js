@@ -8,6 +8,7 @@ const api = require('@aluminumoxide/direct-democracy-external-api-client')
 export default function BallotUpdateScreen({ route }) {
 
 	const proposalId = route.params.id
+	const democracyId = route.params.democracy
 	const navigation = useNavigation();
 	
 	// redirect if not logged in
@@ -57,7 +58,7 @@ export default function BallotUpdateScreen({ route }) {
 		const bal = await api.ballot_update({
 			jwt: authState.jwt, 
 			...value })
-		return { id: proposalId }
+		return { id: proposalId, democracy: democracyId }
 	}
 
 	// render form

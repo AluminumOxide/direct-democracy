@@ -46,7 +46,7 @@ export default function ProposalListScreen({ route }) {
 		displayCols: ['proposal_name','proposal_description','democracy_id','proposal_target','proposal_votable','proposal_passed','date_created','date_updated'],
 		filterCols: ['proposal_name','proposal_description','democracy_id','proposal_target','proposal_changes','proposal_votable','proposal_passed','date_created','date_updated'],
 		rowPress: function(item){
-			navigation.navigate('ProposalView', {id: item.proposal_id })
+			navigation.navigate('ProposalView', {id: item.proposal_id, democracy: item.democracy_id.id })
 		},
 		filters,
 		getData: (q) => handleData(q),

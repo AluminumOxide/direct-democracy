@@ -12,7 +12,7 @@ export default function ProposalViewScreen({ route }) {
 
 	const proposalId = route.params.id;
 	const democracyId = route.params.democracy;
-
+ 
 	const [ actions, setActions ] = useState([{
 		title: "View Proposal Results",
 		press: () => navigation.navigate('ProposalResult', { id: proposalId })
@@ -52,7 +52,8 @@ export default function ProposalViewScreen({ route }) {
 			      key: 'balbutton',
                 	      title: "My Ballot",
                 	      press: () => navigation.navigate('BallotView', {
-				      id: proposalId
+				      id: proposalId,
+				      democracy: democracyId
 			      })
                 	})
 		} else if(!!prop.vote && !prop.mine) {
@@ -60,7 +61,8 @@ export default function ProposalViewScreen({ route }) {
 				key: 'votebutton',
 				title: "Vote!",
 				press: () => navigation.navigate('BallotCreate', {
-					id: proposalId
+					id: proposalId,
+					democracy: democracyId
 				})
 			})
 		}
@@ -69,9 +71,13 @@ export default function ProposalViewScreen({ route }) {
 	}
 
 	return DetailView({
+		id: proposalId,
+		democracy: democracyId,
+		target: 'proposal',
 		nameField: 'proposal_name',
 		shortFields: ['proposal_target','proposal_votable','proposal_passed','democracy_id','date_created','date_updated'],
 		longFields: ['proposal_description','proposal_changes'],
+		reportFields: ['proposal_name','proposal_description','proposal_changes'],
 		actions,
 		colDefns: config.defn.proposal,
 		getData: handleData

@@ -13,7 +13,16 @@ export default function ProposalResultScreen({ route }) {
 	const { authState } = useContext(AuthContext)
 
 	const handleData = async function() {
-		return (await api.proposal_read({ proposal_id: proposalId })).proposal_votes
+		const prop = await api.proposal_read({ proposal_id: proposalId }) 
+		let data = prop.proposal_votes
+		data.democracy = prop.democracy_id.id
+		data.total = {}
+		data.total.yes = data.verified.yes + data.unverified.yes
+		data.total.no = data.verified.no + data.unverified.no
+		const yes = await api.ballot_list({ proposal_id: proposalId, ballot_approved: 'yes' })
+		const no = await api.ballot_list({ proposal_id: proposalId, ballot_approved: 'no' })
+		data.comments = { yes, no }
+		return data
 	}
 
 	return ResultView({

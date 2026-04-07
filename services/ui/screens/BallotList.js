@@ -39,7 +39,7 @@ export default function BallotListScreen({ route }) {
 		displayCols: ['ballot_approved','ballot_comments','proposal_id','ballot_verified','ballot_modifiable','date_created','date_updated'],
 		filterCols: ['ballot_approved','ballot_comments','proposal_id','ballot_verified','ballot_modifiable','date_created','date_updated'],
 		rowPress: function(item){
-			navigation.navigate('BallotView', {id: item.proposal_id.id })
+			navigation.navigate('BallotView', {id: item.proposal_id.id, democracy: item.democracy_id })
 		},
 		filters,
 		colDefns: config.defn.ballot,

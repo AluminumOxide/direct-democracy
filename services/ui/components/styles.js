@@ -320,13 +320,24 @@ const getStyles = function() {
 		flexDirection:'row',
 		flexWrap: 'wrap',
 		justifyContent:'center',
+		padding: 5,
 		alignItems:'center'
 	},
 	fieldSelectSelected: {
-		mode: 'contained',
+		padding: 10,
+		margin: 5,	
+		borderRadius: 20,
+		backgroundColor: theme.colors.primary,
+		color: theme.colors.onPrimary,
+		fontSize: getFontSize(16)
 	},
 	fieldSelectUnselected: {
-		mode: 'contained-tonal',
+		padding: 10,
+		margin: 5,
+		borderRadius: 20,
+		backgroundColor: theme.colors.primaryContainer,
+		color: theme.colors.primary,
+		fontSize: getFontSize(16)
 	},
 	fieldSelectLabel: {
 		padding: 5,
@@ -372,6 +383,14 @@ const getStyles = function() {
 	timeoutButton: {
 		mode: 'contained',
 		margin: 5,
+	},
+	reportButton: {
+		padding: 0,
+		margin: 0,
+		marginLeft: 5,
+		justifyContent: 'right',
+		color: theme.colors.primary,
+		size: getFontSize(15),
 	},
 })}
 export default getStyles;

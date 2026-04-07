@@ -8,6 +8,7 @@ const api = require('@aluminumoxide/direct-democracy-external-api-client')
 export default function BallotViewScreen({ route }) {
 
 	const proposalId = route.params.id;
+	const democracyId = route.params.democracy
 	const navigation = useNavigation();
 
 	const { authState } = useContext(AuthContext);
@@ -26,10 +27,10 @@ export default function BallotViewScreen({ route }) {
 		if(!!ballot.ballot_modifiable) {
 			setActions([{
 				title: "Update Ballot",
-				press: () => navigation.navigate('BallotUpdate', {id: proposalId})
+				press: () => navigation.navigate('BallotUpdate', {id: proposalId, democracy: democracyId})
 			},{
 				title: "Delete Ballot",
-				press: () => navigation.navigate('BallotDelete', {id: proposalId})
+				press: () => navigation.navigate('BallotDelete', {id: proposalId, democracy: democracyId})
 			}])
 		}
 		return ballot

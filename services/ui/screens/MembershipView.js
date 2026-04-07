@@ -41,7 +41,7 @@ export default function MembershipViewScreen({ route }) {
 		if(mem.status === 'Verifying') {
 			actions.push({
 				title: 'View Membership Verification Request',
-				press: () => navigation.navigate('ProposalView', { id: mem.verify_proposal })
+				press: () => navigation.navigate('ProposalView', { id: mem.verify_proposal, democracy: democracyId })
 			})
 		}
 		return mem

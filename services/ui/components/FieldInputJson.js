@@ -165,10 +165,13 @@ export default function FieldInputJson({ label, val, opts, keys: valKeys, valCha
 			mode: {
 				title: 'What would you like to add?',
 				format: 'enum',
-				fetch: async function() {
-					return {
-					val: 'Add Value',
-					section: 'Add Section'
+				display: true,
+				opts: {
+					fetch: async() => { 
+						return [
+							{id: 'val', name: 'Add Value'},
+							{id: 'section', name: 'Add Section'}
+						]
 					}
 				}
 			},

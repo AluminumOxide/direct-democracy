@@ -42,12 +42,23 @@ export default function DemocracyViewScreen({ route }) {
 		}
 	}
 
+	const getData = async function() {
+		let dem = await api.democracy_read({democracy_id: democracyId})
+		dem.democracy_conduct = dem.democracy_conduct.filter(d => d[Object.keys(d)[0]].democracy_id === democracyId)
+			.map(d => {return {[Object.keys(d)[0]] : d[Object.keys(d)[0]].description}})
+		return dem
+	}
+
 	return DetailView({
+		id: democracyId,
+		democracy: democracyId,
+		target: 'democracy',
 		nameField: 'democracy_name',
 		shortFields: ['democracy_population_verified','democracy_population_unverified','date_created','date_updated','democracy_parent'],
 		longFields: ['democracy_description','democracy_children','democracy_conduct','democracy_content','democracy_metas'],
+		reportFields: ['democracy_name','democracy_description','democracy_conduct','democracy_content'],
 		actions: actions,
-		getData: () => api.democracy_read({democracy_id: democracyId}),
+		getData,
 		colDefns: config.defn.democracy 
 	})
 }

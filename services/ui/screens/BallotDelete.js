@@ -7,6 +7,7 @@ const api = require('@aluminumoxide/direct-democracy-external-api-client')
 export default function BallotDeleteScreen({ route }) {
 
 	const proposalId = route.params.id;
+	const democracyId = route.params.democracy;
 	const navigation = useNavigation();
 
 	const { authState } = useContext(AuthContext)
@@ -36,7 +37,7 @@ export default function BallotDeleteScreen({ route }) {
 			jwt: authState.jwt,
 			proposal_id: proposalId
 		})
-		return { id: proposalId }
+		return { id: proposalId, democracy: democracyId }
 	}
 
 	return ConfirmView({

@@ -32,7 +32,7 @@ export default function MembershipVerifyScreen({ route }) {
 			membership_id: membershipId,
 			jwt: authState.jwt
 		})
-		return { id: prop.proposal_id }
+		return { id: prop.proposal_id, democracy: prop.democracy_id }
 	}
 
 	return (<FormView

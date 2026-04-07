@@ -9,6 +9,7 @@ export default function BallotCreateScreen({ route }) {
 	
 	const navigation = useNavigation();	
 	const proposalId = route.params.id;
+	const democracyId = route.params.democracy;
 
 	// redirect if not logged in
 	const { authState } = useContext(AuthContext)
@@ -56,7 +57,7 @@ export default function BallotCreateScreen({ route }) {
 			jwt: authState.jwt,
 			proposal_id: proposalId,
 			...val})
-		return { id: proposalId }
+		return { id: proposalId, democracy: democracyId }
 	}
 
 	// render form
