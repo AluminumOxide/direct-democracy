@@ -23,7 +23,7 @@ describe('Membership Read', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
 				fxn: 'where', 
-				args: ['membership.id', dummy_req.membership_id],
+				args: [{ id: dummy_req.membership_id, is_deleted: false }],
 				val: [dummy_req],
 				err: false
 			}])
@@ -51,7 +51,7 @@ describe('Membership Read', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
 				fxn: 'where', 
-				args: ['membership.id', dummy_req.membership_id],
+				args: [{ id: dummy_req.membership_id, is_deleted: false }],
 				val: [],
 				err: false
 			}])
@@ -79,7 +79,7 @@ describe('Membership Read', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
 				fxn: 'where', 
-				args: ['membership.id', dummy_req.membership_id],
+				args: [{ id: dummy_req.membership_id, is_deleted: false }],
 				val: false,
 				err: new Error('db error')
 			}])

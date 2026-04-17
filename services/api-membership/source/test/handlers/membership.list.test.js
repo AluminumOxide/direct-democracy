@@ -77,7 +77,7 @@ describe('Membership List', () => {
 		// success: list all
 		test('List all', async () => {
 			const mems = await mem_list_i({})
-			expect(mems.length).toBe(30)
+			expect(mems.length).toBe(29)
 		})
 
 		// sort by membership id asc
@@ -218,7 +218,7 @@ describe('Membership List', () => {
 					}
 				}
 			})
-			expect(mems.length).toBe(30)
+			expect(mems.length).toBe(29)
 		})
 
 		// filter by date updated greater than

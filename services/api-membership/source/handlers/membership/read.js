@@ -21,7 +21,7 @@ const membership_read = async function(request, reply, db, log, lib) {
 			date_updated: 'membership.date_updated'
 		})
 		.select(db.raw('case when timeout_end is null or timeout_end < NOW() then false else true end as in_timeout'))
-		.where('membership.id', membership_id)
+		.where({ id: membership_id, is_deleted: false })
 	
 		if(!rows || rows.length < 1) {
 			log.warn(`Membership/Read: Failure: ${membership_id} Error: Membership does not exist`)

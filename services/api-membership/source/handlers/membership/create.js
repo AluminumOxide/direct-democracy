@@ -21,12 +21,38 @@ const membership_create = async function(request, reply, db, log, lib) {
 
 	// TODO - check profile_id is valid
 
-	// make sure there is no pre-existing membership
+	// use any pre-existing membership
 	try {
-		const check = await db('membership').select('id').where({ democracy_id, profile_id })
+		const check = await db('membership').select('id','is_deleted').where({ democracy_id, profile_id })
 		if(!!check && check.length > 0) {
-			log.warn(`Membership/Create: Failure: ${democracy_id},${profile_id} Error: Membership already exists`)
-			return reply.code(400).send(new Error(membership_exist))
+
+			// update existing memberships to not deleted
+			if(!!check[0].is_deleted) {
+				const rows = await db('membership').update({ is_deleted: false }).where({ id: check[0].id }).returning('*')
+
+				// handle membership update failure
+				if(!rows || rows.length < 1) {
+					log.error(`Membership/Create: Failure: ${democracy_id},${profile_id} Error: membership update`)
+					return reply.code(500).send(new Error(internal_error))
+				}
+
+				// return new membership
+				const membership = {
+					membership_id: rows[0].id,
+					democracy_id: rows[0].democracy_id,
+					profile_id: rows[0].profile_id,
+					is_verified: rows[0].is_verified,
+					date_created: rows[0].date_created,
+					date_updated: rows[0].date_updated
+				}
+				log.info(`Membership/Create: Success: ${membership.membership_id}`)
+				return reply.code(200).send(membership)
+
+			// error if existing membership is not deleted
+			} else {
+				log.warn(`Membership/Create: Failure: ${democracy_id},${profile_id} Error: Membership already exists`)
+				return reply.code(400).send(new Error(membership_exist))
+			}
 		}
 	} catch(e) {
 		log.error(`Membership/Create: Failure: ${democracy_id},${profile_id} Error: ${e}`)

@@ -15,7 +15,8 @@ const membership_list = async function(request, reply, db, log, lib) {
 				timeout_end: 'membership.timeout_end'
 			}).select(db.raw('greatest(date_created,date_updated) as date_updated'))
 			.select(db.raw('case when timeout_end is null or timeout_end < NOW() then false else true end as in_timeout'))
-			.from('membership'))
+			.from('membership')
+			.where({ is_deleted: false }))
 
 		log.info('Membership/List: Success')
 		return reply.code(200).send(rows)

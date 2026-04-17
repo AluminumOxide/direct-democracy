@@ -63,6 +63,58 @@ describe('Membership Create', () => {
 			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
 			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
+		
+		test('Success: Membership deleted', async() => {
+
+			// set up mocks
+			let expected = {
+				id: '3f8d3110-e63c-491f-a1d4-772ded682d8f',
+				democracy_id: '9cc71698-5845-4186-8620-2efb1cecc964',
+				profile_id: 'acd16c5f-7abe-4ce9-ac3b-a74804af1f58',
+				is_verified: false,
+				is_deleted: true,
+				date_created: '2014-01-23T07:46:39',
+				date_updated: '2027-02-05T03:43:59'
+			}
+			const dummy_req = {
+				democracy_id: expected.democracy_id,
+				profile_id: expected.profile_id
+			}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_db = get_dummy_db([{
+				fxn: 'where',
+				args: [dummy_req],
+				val: [expected],
+				err: false
+			},{
+				fxn: 'returning',
+				args: ['*'],
+				val: [expected],
+				err: false
+			}])	
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_democracy',
+				fxn: 'democracy_read',
+				val: { id: expected.democracy_id },
+				err: false
+			}], errors)
+
+			// call handler
+			await mem_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+			
+			// check reply
+			expected.membership_id = expected.id
+			delete expected.id
+			delete expected.is_deleted
+			expect(dummy_reply.send).toHaveBeenCalledWith(expected)
+			expect(dummy_reply.code).toHaveBeenCalledWith(200)
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
 
 		// error: democracy id invalid
 		test('Error: Democracy id invalid', async() => {
@@ -260,6 +312,55 @@ describe('Membership Create', () => {
 			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
 
+		test('Error: DB update failure', async() => {
+
+			// set up mocks
+			let expected = {
+				id: '3f8d3110-e63c-491f-a1d4-772ded682d8f',
+				democracy_id: '9cc71698-5845-4186-8620-2efb1cecc964',
+				profile_id: 'acd16c5f-7abe-4ce9-ac3b-a74804af1f58',
+				is_verified: false,
+				is_deleted: true,
+				date_created: '2014-01-23T07:46:39',
+				date_updated: '2027-02-05T03:43:59'
+			}
+			const dummy_req = {
+				democracy_id: expected.democracy_id,
+				profile_id: expected.profile_id
+			}
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_db = get_dummy_db([{
+				fxn: 'where',
+				args: [dummy_req],
+				val: [expected],
+				err: false
+			},{
+				fxn: 'returning',
+				args: ['*'],
+				val: [],
+				err: false
+			}])	
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_democracy',
+				fxn: 'democracy_read',
+				val: { id: expected.democracy_id },
+				err: false
+			}], errors)
+
+			// call handler
+			await mem_create_u(dummy_req, dummy_reply, dummy_db, dummy_log, dummy_lib)
+			
+			// check reply
+			expect(dummy_reply.code).toHaveBeenCalledWith(500)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.internal_error))
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(1)
+		})
+
 		// error: db insert failure
 		test('Error: DB insert failure', async() => {
 
@@ -373,6 +474,17 @@ describe('Membership Create', () => {
 			expect(mem.membership_id).toBeDefined()
 			expect(mem.date_created).toBeDefined()
 			expect(mem.date_updated).toBeNull()
+		})
+		
+		test('Success: Deleted', async () => {
+			const expected = test_data.membership.verified_grandchild_5
+			const mem = await mem_create_i(expected.democracy_id, expected.profile_id)
+			expect(mem.democracy_id).toBe(expected.democracy_id)
+			expect(mem.profile_id).toBe(expected.profile_id)
+			expect(mem.is_verified).toBeTruthy()
+			expect(mem.membership_id).toBeDefined()
+			expect(mem.date_created).toBeDefined()
+			expect(mem.date_updated).toBeDefined()
 		})
 
 		// error: invalid democracy_id

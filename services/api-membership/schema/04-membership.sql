@@ -2,6 +2,7 @@ CREATE TABLE membership( LIKE base INCLUDING ALL );
 
 ALTER TABLE membership ADD COLUMN democracy_id UUID;
 ALTER TABLE membership ADD COLUMN profile_id UUID;
+ALTER TABLE membership ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;
 ALTER TABLE membership ADD COLUMN is_verified BOOLEAN DEFAULT FALSE;
 ALTER TABLE membership ADD COLUMN is_verifying BOOLEAN DEFAULT FALSE;
 ALTER TABLE membership ADD COLUMN verify_proposal UUID;
