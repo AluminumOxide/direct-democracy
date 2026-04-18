@@ -319,6 +319,21 @@
 			"description": "Is the membership verified?",
 			"type": "boolean"
 		},
+		"in_timeout": {
+			"$id": "schemas-in_timeout",
+			"description": "Is the member in timeout?",
+			"type": "boolean"
+		},
+		"timeout_end": {
+			"$id": "schemas-timeout_end",
+			"description": "When member's timeout ends",
+			"$ref": "schemas-date"
+		},
+		"timeout_history": {
+			"$id": "schemas-timeout_history",
+			"description": "Proposals that put member in timeout",
+			"type": "object"
+		},
 		"membership_read": {
 			"$id": "schemas-membership_read",
 			"description": "Membership - Read",
@@ -328,6 +343,8 @@
 				"democracy_id",
 				"profile_id",
 				"is_verified",
+				"timeout_end",
+				"timeout_history",
 				"date_created",
 				"date_updated"
 			],
@@ -343,6 +360,12 @@
 				},
 				"is_verified": {
 					"$ref": "schemas-is_verified"
+				},
+				"timeout_end": {
+					"$ref": "schemas-timeout_end"
+				},
+				"timeout_history": {
+					"$ref": "schemas-timeout_history"
 				},
 				"date_created": {
 					"$ref": "schemas-date_created"
@@ -360,6 +383,7 @@
 				"membership_id",
 				"democracy_id",
 				"profile_id",
+				"in_timeout",
 				"is_verified",
 				"date_created",
 				"date_updated"
@@ -376,6 +400,9 @@
 				},
 				"is_verified": {
 					"$ref": "schemas-is_verified"
+				},
+				"in_timeout": {
+					"$ref": "schemas-in_timeout"
 				},
 				"date_created": {
 					"$ref": "schemas-date_created"
@@ -706,6 +733,70 @@
 				}
 			}
 		},
+		"misconduct_id": {
+			"$id": "schemas-misconduct_id",
+			"type": "string"
+		},
+		"misconduct_description": {
+			"$id": "schemas-misconduct_description",
+			"type": "string"
+		},
+		"target_type": {
+			"$id": "schemas-target_type",
+			"type": "string"
+		},
+		"target_id": {
+			"$id": "schemas-target_id",
+			"type": "string"
+		},
+		"target_text": {
+			"$id": "schemas-target_text",
+			"type": "string"
+		},
+		"target_keys": {
+			"$id": "schemas-target_keys",
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"report_create": {
+			"$id": "schemas-report_create",
+			"description": "Report - Create",
+			"type": "object",
+			"required": [
+				"democracy_id",
+				"misconduct_id",
+				"misconduct_description",
+				"target_type",
+				"target_id",
+				"target_text"
+			],
+			"additionalProperties": false,
+			"properties": {
+				"democracy_id": {
+					"$ref": "schemas-democracy_id"
+				},
+				"misconduct_id": {
+					"$ref": "schemas-misconduct_id"
+				},
+				"misconduct_description": {
+					"$ref": "schemas-misconduct_description"
+				},
+				"target_type": {
+					"$ref": "schemas-target_type"
+				},
+				"target_id": {
+					"$ref": "schemas-target_id"
+				},
+				"target_text": {
+					"$ref": "schemas-target_text"
+				},
+				"target_keys": {
+					"$ref": "schemas-target_keys"
+				}
+			}
+		},
 		"jwt": {
 			"$id": "schemas-jwt",
 			"description": "jwt",
@@ -726,6 +817,11 @@
 		"ballot_id": {
 			"$id": "params-ballot_id",
 			"$ref": "schemas-ballot_id"
+		},
+		"ballot_approved": {
+			"$id": "params-ballot_approved",
+			"type": "string",
+			"enum": ["yes","no"]
 		},
 		"membership_id": {
 			"$id": "params-membership_id",
@@ -1073,6 +1169,30 @@
 						}
 					}
 				},
+				"in_timeout": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-in_timeout"
+						}
+					}
+				},
+				"timeout_end": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"op": {
+							"$ref": "schemas-op"
+						},
+						"val": {
+							"$ref": "schemas-timeout_end"
+						}
+					}
+				},
 				"date_created": {
 					"type": "object",
 					"additionalProperties": false,
@@ -1359,6 +1479,10 @@
 		"membership_verify": {
 			"$id": "bodies-membership_verify",
 			"$ref": "schemas-membership_verify"
+		},
+		"report_create": { 
+			"$id": "bodies-report_create",
+			"$ref": "schemas-report_create"
 		}
 	},
 	"responses": {
@@ -1643,6 +1767,30 @@
 				"operationId": "proposal_read",
 				"param": {
 					"proposal_id": { "$ref": "params-proposal_id" }
+				},
+				"response": {
+					"200": {
+						"$ref": "responses-proposal_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/proposal/:proposal_id/ballots/:ballot_approved": {
+			"GET": {
+				"description": "List proposal ballot comments",
+				"operationId": "ballot_list",
+				"param": {
+					"proposal_id": { "$ref": "params-proposal_id" },
+					"ballot_approved": { "$ref": "params-ballot_approved" }
 				},
 				"response": {
 					"200": {
@@ -1978,6 +2126,32 @@
 				"responses": {
 					"204": {
 						"description": "successfully deleted"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/report": {
+			"POST": {
+				"description": "Create misconduct report",
+				"operationId": "report_create",
+				"headers": {
+					"jwt": { "$ref": "headers-jwt" }
+				},
+				"body": {
+					"$ref": "bodies-report_create"
+				},
+				"responses": {
+					"200": {
+						"$ref": "responses-proposal_read"
 					},
 					"400": {
 						"$ref": "responses-400"

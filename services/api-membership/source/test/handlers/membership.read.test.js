@@ -23,7 +23,7 @@ describe('Membership Read', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
 				fxn: 'where', 
-				args: ['membership.id', dummy_req.membership_id],
+				args: [{ id: dummy_req.membership_id, is_deleted: false }],
 				val: [dummy_req],
 				err: false
 			}])
@@ -51,7 +51,7 @@ describe('Membership Read', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
 				fxn: 'where', 
-				args: ['membership.id', dummy_req.membership_id],
+				args: [{ id: dummy_req.membership_id, is_deleted: false }],
 				val: [],
 				err: false
 			}])
@@ -79,7 +79,7 @@ describe('Membership Read', () => {
 			const dummy_reply = get_dummy_reply()
 			const dummy_db = get_dummy_db([{
 				fxn: 'where', 
-				args: ['membership.id', dummy_req.membership_id],
+				args: [{ id: dummy_req.membership_id, is_deleted: false }],
 				val: false,
 				err: new Error('db error')
 			}])
@@ -109,6 +109,10 @@ describe('Membership Read', () => {
 			expect(mem.membership_id).toBe(test_mem.id)
 			expect(mem.democracy_id ).toBe(test_mem.democracy_id)
 			expect(mem.profile_id).toBe(test_mem.profile_id)
+			expect(mem.timeout_end).toBe(null)
+			expect(mem.timeout_count).toBe(0)
+			expect(mem.timeout_total).toBe(0)
+			expect(mem.timeout_history).toBe({})
 			expect(mem.is_verified).toBeFalsy()
 			expect(mem.date_created).toBeDefined()
 			expect(mem.date_updated).toBeDefined()
@@ -121,6 +125,26 @@ describe('Membership Read', () => {
 			expect(mem.membership_id).toBe(test_mem.id)
 			expect(mem.democracy_id ).toBe(test_mem.democracy_id)
 			expect(mem.profile_id).toBe(test_mem.profile_id)
+			expect(mem.timeout_end).toBe(null)
+			expect(mem.timeout_count).toBe(0)
+			expect(mem.timeout_total).toBe(0)
+			expect(mem.timeout_history).toBe({})
+			expect(mem.is_verified).toBeTruthy()
+			expect(mem.date_created).toBeDefined()
+			expect(mem.date_updated).toBeDefined()
+		})
+		
+		// success: timeout
+		test('Success: Timeout', async () => {
+			const test_mem = test_data['membership']['verified_child_1']
+			const mem = await mem_read_i(test_mem.id)
+			expect(mem.membership_id).toBe(test_mem.id)
+			expect(mem.democracy_id ).toBe(test_mem.democracy_id)
+			expect(mem.profile_id).toBe(test_mem.profile_id)
+			expect(mem.timeout_end).not.toBe(null)
+			expect(mem.timeout_count).toBe(test_mem.timeout_count)
+			expect(mem.timeout_total).toBe(test_mem.timeout_total)
+			expect(Object.keys(mem.timeout_history).length).toBe(1)
 			expect(mem.is_verified).toBeTruthy()
 			expect(mem.date_created).toBeDefined()
 			expect(mem.date_updated).toBeDefined()

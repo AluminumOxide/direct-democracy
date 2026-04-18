@@ -166,7 +166,7 @@ describe('List', () => {
 					}
 				}
 			})
-			expect(blts.length).toBe(29)
+			expect(blts.length).toBe(34)
 		})
 		
 		// filter by ballot_verified not equals
@@ -206,7 +206,7 @@ describe('List', () => {
 					}
 				}
 			})
-			expect(blts.length).toBe(37)
+			expect(blts.length).toBe(42)
 		})
 
 		// filter by date_updated greater than

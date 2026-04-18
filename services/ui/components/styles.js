@@ -226,6 +226,16 @@ const getStyles = function() {
 	},
 	confirmContainer: {
 		justifyContent:'center',
+		flexDirection:'column',
+		padding:20
+	},
+	confirmText: {
+		justifyContent: 'center',
+		color: theme.colors.onBackground,
+		fontSize: getFontSize(14)
+	},
+	confirmButtonContainer: {
+		justifyContent:'center',
 		flexDirection:'row',
 		padding:20
 	},
@@ -320,13 +330,24 @@ const getStyles = function() {
 		flexDirection:'row',
 		flexWrap: 'wrap',
 		justifyContent:'center',
+		padding: 5,
 		alignItems:'center'
 	},
 	fieldSelectSelected: {
-		mode: 'contained',
+		padding: 10,
+		margin: 5,	
+		borderRadius: 20,
+		backgroundColor: theme.colors.primary,
+		color: theme.colors.onPrimary,
+		fontSize: getFontSize(16)
 	},
 	fieldSelectUnselected: {
-		mode: 'contained-tonal',
+		padding: 10,
+		margin: 5,
+		borderRadius: 20,
+		backgroundColor: theme.colors.primaryContainer,
+		color: theme.colors.primary,
+		fontSize: getFontSize(16)
 	},
 	fieldSelectLabel: {
 		padding: 5,
@@ -356,6 +377,30 @@ const getStyles = function() {
 	resultContainer: {
 		alignItems: 'center',
 		padding: 5
-	}
+	},
+	timeoutContainer: {
+		height: '100%',
+		color: theme.colors.onError,
+		backgroundColor: 'rgba(186, 26, 26, 0.75)',
+		alignItems: 'center',
+		justifyContent: 'center',
+		padding: 5,
+	},
+	timeoutText: {
+		variant: 'titleLarge',
+		fontWeight: 'bold',
+	},
+	timeoutButton: {
+		mode: 'contained',
+		margin: 5,
+	},
+	reportButton: {
+		padding: 0,
+		margin: 0,
+		marginLeft: 5,
+		justifyContent: 'right',
+		color: theme.colors.primary,
+		size: getFontSize(15),
+	},
 })}
 export default getStyles;

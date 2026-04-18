@@ -6,7 +6,27 @@ const democracy_read = async function(request, reply, db, log, lib) {
 
 	try {
 		// fetch from democracy service
-		const dem = await api_democracy.democracy_read({ democracy_id })
+		let dem = await api_democracy.democracy_read({ democracy_id })
+
+		// sort out code of conduct
+		let tmp = Object.assign({}, dem)
+		dem.democracy_conduct = []
+		while(!!tmp) {
+
+			// rearrange code of conduct
+			let coc = []
+			Object.keys(tmp.democracy_conduct).map(c => coc[tmp.democracy_conduct[c].order-1] = {
+				[c]: { description: tmp.democracy_conduct[c].description, democracy_id: tmp.democracy_id }
+			})
+			dem.democracy_conduct = coc.concat(dem.democracy_conduct)
+		
+			// get parents' code of conduct
+			if(!!tmp.democracy_parent.id) {
+				tmp = await api_democracy.democracy_read({ democracy_id: tmp.democracy_parent.id })
+			} else {
+				tmp = false
+			}
+		}
 
 		// return results
 		log.info(`Democracy/Read: Success: ${democracy_id}`)

@@ -4,9 +4,7 @@ const api = require('@aluminumoxide/direct-democracy-external-api-client')
 
 const dem_defn_list = async function() {
 	let dems = await api.democracy_list({})
-	return dems.reduce((a,v) => Object.assign(a, {
-		[v.democracy_id]: v.democracy_name
-	}), {})
+	return dems.map((v) => ({ id: v.democracy_id, name: v.democracy_name }))
 }
 
 const dem_defn_read = async function(democracy_id) {
@@ -70,7 +68,8 @@ const democracy_defn = {
 	},
 	democracy_conduct: {
 	        title: 'Code of Conduct',
-	        format: 'object',
+	        format: 'array',
+		opts: { format: 'object' },
 	        filters: ['~']
 	},
 	democracy_metas: {
@@ -92,15 +91,15 @@ const proposal_defn = {
 	        display: true,
 	        sort: false,
 	        filters: ['=','!='],
-		opts: { vals: {
-			'democracy_name': 'Democracy Name',
-			'democracy_description': 'Democracy Description',
-			'democracy_conduct': 'Code of Conduct',
-			'democracy_content': 'Democracy Content',
-			'democracy_metas': 'Democracy Content Rules',
-			'democracy_children': 'New Democracy',
-			'democracy_members': 'Membership Verification'
-		} }
+		opts: { vals: [
+			{id: 'democracy_name', 		name: 'Democracy Name'},
+			{id: 'democracy_description',	name: 'Democracy Description'},
+			{id: 'democracy_conduct',	name: 'Code of Conduct'},
+			{id: 'democracy_content',	name: 'Democracy Content'},
+			{id: 'democracy_metas',		name: 'Democracy Content Rules'},
+			{id: 'democracy_children',	name: 'New Democracy'},
+			{id: 'democracy_members',	name: 'Membership Verification'}
+		]}
 	},
 	proposal_name: {
 	        title: 'Name',
@@ -165,9 +164,7 @@ const proposal_defn = {
 
 const prop_defn_list = async function() {
 	let props = await api.proposal_list({})
-	return props.reduce((a,v) => Object.assign(a, {
-		[v.proposal_id]: v.proposal_name
-	}), {})
+	return props.map((v) => ({ id: v.proposal_id, name: v.proposal_name }))
 }
 const ballot_defn = {
 	proposal_id: {
@@ -257,6 +254,26 @@ const membership_defn = {
 	        display: false,
 	        sort: false,
 	        filters: ['=','!=']
+	},
+	in_timeout: {
+	        title: 'In Timeout?',
+	        format: 'boolean',
+	        display: false,
+	        sort: false,
+	        filters: ['=','!=']
+	},
+	timeout_end: {
+	        title: 'Timeout End',
+	        format: 'date',
+	        display: false,
+	        sort: false,
+	        filters: ['=','!=','>=','>','<=','<']
+	},
+	timeout_history: {
+	        title: 'Timeout History',
+	        format: 'array',
+		opts: { link: 'ProposalView', format: 'uuid' },
+		filters: []
 	},
 	date_created: {
 	        title: 'Created',

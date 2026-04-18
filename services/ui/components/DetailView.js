@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Button } from 'react-native-paper';
-import { PageContainer, FieldRow } from './';
+import { PageContainer, FieldRow, ReportButton } from './';
 import getStyles from './styles';
 
-export default function DetailView({ nameField, shortFields, longFields, getData, colDefns, actions }) {
+export default function DetailView({ id, target, democracy, nameField, shortFields, longFields, getData, colDefns, actions, reportFields=[] }) {
 
 	// load data
 	const [ data, setData ] = useState([]);
@@ -17,6 +17,7 @@ export default function DetailView({ nameField, shortFields, longFields, getData
 	const styles = getStyles()	
 	return PageContainer({
 		title: !!data[nameField]&&data[nameField].name ? data[nameField].name:data[nameField],
+		buttons: reportFields.indexOf(nameField) >= 0 ? ReportButton({text: nameField, target, keys:[], id, democracy}) : false,
 		contents: (<View style={styles.detailContainer}>
 
 		{/* short details */}
@@ -24,6 +25,7 @@ export default function DetailView({ nameField, shortFields, longFields, getData
 		{shortFields.map((col) => (<FieldRow
 			key={'sd-'+col}
 			label={colDefns[col].title}
+			report={reportFields.indexOf(col) >= 0 ? {text: col, target, id, democracy} : false}
 			data={data[col]}
 			format={colDefns[col].format}
 			opts={colDefns[col].opts}
@@ -47,6 +49,7 @@ export default function DetailView({ nameField, shortFields, longFields, getData
 			{longFields.map((col) => (<FieldRow
 				key={'ld-'+col}
 				label={colDefns[col].title}
+				report={reportFields.indexOf(col) >= 0 ? {text: col, target, id, democracy} : false}
 				data={data[col]}
 				format={colDefns[col].format}
 				opts={colDefns[col].opts}

@@ -39,6 +39,10 @@ const democracy_apply_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/democracy/apply')(request, reply, db, log, lib)
 }
 
+const democracy_erase_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/democracy/erase')(request, reply, db, log, lib)
+}
+
 // integration tests
 const democracy_list_integration = async(args) => {
 	return await api_democracy_client.democracy_list(args)
@@ -50,6 +54,10 @@ const democracy_read_integration = async (id) => {
 
 const democracy_root_integration = async () => {
 	return await api_democracy_client.democracy_root({})
+}
+
+const democracy_erase_integration = async (democracy_id, erase_field, erase_keys) => {
+	return await api_democracy_client.democracy_erase({ democracy_id, erase_field, erase_keys })
 }
 
 const democracy_population_integration = async (time_start, time_end) => {
@@ -91,6 +99,8 @@ module.exports = {
 	democracy_read_integration,
 	democracy_root_unit,
 	democracy_root_integration,
+	democracy_erase_unit,
+	democracy_erase_integration,
 	democracy_population_unit,
 	democracy_population_integration,
 	democracy_apply_unit,

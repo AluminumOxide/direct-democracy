@@ -17,12 +17,20 @@ describe('Ballot Delete', () => {
 		const test_data = integration_test_setup()
 
 		test('Success', async() => {
-			const proposal_id = test_data.ballot.cmp_av_1.proposal_id
-			const mem_id = test_data.ballot.cmp_av_1.membership_id
+			const proposal_id = test_data.ballot.rcf_dv_1.proposal_id
+			const mem_id = test_data.ballot.rcf_dv_1.membership_id
 			const profile = test_data.profile.profile
 			await expect(blt_read_i(proposal_id, profile.id, profile.auth_token, profile.auth_expiry)).resolves.toBeInstanceOf(Object)
 			await blt_delete_i(proposal_id, profile.id, profile.auth_token, profile.auth_expiry)
 			await expect(blt_read_i(proposal_id, profile.id, profile.auth_token, profile.auth_expiry)).rejects.toThrow(new Error(errors.ballot_dne))
+		})
+		
+		test('Error: Timeout', async() => {
+			const proposal_id = test_data.ballot.ndp_av_1.proposal_id
+			const mem_id = test_data.ballot.ndp_av_1.membership_id
+			const profile = test_data.profile.profile
+			await expect(blt_delete_i(proposal_id, profile.id, profile.auth_token, profile.auth_expiry))
+				.rejects.toThrow(new Error(errors.membership_timeout))
 		})
 	})
 
@@ -54,7 +62,7 @@ describe('Ballot Delete', () => {
 			},{
 				lib: 'api_membership',
 				fxn: 'membership_list',
-				val: [{ membership_id }],
+				val: [{ membership_id, is_verified: true }],
 				err: false
 			},{
 				lib: 'api_proposal',
@@ -100,7 +108,7 @@ describe('Ballot Delete', () => {
 			},{
 				lib: 'api_membership',
 				fxn: 'membership_list',
-				val: [{ membership_id }],
+				val: [{ membership_id, is_verified: true }],
 				err: false
 			},{
 				lib: 'api_proposal',
@@ -156,6 +164,47 @@ describe('Ballot Delete', () => {
 			// check reply
 			expect(dummy_reply.code).toHaveBeenCalledWith(401)
 			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.invalid_auth))
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
+		test('Error: Membership timeout', async() => {
+
+			// set up mocks
+			const dummy_req = { proposal_id, jwt }
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_profile',
+				fxn: 'sign_in_verify',
+				val: { profile_id },
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'ballot_read',
+				val: { membership_id, proposal_id },
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: { democracy_id },
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_list',
+				val: [{membership_id, in_timeout: true}],
+				err: false
+			}], errors)
+			
+			// call handler
+			await blt_delete_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_timeout))
 
 			// check log
 			expect(dummy_log.info).toHaveBeenCalledTimes(0)
@@ -341,7 +390,7 @@ describe('Ballot Delete', () => {
 			},{
 				lib: 'api_membership',
 				fxn: 'membership_list',
-				val: [{ membership_id }],
+				val: [{ membership_id, is_verified: true }],
 				err: false
 			},{
 				lib: 'api_proposal',

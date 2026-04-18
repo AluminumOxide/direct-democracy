@@ -1,4 +1,5 @@
 const { changes_invalid } = require('./errors.json')
+const { obj_get, obj_set, obj_add, obj_del } = require('./utils.js')
 
 /*
  * Verify that changes can be applied to contents
@@ -158,4 +159,4 @@ const apply_changes = function(changes, contents) {
 	return contents
 }
 
-module.exports = { check_changes, apply_changes }
+module.exports = { check_changes, apply_changes, obj_get, obj_set, obj_add, obj_del  }

@@ -17,6 +17,10 @@ const ballot_list_unit = async(request, reply, db, log, lib) => {
         return await require('../handlers/ballot/list')(request, reply, db, log, lib)
 }
 
+const ballot_erase_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/ballot/erase')(request, reply, db, log, lib)
+}
+
 const ballot_read_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/ballot/read')(request, reply, db, log, lib)
 }
@@ -57,9 +61,17 @@ const proposal_delete_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/proposal/delete')(request, reply, db, log, lib)
 }
 
+const proposal_erase_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/proposal/erase')(request, reply, db, log, lib)
+}
+
 // integration tests
 const ballot_list_integration = async(args) => {
         return await api_proposal_client.ballot_list(args)
+}
+
+const ballot_erase_integration = async (ballot_id) => {
+	return await api_proposal_client.ballot_erase({ ballot_id })
 }
 
 const ballot_read_integration = async (proposal_id, membership_id) => {
@@ -119,6 +131,10 @@ const proposal_close_integration = async(proposal_id, passed) => {
 	return await api_proposal_client.proposal_close({ proposal_id, passed })
 }
 
+const proposal_erase_integration = async(proposal_id, erase_field, erase_keys) => {
+	return await api_proposal_client.proposal_erase({ proposal_id, erase_field, erase_keys })
+}
+
 const membership_read_integration = async(membership_id) => {
 	return await api_membership_client.membership_read({ membership_id })
 }
@@ -131,6 +147,7 @@ module.exports = {
 	get_dummy_log,
 	get_dummy_reply,
 	ballot_list_unit,
+	ballot_erase_unit,
 	ballot_read_unit,
 	ballot_create_unit,
 	ballot_update_unit,
@@ -141,8 +158,10 @@ module.exports = {
 	proposal_create_unit,
 	proposal_delete_unit,
 	proposal_close_unit,
+	proposal_erase_unit,
 	integration_test_setup,
 	ballot_list_integration,
+	ballot_erase_integration,
 	ballot_read_integration,
 	ballot_create_integration,
 	ballot_update_integration,
@@ -153,6 +172,7 @@ module.exports = {
 	proposal_create_integration,
 	proposal_delete_integration,
 	proposal_close_integration,
+	proposal_erase_integration,
 	membership_read_integration
 }
 

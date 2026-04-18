@@ -17,6 +17,15 @@
 		"ballot_id": {
 			"$id": "params-ballot_id",
 			"$ref": "schemas-ballot_id"
+		},
+		"erase_field": {
+			"$id": "params-erase_field",
+			"type": "string",
+			"enum": [
+				"name",
+				"description",
+				"changes"
+			]
 		}
 	},
 	"queries": {
@@ -473,6 +482,18 @@
 		"ballot_update": {
 			"$id": "bodies-ballot_update",
 			"$ref": "schemas-ballot_update"
+		},
+		"proposal_erase": {
+			"$id": "bodies-proposal_erase",
+			"type": "object",
+			"properties": {
+				"erase_keys": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
 		}
 	},
 	"responses": {
@@ -642,6 +663,7 @@
 				"democracy_description",
 				"democracy_content",
 				"democracy_conduct",
+				"democracy_misconduct",
 				"democracy_metas",
 				"democracy_children",
 				"democracy_members"
@@ -1042,6 +1064,33 @@
 				}
 			}
 		},
+		"/proposal/:proposal_id/:erase_field": {
+			"DELETE": {
+				"description": "Erase proposal data",
+				"operationId": "proposal_erase",
+				"param": { 
+					"proposal_id": { "$ref": "params-proposal_id" },
+					"erase_field": { "$ref": "params-erase_field" }
+				},
+				"body": {
+					"$ref": "bodies-proposal_erase"
+				},
+				"responses": {
+					"204": {
+						"$ref": "responses-proposal_delete"
+					},
+					"400": {
+					        "$ref": "responses-400"
+					},
+					"401": {
+					        "$ref": "responses-401"
+					},
+					"500": {
+					        "$ref": "responses-500"
+					}
+				}
+			}
+		},
 		"/proposal/:proposal_id/ballot": {
 			"GET": {
 				"description": "List ballots",
@@ -1171,6 +1220,27 @@
 				}
 			}
 			
+		},
+		"/ballot/:ballot_id": {
+			"DELETE": {
+				"description": "Erase ballot comments",
+				"operationId": "ballot_erase",
+				"param": { "ballot_id": { "$ref": "params-ballot_id" } },
+				"responses": {
+					"204": {
+						"$ref": "responses-ballot_delete"
+					},
+					"400": {
+					        "$ref": "responses-400"
+					},
+					"401": {
+					        "$ref": "responses-401"
+					},
+					"500": {
+					        "$ref": "responses-500"
+					}	
+				}
+			}
 		}
 	}
 }

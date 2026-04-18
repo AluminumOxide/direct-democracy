@@ -31,6 +31,7 @@ export default function MembershipViewScreen({ route }) {
 			jwt: authState.jwt 
 		})
 		mem.status = !!mem.is_verified ? 'Verified' : !!mem.is_verifying ? 'Verifying' : 'Unverified'
+		mem.timeout_history = !mem.timeout_history ? [] : Object.keys(mem.timeout_history).map(m => ({ id: mem.timeout_history[m], name: m }))
 		if(mem.status === 'Unverified') {
 			actions.push({
 				title: 'Request Membership Verification',
@@ -40,7 +41,7 @@ export default function MembershipViewScreen({ route }) {
 		if(mem.status === 'Verifying') {
 			actions.push({
 				title: 'View Membership Verification Request',
-				press: () => navigation.navigate('ProposalView', { id: mem.verify_proposal })
+				press: () => navigation.navigate('ProposalView', { id: mem.verify_proposal, democracy: democracyId })
 			})
 		}
 		return mem
@@ -48,8 +49,8 @@ export default function MembershipViewScreen({ route }) {
 
 	return DetailView({
 		nameField: 'democracy_id',
-		shortFields: ['democracy_id','status','date_created','date_updated'],
-		longFields: [],
+		shortFields: ['democracy_id','status','in_timeout','timeout_end','date_created','date_updated'],
+		longFields: ['timeout_history'],
 		actions,
 		colDefns: config.defn.membership,
 		getData: handleData

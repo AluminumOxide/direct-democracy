@@ -15,7 +15,13 @@ describe('Democracy Read', () => {
 
 		const test_data = integration_test_setup()
 
-		test('Success', async() => {
+		test('Success: Parent', async() => {
+			const expected = test_data['democracy']['root_child']
+			const actual = await dem_read_i(expected.id)
+			expect(actual.democracy_id).toBe(expected.id)
+		})
+
+		test('Success: No Parent', async() => {
 			const expected = test_data['democracy']['root']
 			const actual = await dem_read_i(expected.id)
 			expect(actual.democracy_id).toBe(expected.id)
@@ -24,7 +30,45 @@ describe('Democracy Read', () => {
 
 	describe('Unit Tests', () => {
 
-		test('Success', async() => {
+		test('Success: Parent', async() => {
+
+			// set up mocks
+			const id = get_uuid()
+			const dummy_req = { democracy_id: get_uuid() }
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_democracy',
+				fxn: 'democracy_read',
+				err: false,
+				val: {democracy_id: dummy_req.democracy_id,democracy_conduct:{rule2:{order:1,description:'test'}},democracy_parent:{id}},
+				call: 1
+			},{
+				lib: 'api_democracy',
+				fxn: 'democracy_read',
+				err: false,
+				val: {democracy_id:id,democracy_conduct:{rule1:{order:1,description:'test'}},democracy_parent:{}},
+				call: 2
+			}], errors)
+			
+			// call handler
+			await dem_read_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toHaveBeenCalledWith(200)
+			expect(dummy_reply.send).toHaveBeenCalledWith({
+				democracy_id: dummy_req.democracy_id,
+				democracy_conduct:[{rule1:{description:'test',democracy_id:id}},{rule2:{description:'test',democracy_id:dummy_req.democracy_id}}],
+				democracy_parent:{id}
+			})
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(1)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+
+		test('Success: No Parent', async() => {
 
 			// set up mocks
 			const dummy_req = { democracy_id: get_uuid() }
@@ -33,8 +77,8 @@ describe('Democracy Read', () => {
 			const dummy_lib = get_dummy_lib([{
 				lib: 'api_democracy',
 				fxn: 'democracy_read',
-				val: dummy_req,
-				err: false
+				err: false,
+				val: {democracy_conduct:{},democracy_parent:{}}
 			}], errors)
 			
 			// call handler
@@ -42,7 +86,10 @@ describe('Democracy Read', () => {
 
 			// check reply
 			expect(dummy_reply.code).toHaveBeenCalledWith(200)
-			expect(dummy_reply.send).toHaveBeenCalledWith(dummy_req)
+			expect(dummy_reply.send).toHaveBeenCalledWith({
+				democracy_conduct:[],
+				democracy_parent:{}
+			})
 
 			// check log
 			expect(dummy_log.info).toHaveBeenCalledTimes(1)

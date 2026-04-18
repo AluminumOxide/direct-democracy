@@ -40,7 +40,10 @@ export default function TableFilter({ filterCols, query, setQuery, cols, display
 				format: 'enum',
 				opts: {
 					fetch: async () => {
-						return !!cols[id] ? cols[id].filters.reduce((a,v) => ({...a, [v]:v}), {}) : {}
+						return !!cols[id] ? cols[id].filters.map(v => ({
+							id: v,
+							name: v
+						})) : {}
 					}
 				}
 			},
@@ -57,7 +60,10 @@ export default function TableFilter({ filterCols, query, setQuery, cols, display
 				format: 'enum',
 				opts: {
 					fetch: async () => {
-						return !!cols[id] ? cols[id].filters.reduce((a,v) => ({...a, [v]:v}), {}) : {}
+						return !!cols[id] ? cols[id].filters.map(v => ({
+							id: v,
+							name: v
+						})) : {}
 					}
 				}
 			},

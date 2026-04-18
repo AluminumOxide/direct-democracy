@@ -28,6 +28,10 @@ const membership_delete_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/membership/delete')(request, reply, db, log, lib)
 }
 
+const membership_timeout_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/membership/timeout')(request, reply, db, log, lib)
+}
+
 const membership_verify_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/membership/verify')(request, reply, db, log, lib)
 }
@@ -72,6 +76,10 @@ const membership_delete_integration = async(membership_id, profile_id) => {
 	})
 }
 
+const membership_timeout_integration = async(membership_id, timeout_days, proposal_id) => {
+	return await api_membership_client.membership_timeout({ membership_id, timeout_days, proposal_id })
+}
+
 const membership_verify_integration = async(membership_id) => {
 	return await api_membership_client.membership_verify({ membership_id })
 }
@@ -112,6 +120,8 @@ module.exports = {
 	membership_population_integration,
 	democracy_members_unit,
 	democracy_members_integration,
+	membership_timeout_unit,
+	membership_timeout_integration,
 	membership_verify_unit,
 	membership_verify_integration,
 	membership_verifying_unit,

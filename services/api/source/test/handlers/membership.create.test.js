@@ -17,8 +17,8 @@ describe('Membership Create', () => {
 
 		test('Success', async() => {
 			const profile = test_data.profile.profile
-			const mem = await mem_create_i(test_data.democracy.not_root_child.id, profile.id, profile.auth_token, profile.auth_expiry)
-			expect(mem.democracy_id).toBe(test_data.democracy.not_root_child.id)
+			const mem = await mem_create_i(test_data.democracy.new_child.id, profile.id, profile.auth_token, profile.auth_expiry)
+			expect(mem.democracy_id).toBe(test_data.democracy.new_child.id)
 		})
 	})
 

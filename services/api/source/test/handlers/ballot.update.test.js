@@ -17,13 +17,23 @@ describe('Ballot Update', () => {
 
 		test('Success', async() => {
 			const profile = test_data.profile.profile
+			const ballot = {
+				proposal_id: test_data.ballot.rcf_dv_1.proposal_id,
+				ballot_approved: false,
+				ballot_comments: 'qwerawer'
+			}
+			await expect(blt_update_i(ballot.proposal_id, ballot.ballot_approved, ballot.ballot_comments, profile.id, profile.auth_token, profile.auth_expiry)).resolves.toMatchObject(ballot)
+		})
 
+		test('Error: Timeout', async() => {
+			const profile = test_data.profile.profile
 			const ballot = {
 				proposal_id: test_data.ballot.cmp_av_1.proposal_id,
 				ballot_approved: false,
 				ballot_comments: 'qwerawer'
 			}
-			await expect(blt_update_i(ballot.proposal_id, ballot.ballot_approved, ballot.ballot_comments, profile.id, profile.auth_token, profile.auth_expiry)).resolves.toMatchObject(ballot)
+			await expect(blt_update_i(ballot.proposal_id, ballot.ballot_approved, ballot.ballot_comments, profile.id, profile.auth_token, profile.auth_expiry))
+				.rejects.toThrow(new Error(errors.membership_timeout))
 		})
 	})
 
@@ -336,6 +346,47 @@ describe('Ballot Update', () => {
 			expect(dummy_log.info).toHaveBeenCalledTimes(0)
 			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
 			expect(dummy_log.error).toHaveBeenCalledTimes(1)
+		})
+
+		test('Error: Membership timeout', async() => {
+
+			// set up mocks
+			const dummy_req = { proposal_id, ballot_approved: true, jwt }
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_profile',
+				fxn: 'sign_in_verify',
+				val: { profile_id },
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'ballot_read',
+				val: { proposal_id, membership_id },
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: { democracy_id },
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_list',
+				val: [{ membership_id, in_timeout: true}],
+				err: false
+			}], errors)
+			
+			// call handler
+			await blt_update_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_timeout))
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
 		})
 
 		test('Error: Proposal DNE', async() => {

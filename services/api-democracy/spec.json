@@ -354,6 +354,19 @@
 					"$ref": "schemas-date_updated"
 				}
 			}
+		},
+		"democracy_erase": {
+			"$id": "schemas-democracy_erase",
+			"description": "Democracy - Erase",
+			"type": "object",
+			"properties": {
+				"erase_keys": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
 		}
 	},
 	"params": {
@@ -364,6 +377,16 @@
 		"proposal_id": {
 			"$id": "params-proposal_id",
 			"$ref": "schemas-proposal_id"
+		},
+		"erase_field": {
+			"$id": "params-erase_field",
+			"type": "string",
+			"enum": [
+				"name",
+				"description",
+				"conduct",
+				"content"
+			]
 		}
 	},
 	"queries": {
@@ -623,6 +646,12 @@
 			}		
 		}
 	},
+	"bodies": {
+		"democracy_erase": {
+			"$id": "bodies-democracy_erase",
+			"$ref": "schemas-democracy_erase"
+		}
+	},
 	"responses": {
 		"200": {
 			"$id": "responses-200",
@@ -709,6 +738,33 @@
 				"responses": {
 					"200": {
 						"$ref": "responses-democracy_read"
+					},
+					"400": {
+						"$ref": "responses-400"
+					},
+					"401": {
+						"$ref": "responses-401"
+					},
+					"500": {
+						"$ref": "responses-500"
+					}
+				}
+			}
+		},
+		"/democracy/:democracy_id/:erase_field": {
+			"DELETE": {
+				"description": "Erase democracy data",
+				"operationId": "democracy_erase",
+				"param": {
+					"democracy_id": { "$ref": "params-democracy_id" },
+					"erase_field": { "$ref": "params-erase_field" }
+				},
+				"body": {
+					"$ref": "bodies-democracy_erase"
+				},
+				"responses": {
+					"204": {
+						"$ref": "responses-204"
 					},
 					"400": {
 						"$ref": "responses-400"

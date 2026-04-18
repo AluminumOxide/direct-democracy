@@ -1,10 +1,10 @@
 import { FlatList, View } from 'react-native'
 import { Link, useNavigation } from '@react-navigation/native'
 import { Checkbox, Text } from 'react-native-paper'
-import { Paragraph } from '.'
+import { Paragraph, ReportButton } from '.'
 // TODO: why can't I import styles here normally? ...recursion?
 
-export default function FieldValue({ data, format, layout, opts={}, styles, textStyle={} }) {
+export default function FieldValue({ data, format, layout, opts={}, keys=[], report, styles, textStyle={} }) {
 
 	const navigation = useNavigation()
 
@@ -39,7 +39,9 @@ export default function FieldValue({ data, format, layout, opts={}, styles, text
 					data={item}
 					format={!!opts && !!opts.format ? opts.format : 'string'}
 					opts={opts}
+					report={report}
 					styles={styles} />
+
 			</View>)}	
 		/>)
 	
@@ -49,11 +51,14 @@ export default function FieldValue({ data, format, layout, opts={}, styles, text
 			 renderItem={({item}) => (
 				<Paragraph
 				 title={item}
+
 				 contents={
 					<FieldValue
 					 data={data[item]}
 					 format={Array.isArray(data[item]) ? 'array' : typeof data[item] == 'object' ? 'object' : 'string'}
-					 styles={styles}/>}
+					 keys={keys.concat([item])}
+					 report={report}
+					 styles={styles}/>}	
 				 />)}
 			/>)
 
@@ -66,6 +71,9 @@ export default function FieldValue({ data, format, layout, opts={}, styles, text
 
 	// string, multiline, integer
 	} else {
-		return(<Text style={{...textStyle, ...styles.fieldValueText }}>{data}</Text>)
+		return(<View style={{flexDirection: 'row', alignItems: 'center', width:'100%'}}>
+			<Text style={{...textStyle, ...styles.fieldValueText }}>{data}</Text>
+			{!!report && ReportButton({keys, ...report})}
+		</View>)
 	}
 }

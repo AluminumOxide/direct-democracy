@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { IconButton, Text } from 'react-native-paper';
 import getStyles from './styles';
 
-export default function Paragraph({ title, contents }) {
+export default function Paragraph({ title, contents, buttons=false }) {
 	const styles = getStyles()
 	// show contents?
 	const [show, setShow] = useState(true)
@@ -25,6 +25,7 @@ export default function Paragraph({ title, contents }) {
 				 onPress={() => setShow(!show)}
 				 iconColor={styles.paragraphTitleButton.color}
 				 size={styles.paragraphTitleButton.size}/>
+				{!!buttons && buttons}
 			</View>
 		</View>
 

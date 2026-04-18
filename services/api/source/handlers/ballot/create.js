@@ -1,4 +1,4 @@
-const { invalid_auth, internal_error } = require('../../errors.json')
+const { membership_timeout, invalid_auth, internal_error } = require('../../errors.json')
 
 const ballot_create = async function(request, reply, db, log, lib) {
 
@@ -18,7 +18,7 @@ const ballot_create = async function(request, reply, db, log, lib) {
 		const proposal = await api_proposal.proposal_read({ proposal_id })
 
 		// get membership
-		const membership = await api_membership.membership_list({
+		let membership = await api_membership.membership_list({
 			filter: {
 				democracy_id: { op: '=', val: proposal.democracy_id },
 				profile_id: { op: '=', val: profile_id }
@@ -35,7 +35,14 @@ const ballot_create = async function(request, reply, db, log, lib) {
 			log.error(`Ballot/Create: Failure: Error: Duplicate Membership`)
 			return reply.code(500).send(new Error(internal_error))
 		}
-		const membership_id = membership[0].membership_id
+		membership = membership[0]
+		const membership_id = membership.membership_id
+
+		// check member is not in time out
+		if(!!membership.in_timeout) {
+			log.warn(`Ballot/Create: Failure: ${membership_id} Error: Member in time out`)
+			return reply.code(400).send(new Error(membership_timeout))
+		}
 
 		// create ballot
 		const ballot = await api_proposal.ballot_create({ proposal_id, membership_id, ballot_approved, ballot_comments })

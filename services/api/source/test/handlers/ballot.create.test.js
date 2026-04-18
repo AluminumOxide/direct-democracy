@@ -20,12 +20,25 @@ describe('Ballot Create', () => {
 				profile_id: test_data.profile.profile.id,
 				auth_token: test_data.profile.profile.auth_token,
 				auth_expiry: test_data.profile.profile.auth_expiry,
-				proposal_id: test_data.proposal.child_metas_pass.id,
+				proposal_id: test_data.proposal.root_conduct_fail.id,
 				ballot_approved: true,
 				ballot_comments: 'asdfasdfasf'
 			}
 			const { profile_id, auth_expiry, auth_token, ...expected } = test_blt
 			await expect(blt_create_i(test_blt)).resolves.toMatchObject(expected)
+		})
+
+		test('Error: Timeout', async() => {
+			const test_blt = {
+				profile_id: test_data.profile.profile.id,
+				auth_token: test_data.profile.profile.auth_token,
+				auth_expiry: test_data.profile.profile.auth_expiry,
+				proposal_id: test_data.proposal.child_metas_pass.id,
+				ballot_approved: true,
+				ballot_comments: 'asdfasdfasf'
+			}
+			const { profile_id, auth_expiry, auth_token, ...expected } = test_blt
+			await expect(blt_create_i(test_blt)).rejects.toThrow(errors.membership_timeout)
 		})
 	})
 
@@ -221,7 +234,43 @@ describe('Ballot Create', () => {
 			expect(dummy_log.warn).toHaveBeenCalledTimes(0)
 			expect(dummy_log.error).toHaveBeenCalledTimes(1)
 		})
+		
+		test('Error: Membership timeout', async() => {
 
+			// set up mocks
+			const dummy_req = { proposal_id, ballot_approved: true, jwt }
+			const dummy_log = get_dummy_log()
+			const dummy_reply = get_dummy_reply()
+			const dummy_lib = get_dummy_lib([{
+				lib: 'api_profile',
+				fxn: 'sign_in_verify',
+				val: { profile_id },
+				err: false
+			},{
+				lib: 'api_proposal',
+				fxn: 'proposal_read',
+				val: { democracy_id },
+				err: false
+			},{
+				lib: 'api_membership',
+				fxn: 'membership_list',
+				val: [{membership_id, in_timeout:true}],
+				err: false
+			}], errors)
+			
+			// call handler
+			await blt_create_u(dummy_req, dummy_reply, {}, dummy_log, dummy_lib)
+
+			// check reply
+			expect(dummy_reply.code).toHaveBeenCalledWith(400)
+			expect(dummy_reply.send).toHaveBeenCalledWith(new Error(errors.membership_timeout))
+
+			// check log
+			expect(dummy_log.info).toHaveBeenCalledTimes(0)
+			expect(dummy_log.warn).toHaveBeenCalledTimes(1)
+			expect(dummy_log.error).toHaveBeenCalledTimes(0)
+		})
+		
 		test('Error: Membership DNE', async() => {
 
 			// set up mocks

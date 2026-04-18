@@ -145,6 +145,26 @@ Properties:
 - [401](#responses-401)
 - [500](#responses-500)
 
+### DELETE /v1/proposal/:proposal_id/:erase_field
+
+*Erase proposal data*
+
+**Params**
+
+- [proposal_id](#params-proposal_id)
+- [erase_field](#params-erase_field)
+
+**Bodies**
+
+ - [bodies-proposal_erase](#bodies-proposal_erase)
+
+**Responses**
+
+- [204](#responses-proposal_delete)
+- [400](#responses-400)
+- [401](#responses-401)
+- [500](#responses-500)
+
 ### GET /v1/proposal/:proposal_id/ballot
 
 *List ballots*
@@ -258,6 +278,21 @@ Properties:
 - [401](#responses-401)
 - [500](#responses-500)
 
+### DELETE /v1/ballot/:ballot_id
+
+*Erase ballot comments*
+
+**Params**
+
+- [ballot_id](#params-ballot_id)
+
+**Responses**
+
+- [204](#responses-ballot_delete)
+- [400](#responses-400)
+- [401](#responses-401)
+- [500](#responses-500)
+
 
 ## Headers
 
@@ -272,6 +307,15 @@ Type: [schemas-membership_id](#schemas-membership_id)
 #### params-ballot_id
 
 Type: [schemas-ballot_id](#schemas-ballot_id)
+#### params-erase_field
+
+Type: string
+
+Enum:
+
+- name
+- description
+- changes
 ## Queries
 
 #### queries-limit
@@ -883,6 +927,20 @@ Type: [schemas-ballot_create](#schemas-ballot_create)
 #### bodies-ballot_update
 
 Type: [schemas-ballot_update](#schemas-ballot_update)
+#### bodies-proposal_erase
+
+Type: object
+
+Properties:
+
+- **erase_keys**
+
+	Type: array
+
+	Items:
+
+	- Type: string
+
 ## Responses
 
 #### responses-400
@@ -1094,6 +1152,7 @@ Enum:
 - democracy_description
 - democracy_content
 - democracy_conduct
+- democracy_misconduct
 - democracy_metas
 - democracy_children
 - democracy_members

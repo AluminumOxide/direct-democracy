@@ -94,7 +94,7 @@ describe('Proposal List', () => {
 				sort: 'date_created',
 				order: 'DESC'
 			})
-			expect(props[0].proposal_id).toBe(test_data['proposal']['gchild_content_close'].id)
+			expect(props[0].proposal_id).toBe(test_data['proposal']['root_misconduct_changes'].id)
 		})
 
 		// sort by date_updated asc
@@ -199,7 +199,7 @@ describe('Proposal List', () => {
 					}
 				}
 			})
-			expect(props.length).toBe(5)
+			expect(props.length).toBe(11)
 		})
 
 		// TODO: fix
@@ -226,7 +226,7 @@ describe('Proposal List', () => {
 					}
 				}
 			})
-			expect(props.length).toBe(6)
+			expect(props.length).toBe(12)
 		})
 
 		// filter by proposal_votable equals
@@ -239,7 +239,7 @@ describe('Proposal List', () => {
 					}
 				}
 			})
-			expect(props.length).toBe(5)
+			expect(props.length).toBe(11)
 		})
 
 		// filter by proposal_passed not equal
@@ -278,7 +278,7 @@ describe('Proposal List', () => {
 					}
 				}
 			})
-			expect(props.length).toBe(7)
+			expect(props.length).toBe(13)
 		})
 
 		// TODO error: invalid filter field

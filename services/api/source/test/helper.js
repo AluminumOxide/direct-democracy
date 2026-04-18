@@ -79,6 +79,10 @@ const ballot_my_list_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/ballot/my_list')(request, reply, db, log, lib)
 }
 
+const ballot_list_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/ballot/list')(request, reply, db, log, lib)
+}
+
 const ballot_create_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/ballot/create')(request, reply, db, log, lib)
 }
@@ -93,6 +97,10 @@ const ballot_update_unit = async(request, reply, db, log, lib) => {
 
 const ballot_delete_unit = async(request, reply, db, log, lib) => {
 	return await require('../handlers/ballot/delete')(request, reply, db, log, lib)
+}
+
+const report_create_unit = async(request, reply, db, log, lib) => {
+	return await require('../handlers/report/create')(request, reply, db, log, lib)
 }
 
 // integration tests
@@ -160,6 +168,10 @@ const ballot_my_list_integration = async(profile_id, auth_token, auth_expiry) =>
 	return await api_external_client.ballot_my_list({ jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile') })
 }
 
+const ballot_list_integration = async(proposal_id, ballot_approved) => {
+	return await api_external_client.ballot_list({ proposal_id, ballot_approved })
+}
+
 const ballot_create_integration = async({ proposal_id, ballot_approved, ballot_comments, profile_id, auth_token, auth_expiry }) => {
 	return await api_external_client.ballot_create({ proposal_id, ballot_approved, ballot_comments, jwt: await integration_test_jwt({ profile_id, auth_token, auth_expiry }, 'profile') })
 }
@@ -174,6 +186,10 @@ const ballot_update_integration = async(proposal_id, ballot_approved, ballot_com
 
 const ballot_delete_integration = async(proposal_id, profile_id, auth_token, auth_expiry) => {
 	return await api_external_client.ballot_delete({ proposal_id, jwt: await integration_test_jwt({profile_id, auth_token, auth_expiry}, 'profile')})
+}
+
+const report_create_integration = async(democracy_id, misconduct_id, misconduct_description, target_type, target_id, target_text, target_keys, profile_id, auth_token, auth_expiry) => {
+	return await api_external_client.report_create({democracy_id, misconduct_id, misconduct_description, target_type, target_id, target_text, target_keys, jwt: await integration_test_jwt({profile_id, auth_token, auth_expiry}, 'profile')})
 }
 
 module.exports = {
@@ -204,10 +220,12 @@ module.exports = {
 	proposal_read_unit,
 	proposal_delete_unit,
 	ballot_my_list_unit,
+	ballot_list_unit,
 	ballot_create_unit,
 	ballot_my_read_unit,
 	ballot_update_unit,
 	ballot_delete_unit,
+	report_create_unit,
 	democracy_list_integration,
 	democracy_read_integration,
 	democracy_root_integration,
@@ -223,8 +241,10 @@ module.exports = {
 	proposal_read_integration,
 	proposal_delete_integration,
 	ballot_my_list_integration,
+	ballot_list_integration,
 	ballot_create_integration,
 	ballot_my_read_integration,
 	ballot_update_integration,
-	ballot_delete_integration
+	ballot_delete_integration,
+	report_create_integration
 }
