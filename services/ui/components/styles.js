@@ -226,6 +226,16 @@ const getStyles = function() {
 	},
 	confirmContainer: {
 		justifyContent:'center',
+		flexDirection:'column',
+		padding:20
+	},
+	confirmText: {
+		justifyContent: 'center',
+		color: theme.colors.onBackground,
+		fontSize: getFontSize(14)
+	},
+	confirmButtonContainer: {
+		justifyContent:'center',
 		flexDirection:'row',
 		padding:20
 	},

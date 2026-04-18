@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { AuthContext } from '../contexts/'
 import { ConfirmView } from '../components/'
@@ -13,6 +13,22 @@ export default function MembershipCreateScreen({ route }) {
 	if(!authState.state) {
 		return navigation.navigate('SignIn')
 	}
+
+	const [ data, setData ] = useState([])
+	const fetchData = async() => {
+		const dem = await api.democracy_read({ democracy_id: democracyId })
+		let question = `Would you like to join "${dem.democracy_name}"?`
+		let conduct = `By joining "${dem.democracy_name}" you are agreeing to follow the code of conduct:\n\n`
+		dem.democracy_conduct.map(c => {
+			let k = Object.keys(c)[0]
+			conduct += `☑︎ ${k}: ${c[k].description}\n`
+		})
+		setData({
+			question,
+			conduct
+		})
+	}
+	useEffect(() => { fetchData() }, [])
 
 	const handleProceed = async function() {
 		const mem = await api.membership_create({
@@ -30,7 +46,8 @@ export default function MembershipCreateScreen({ route }) {
 	}
 
 	return ConfirmView({
-		question: 'Would you like to join this democracy?',
+		question: data.question,
+		confirmText: data.conduct,
 		proceed: handleProceed,
 		nextScreen: 'MembershipList'
 	})
