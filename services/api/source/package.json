@@ -6,6 +6,7 @@
   "dependencies": {
     "@aluminumoxide/direct-democracy-external-api-client": "^1.0.25",
     "@aluminumoxide/direct-democracy-lib-server": "^1.0.44",
+    "@babel/preset-env": "^7.29.7",
     "uuid": "^14.0.0"
   },
   "scripts": {
@@ -21,7 +22,10 @@
     "coveragePathIgnorePatterns": [
       "index.js"
     ],
-    "coverageDirectory": "./test/coverage"
+    "coverageDirectory": "./test/coverage",
+    "transformIgnorePatterns": [
+	    "/node_modules/(?!(js-srp6a))/"
+    ]
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

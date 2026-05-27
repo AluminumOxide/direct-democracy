@@ -1,6 +1,6 @@
 {    
 	"servers": {
-		"local": "https://localhost:3000/v1",
+		"local": "https://127.0.0.1:3000/v1",
 		"dev":   "https://0.0.0.0:3000/v1"	
 	},
 	"schemas": {

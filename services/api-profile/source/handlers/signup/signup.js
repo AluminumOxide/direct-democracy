@@ -30,16 +30,14 @@ const sign_up = async function(request, reply, db, log, lib) {
 		}
 
 		// pick a signup token
-		const token_query = await db('token').where({
-				bucket: 'signup'
-			}).orderByRaw('random()').limit(1).del(['token'])
+		const token_query = await db.raw("delete from token where token in (select token from token where bucket = 'signup' order by random() limit 1) returning token;")
 
 		// handle empty signup bucket
-		if(!token_query || token_query.length < 1) {
+		if(!token_query || !token_query.rows || token_query.rows.length < 1) {
 			log.error(`Profile/Signup: Failure: ${profile_id} Error: No signup token!`)
 			return reply.code(500).send(new Error(internal_error))
 		}
-		const signup_token = token_query[0].token
+		const signup_token = token_query.rows[0].token
 
 		// save new profile
 		const rows = await db('profile').insert({

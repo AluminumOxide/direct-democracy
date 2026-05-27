@@ -1,6 +1,6 @@
 {
 	"name": "@aluminumoxide/direct-democracy-profile-api-client",
-	"version": "1.0.9",
+	"version": "1.0.10",
 	"description": "Client library for profile API",
 	"main": "index.js",
 	"dependencies": {
