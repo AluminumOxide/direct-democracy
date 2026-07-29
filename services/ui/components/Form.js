@@ -135,7 +135,7 @@ export default function Form({ formFields=[], reqFields=[], fields={}, keys=[], 
 			}
 			return val
 		} else if(!!defn) {
-			return !!defn.visible ? defn.visible : true
+			return Object.keys(defn).indexOf('visible') >= 0 ? defn.visible : true
 		} else {
 			return true
 		}

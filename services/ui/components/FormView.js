@@ -9,7 +9,10 @@ export default function FormView({ id, title, formFields, reqFields, fields, pro
 
 	// handle form submission
 	const submit = async function(formValues) {
-		navigation.navigate(nextScreen, await proceed(formValues))
+		const vals = await proceed(formValues)
+		if(!!vals) {
+			navigation.navigate(nextScreen, vals)
+		}
 	}
 
 	// handle form cancel

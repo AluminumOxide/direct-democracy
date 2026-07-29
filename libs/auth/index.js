@@ -1,6 +1,23 @@
-const fs = require('node:fs')
-const { Buffer } = require('node:buffer')
-const { subtle, createCipheriv, createDecipheriv, createECDH, createHash, getRandomValues, randomBytes, randomFillSync, randomUUID, scryptSync } = require('node:crypto')
+// get buffer for node server or react native
+let { Buffer } = require('node:buffer')
+if(!Buffer) {
+	Buffer = require('buffer/').Buffer
+}
+
+// get crypto for node server or react native
+let nodecrypto = require('node:crypto')
+if(Object.keys(nodecrypto).length==0) {
+	nodecrypto = global.crypto
+}
+const { subtle, createCipheriv, createDecipheriv, createECDH, createHash, randomFillSync, randomUUID, scryptSync } = nodecrypto
+
+/* random helpers */
+const getRandomValues = function(len) {
+	return nodecrypto.getRandomValues(new Uint8Array(len))
+}
+const randomBytes = function(len) {
+	return Buffer.from(getRandomValues(len)).toString('hex')
+}
 
 /* uuid */
 const uuid_random = randomUUID
@@ -21,7 +38,7 @@ const key_destringify = async function(key, algo, ops) {
 
 const key_password = async function(password, salt=false) {
 	if(!salt) {
-		salt = randomBytes(key_salt_len/2).toString('hex')
+		salt = randomBytes(key_salt_len/2)
 	}
 	const te = new TextEncoder()
 	const mat = await subtle.importKey('raw', te.encode(password), 'PBKDF2', false, ['deriveKey'])
@@ -65,7 +82,7 @@ const decrypt = async function(enc, key) {
 const hash_algo = 'SHA-512' // TODO: check if keccak / sha3
 
 const hash_chain = async function(secret, n=1000) {
-	let salt = randomBytes(32).toString('hex')
+	let salt = randomBytes(32)
 	const segs = secret.split('/')
 	if(segs.length == 2) {
 		secret = segs[0]
@@ -90,7 +107,7 @@ const hash_chain = async function(secret, n=1000) {
 const token_len = 32
 
 const token_random = function(len=false) {
-	return randomBytes(!!len?len:token_len).toString('hex')
+	return randomBytes(!!len?len:token_len)
 }
 
 /* signature */
@@ -110,6 +127,7 @@ const jwt_new_keys = async function() {
 }
 
 const jwt_read_keys = async function(pblc_file, prvt_file) {
+	const fs = require('node:fs')
 	const sig = { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-512' }
 	return {
 		public: await subtle.importKey('spki', fs.readFileSync(pblc_file), sig, true, ['verify']),
@@ -177,44 +195,45 @@ const conceal_token = async function(token) {
 
 /* password authenticated key exchange */
 
-// TODO: this lib hasn't been updated in 7 years and is using a static big prime :/ ... replace this
-const srp_client = require('secure-remote-password/client')
-const srp_server = require('secure-remote-password/server')
+// TODO: is this library ok?
+const { createSRPClient, createSRPServer } = require('js-srp6a')
+const srp_client = createSRPClient('SHA-256', 2048)
+const srp_server = createSRPServer('SHA-256', 2048)
 
 // step 1
-const pake_client_generate_zkpp = function(email, password) {
+const pake_client_generate_zkpp = async function(email, password) {
 	const salt = srp_client.generateSalt()
-	const private_key = srp_client.derivePrivateKey(salt, email, password)
+	const private_key = await srp_client.deriveSafePrivateKey(salt, password)
 	const zkpp = srp_client.deriveVerifier(private_key)
 	return { salt, zkpp }
 }
 
 // step 2
-const pake_client_generate_keys = function() {
+const pake_client_generate_keys = async function() {
 	const ephem = srp_client.generateEphemeral()
 	return { public: ephem.public, private: ephem.secret }
 }
 
 // step 3
-const pake_server_generate_keys = function(zkpp) {
-	const ephem = srp_server.generateEphemeral(zkpp)
+const pake_server_generate_keys = async function(zkpp) {
+	const ephem = await srp_server.generateEphemeral(zkpp)
 	return { public: ephem.public, private: ephem.secret }
 }
 
 // step 4
-const pake_client_derive_proof = function(salt, email, password, client_private, server_public) {
-	const private_key = srp_client.derivePrivateKey(salt, email, password)
-	return srp_client.deriveSession(client_private, server_public, salt, email, private_key)
+const pake_client_derive_proof = async function(salt, email, password, client_private, server_public) {
+	const private_key = await srp_client.deriveSafePrivateKey(salt, password)
+	return await srp_client.deriveSession(client_private, server_public, salt, "", private_key)
 }
 
 // step 5
-const pake_server_derive_proof = function(server_private, client_public, salt, zkpp, email, client_proof) {
-	return (srp_server.deriveSession(server_private, client_public, salt, email, zkpp, client_proof)).proof
+const pake_server_derive_proof = async function(server_private, client_public, salt, zkpp, email, client_proof) {
+	return (await srp_server.deriveSession(server_private, client_public, salt, "", zkpp, client_proof)).proof
 }
 
 // step 6
-const pake_client_verify_proof = function(client_public, client_sesh, server_proof) {
-	return srp_client.verifySession(client_public, client_sesh, server_proof)
+const pake_client_verify_proof = async function(client_public, client_sesh, server_proof) {
+	return await srp_client.verifySession(client_public, client_sesh, server_proof)
 }
 
 module.exports = {

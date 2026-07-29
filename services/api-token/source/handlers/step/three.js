@@ -42,8 +42,14 @@ const step_three = async function(request, reply, db, log, lib) {
 		}
 		
 		// select random token from bucket
-		const rand_lookup = await db('token').where({ bucket: new_bucket }).orderByRaw('random()').limit(1).del(['token'])
-		const rand_token = rand_lookup[0].token
+		const rand_lookup = await db.raw(`delete from token where token in (select token from token where bucket = '${new_bucket}' order by random() limit 1) returning token;`)
+
+		// handle empty bucket
+		if(!rand_lookup || !rand_lookup.rows || rand_lookup.rows.length < 1) {
+			log.error(`Step/Three: Failure: Empty bucket`)
+			return reply.code(500).send(new Error(internal_error))
+		}
+		const rand_token = rand_lookup.rows[0].token
 
 		// sign token
 		const sign_token = await lib.jwt.sign({ 'token': rand_token })

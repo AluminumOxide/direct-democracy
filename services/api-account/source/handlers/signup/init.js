@@ -14,19 +14,17 @@ const sign_up_init = async function(request, reply, db, log, lib) {
 		}
 
 		// pick an email token
-		const token_query = await db('token').where({
-				bucket: 'email'
-			}).orderByRaw('random()').limit(1).del(['token'])
+		const token_query = await db.raw("delete from token where token in (select token from token where bucket = 'email' order by random() limit 1) returning token;")
 
 		// handle empty email bucket
-		if(!token_query || token_query.length < 1) {
+		if(!token_query || !token_query.rows || token_query.rows.length < 1) {
 			log.error(`Account/Signup/Init: Failure: ${email} Error: No email token!`)
 			return reply.code(500).send(new Error(internal_error))
 		}
-		const email_token = token_query[0].token
+		const email_token = token_query.rows[0].token
 
 		// TODO: actually email token
-		console.log("---- EMAIL ----", email_token)
+		console.log("---- EMAIL ----", email, email_token)
 
 		// create account
 		const rows = await db('account').insert({
